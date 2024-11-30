@@ -62,11 +62,11 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
         for (var userEntry in usersData.entries) {
           String userId = userEntry.key;
           Map<String, dynamic> userData =
-          Map<String, dynamic>.from(userEntry.value as Map);
+              Map<String, dynamic>.from(userEntry.value as Map);
 
           if (userData.containsKey('AppUsage')) {
             Map<String, dynamic> appUsage =
-            Map<String, dynamic>.from(userData['AppUsage'] as Map);
+                Map<String, dynamic>.from(userData['AppUsage'] as Map);
 
             appUsage.forEach((key, value) {
               List<String> parts = key.split(' ');
@@ -250,144 +250,178 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
     return getSemesterChartData(nextyear.toString(), false);
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blueAccent, Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: availableAcademicYears.isNotEmpty
-              ? Column(
-            children: [
-              SizedBox(height: MediaQuery.of(context).size.height / 100),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Usage Statistics :  ',
-                      style: GoogleFonts.poppins(
-                        fontSize: MediaQuery.of(context).size.width < 360 ? 18 :
-                        MediaQuery.of(context).size.width < 600 ? 22 : 24,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 10.0,
-                            color: Colors.black.withOpacity(0.3),
-                            offset: const Offset(2.0, 2.0),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 2.0),
-                      child: DropdownButton<String>(
-                        value: availableAcademicYears[currentYearIndex],
-                        underline: SizedBox(), // Removing the default underline
-                        icon: Icon(
-                          Icons.arrow_drop_down,
-                          color: Colors.white,
-                          size: 30, // Increase the icon size to make it a little bigger
-                        ),
-                        dropdownColor: Colors.white,
-                        menuWidth: MediaQuery.of(context).size.width / 2.72,
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          color: Colors.black, // Default style for items
-                        ),
-                        items: availableAcademicYears.map((year) {
-                          return DropdownMenuItem<String>(
-                            value: year,
-                            child: Text(
-                              year,
-                              style: GoogleFonts.poppins(
-                                fontSize: 16,
-                                color: Colors.black, // Normal style for each dropdown item
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            currentYearIndex = availableAcademicYears.indexOf(value!);
-                          });
-                        },
-                        selectedItemBuilder: (BuildContext context) {
-                          return availableAcademicYears.map<Widget>((String item) {
-                            return Center(
-                              child: Text(
-                                item,
-                                style: GoogleFonts.poppins(
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: Colors.white,
-                                  fontSize: MediaQuery.of(context).size.width < 360 ? 18 :
-                                  MediaQuery.of(context).size.width < 600 ? 22 : 24,
-                                  color: Colors.transparent, // Apply custom style for selected item
-                                  fontWeight: FontWeight.w600,
-                                  shadows: [
-                                    Shadow(
-                                      color: Colors.white,
-                                      offset: Offset(0, -2),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList();
-                        },
-                      ),
-                    ),
-                  ],
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blueAccent, Colors.white],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
               ),
-              GraphContainer(
-                year: availableAcademicYears[currentYearIndex]
-                    .split('-')[0],
-                maxY: getMaxY(availableAcademicYears[
-                currentYearIndex]
-                    .split('-')[0]),
-                yInterval: calculateYAxisInterval(getMaxY(
-                    availableAcademicYears[currentYearIndex]
-                        .split('-')[0])),
-                getChartData: getOddSemesterChartData,
-                title: 'Odd Semester Usage',
+              child: SingleChildScrollView(
+                child: availableAcademicYears.isNotEmpty
+                    ? Column(
+                        children: [
+                          SizedBox(
+                              height: MediaQuery.of(context).size.height / 100),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  'Usage Statistics :  ',
+                                  style: GoogleFonts.poppins(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width < 360
+                                            ? 18
+                                            : MediaQuery.of(context)
+                                                        .size
+                                                        .width <
+                                                    600
+                                                ? 22
+                                                : 24,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    shadows: [
+                                      Shadow(
+                                        blurRadius: 10.0,
+                                        color: Colors.black.withOpacity(0.3),
+                                        offset: const Offset(2.0, 2.0),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 2.0),
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width /
+                                        2.72,
+                                    child: DropdownButton<String>(
+                                      value: availableAcademicYears[
+                                          currentYearIndex],
+                                      underline:
+                                          SizedBox(), // Removing the default underline
+                                      icon: Icon(
+                                        Icons.arrow_drop_down,
+                                        color: Colors.white,
+                                        size:
+                                            30, // Increase the icon size to make it a little bigger
+                                      ),
+                                      dropdownColor: Colors.white,
+                                      // menuWidth:
+                                      //     MediaQuery.of(context).size.width /
+                                      //         2.72,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 16,
+                                        color: Colors
+                                            .black, // Default style for items
+                                      ),
+                                      items: availableAcademicYears.map((year) {
+                                        return DropdownMenuItem<String>(
+                                          value: year,
+                                          child: Text(
+                                            year,
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 16,
+                                              color: Colors
+                                                  .black, // Normal style for each dropdown item
+                                            ),
+                                          ),
+                                        );
+                                      }).toList(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          currentYearIndex =
+                                              availableAcademicYears
+                                                  .indexOf(value!);
+                                        });
+                                      },
+                                      selectedItemBuilder:
+                                          (BuildContext context) {
+                                        return availableAcademicYears
+                                            .map<Widget>((String item) {
+                                          return Center(
+                                            child: Text(
+                                              item,
+                                              style: GoogleFonts.poppins(
+                                                decoration:
+                                                    TextDecoration.underline,
+                                                decorationColor: Colors.white,
+                                                fontSize: MediaQuery.of(context)
+                                                            .size
+                                                            .width <
+                                                        360
+                                                    ? 18
+                                                    : MediaQuery.of(context)
+                                                                .size
+                                                                .width <
+                                                            600
+                                                        ? 22
+                                                        : 24,
+                                                color: Colors
+                                                    .transparent, // Apply custom style for selected item
+                                                fontWeight: FontWeight.w600,
+                                                shadows: [
+                                                  Shadow(
+                                                    color: Colors.white,
+                                                    offset: Offset(0, -2),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        }).toList();
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          GraphContainer(
+                            year: availableAcademicYears[currentYearIndex]
+                                .split('-')[0],
+                            maxY: getMaxY(
+                                availableAcademicYears[currentYearIndex]
+                                    .split('-')[0]),
+                            yInterval: calculateYAxisInterval(getMaxY(
+                                availableAcademicYears[currentYearIndex]
+                                    .split('-')[0])),
+                            getChartData: getOddSemesterChartData,
+                            title: 'Odd Semester Usage',
+                          ),
+                          const SizedBox(height: 16),
+                          GraphContainer(
+                            year: availableAcademicYears[currentYearIndex]
+                                .split('-')[0],
+                            maxY: getMaxY(
+                                availableAcademicYears[currentYearIndex]
+                                    .split('-')[0]),
+                            yInterval: calculateYAxisInterval(getMaxY(
+                                availableAcademicYears[currentYearIndex]
+                                    .split('-')[0])),
+                            getChartData: getEvenSemesterChartData,
+                            title: 'Even Semester Usage',
+                          ),
+                          const SizedBox(height: 16),
+                        ],
+                      )
+                    : const Center(
+                        child: Text(
+                          'No data available',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
               ),
-              const SizedBox(height: 16),
-              GraphContainer(
-                year: availableAcademicYears[currentYearIndex]
-                    .split('-')[0],
-                maxY: getMaxY(availableAcademicYears[
-                currentYearIndex]
-                    .split('-')[0]),
-                yInterval: calculateYAxisInterval(getMaxY(
-                    availableAcademicYears[currentYearIndex]
-                        .split('-')[0])),
-                getChartData: getEvenSemesterChartData,
-                title: 'Even Semester Usage',
-              ),
-              const SizedBox(height: 16),
-            ],
-          )
-              : const Center(
-            child: Text(
-              'No data available',
-              style: TextStyle(
-                  fontSize: 18, fontWeight: FontWeight.bold),
             ),
-          ),
-        ),
-      ),
     );
   }
 }

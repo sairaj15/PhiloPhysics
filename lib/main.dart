@@ -1,4 +1,4 @@
-import 'package:ephysicsapp/screens/users/home.dart';
+import 'package:ephysicsapp/screens/users/splash_screen.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/material.dart';
@@ -50,11 +50,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       _isLoggedIn = true;
       _userId = userId;
       _startTime = DateTime.now();
+    } else {
+      print("No User Logged In / Admin Logged In");
     }
-    else
-      {
-        print("No User Logged In / Admin Logged In");
-      }
   }
 
   // Check for updates
@@ -78,7 +76,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     print("Started Recording time on login");
     _isLoggedIn = true;
     _userId = userId;
-    _startTime = DateTime.now(); // Start time tracking
+    // Start tracking after the splash screen duration
+    Future.delayed(Duration(seconds: 3), () {
+      _startTime = DateTime.now();
+    });
   }
 
   // Method to stop tracking when user logs out
@@ -97,7 +98,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         // App brought to foreground i.e., in use
         print('Starting Time Recording');
         _startTime = DateTime.now();
-      } else if (state == AppLifecycleState.paused || state == AppLifecycleState.inactive) {
+      } else if (state == AppLifecycleState.paused ||
+          state == AppLifecycleState.inactive) {
         print("App Not in Foreground");
         _logAppUsageTime();
       }
@@ -114,7 +116,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         await _updateUsageInFirebase(_startTime, sessionDuration);
       } else {
         // Spans across midnight
-        print("Session spanned across midnight from ${_startTime} to ${endTime}");
+        print(
+            "Session spanned across midnight from ${_startTime} to ${endTime}");
         DateTime midnight = DateTime(
           _startTime.year,
           _startTime.month,
@@ -138,15 +141,22 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _updateUsageInFirebase(DateTime usageDate, Duration sessionDuration) async {
+  Future<void> _updateUsageInFirebase(
+      DateTime usageDate, Duration sessionDuration) async {
     String userId = _userId!;
     String currentMonth = DateFormat('MMM yyyy').format(usageDate);
     String dateKey = DateFormat('dd-MM-yyyy').format(usageDate);
 
     DatabaseReference dbRef = FirebaseDatabase.instance.ref();
-    DatabaseReference userUsageRef = dbRef.child('Users').child(userId).child('AppUsage').child(currentMonth).child(dateKey);
+    DatabaseReference userUsageRef = dbRef
+        .child('Users')
+        .child(userId)
+        .child('AppUsage')
+        .child(currentMonth)
+        .child(dateKey);
 
-    DataSnapshot snapshot = await userUsageRef.once().then((event) => event.snapshot);
+    DataSnapshot snapshot =
+        await userUsageRef.once().then((event) => event.snapshot);
     Duration totalUsage = Duration();
 
     if (snapshot.exists) {
@@ -197,7 +207,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         primarySwatch: createMaterialColor(color5),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(), // Initial screen of the app
+      home: SplashScreen(), // Initial screen of the app
     );
   }
 }

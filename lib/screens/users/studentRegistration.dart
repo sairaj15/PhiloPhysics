@@ -12,7 +12,6 @@ class StudentRegister extends StatefulWidget {
 }
 
 class _StudentRegisterState extends State<StudentRegister> {
-
   String password = '';
   String confirmPassword = '';
 
@@ -27,10 +26,14 @@ class _StudentRegisterState extends State<StudentRegister> {
 
   final GlobalKey<FormState> _formKeyValue = GlobalKey<FormState>();
 
-  TextEditingController studentAccCreationemailController = TextEditingController();
-  TextEditingController studentAccCreationnameController = TextEditingController();
-  TextEditingController studentAccCreationYearDivController = TextEditingController();
-  TextEditingController studentAccCreationpasswordController = TextEditingController();
+  TextEditingController studentAccCreationemailController =
+      TextEditingController();
+  TextEditingController studentAccCreationnameController =
+      TextEditingController();
+  TextEditingController studentAccCreationYearDivController =
+      TextEditingController();
+  TextEditingController studentAccCreationpasswordController =
+      TextEditingController();
   TextEditingController otherCollegeNameController = TextEditingController();
 
   // Track the selected college radio button
@@ -58,14 +61,35 @@ class _StudentRegisterState extends State<StudentRegister> {
       return;
     }
 
-    String collegeName = _selectedCollege == 'Sakec'
-        ? 'Sakec'
-        : otherCollegeNameController.text;
+    String collegeName =
+        _selectedCollege == 'Sakec' ? 'Sakec' : otherCollegeNameController.text;
+
+    // Show the pop-up dialog to inform the user about Google Sign-In
+    await showDialog(
+      context: context,
+      barrierDismissible: false, // Prevent dismissing by tapping outside
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Important Notice"),
+          content: Text(
+            "A Google Sign-In popup will appear. If you don't wish to link your Google account, please press the back button on your device to skip linking. This is required to complete registration.",
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text("Got it"),
+            ),
+          ],
+        );
+      },
+    );
 
     setState(() {
       isLoading = true;
     });
-    try{
+    try {
       await Studentregister(
         studentAccCreationemailController.text,
         studentAccCreationnameController.text,
@@ -85,7 +109,6 @@ class _StudentRegisterState extends State<StudentRegister> {
     }
   }
 
-
   @override
   void initState() {
     super.initState();
@@ -95,7 +118,6 @@ class _StudentRegisterState extends State<StudentRegister> {
       });
     });
   }
-
 
   void checkPasswordStrength(String password) {
     setState(() {
@@ -122,13 +144,15 @@ class _StudentRegisterState extends State<StudentRegister> {
   }
 
   Widget buildPasswordCheckConditions() {
-    if(hasUppercase == true && hasMinLength == true && hasNumber == true && hasSpecialChar == true)
-      {
-        return Icon(
-          Icons.check_circle,
-          color: Colors.green,
-        );
-      }
+    if (hasUppercase == true &&
+        hasMinLength == true &&
+        hasNumber == true &&
+        hasSpecialChar == true) {
+      return Icon(
+        Icons.check_circle,
+        color: Colors.green,
+      );
+    }
     return Icon(
       Icons.cancel,
       color: Colors.red,
@@ -183,7 +207,8 @@ class _StudentRegisterState extends State<StudentRegister> {
                     children: [
                       Text(
                         "Enter College: ",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.w400),
                       ),
                       SizedBox(width: 10),
                       Expanded(
@@ -199,11 +224,14 @@ class _StudentRegisterState extends State<StudentRegister> {
                                 });
                               },
                             ),
-                            Text('SAKEC', style: GoogleFonts.roboto(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.normal,
-                                color: color5),),
+                            Text(
+                              'SAKEC',
+                              style: GoogleFonts.roboto(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.normal,
+                                  color: color5),
+                            ),
                             SizedBox(width: 10),
                             Radio<String>(
                               value: 'Others',
@@ -215,11 +243,14 @@ class _StudentRegisterState extends State<StudentRegister> {
                                 });
                               },
                             ),
-                            Text('OTHER', style: GoogleFonts.roboto(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                fontStyle: FontStyle.normal,
-                                color: color5),),
+                            Text(
+                              'OTHER',
+                              style: GoogleFonts.roboto(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  fontStyle: FontStyle.normal,
+                                  color: color5),
+                            ),
                           ],
                         ),
                       ),
@@ -229,7 +260,9 @@ class _StudentRegisterState extends State<StudentRegister> {
                 if (_isOtherCollegeSelected)
                   Column(
                     children: [
-                      SizedBox(height: 10,),
+                      SizedBox(
+                        height: 10,
+                      ),
                       TextFormField(
                         controller: otherCollegeNameController,
                         validator: (value) {
@@ -250,7 +283,7 @@ class _StudentRegisterState extends State<StudentRegister> {
                       ),
                     ],
                   ),
-                SizedBox(height : 20),
+                SizedBox(height: 20),
                 TextFormField(
                   controller: studentAccCreationemailController,
                   validator: (value) {
@@ -306,15 +339,19 @@ class _StudentRegisterState extends State<StudentRegister> {
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Row(
-                        mainAxisSize: MainAxisSize.min, // Use min to avoid extra width
+                        mainAxisSize:
+                            MainAxisSize.min, // Use min to avoid extra width
                         children: [
                           IconButton(
                             icon: Icon(
-                              _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                              _isPasswordVisible
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                             ),
                             onPressed: () {
                               setState(() {
-                                _isPasswordVisible = !_isPasswordVisible; // Toggle visibility
+                                _isPasswordVisible =
+                                    !_isPasswordVisible; // Toggle visibility
                               });
                             },
                           ),
@@ -371,15 +408,19 @@ class _StudentRegisterState extends State<StudentRegister> {
                     suffixIcon: Padding(
                       padding: const EdgeInsets.only(right: 8.0),
                       child: Row(
-                        mainAxisSize: MainAxisSize.min, // Use min to avoid extra width
+                        mainAxisSize:
+                            MainAxisSize.min, // Use min to avoid extra width
                         children: [
                           IconButton(
                             icon: Icon(
-                              _isConfPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                              _isConfPasswordVisible
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                             ),
                             onPressed: () {
                               setState(() {
-                                _isConfPasswordVisible = !_isConfPasswordVisible; // Toggle visibility
+                                _isConfPasswordVisible =
+                                    !_isConfPasswordVisible; // Toggle visibility
                               });
                             },
                           ),
@@ -396,19 +437,19 @@ class _StudentRegisterState extends State<StudentRegister> {
                 isLoading
                     ? CircularProgressIndicator()
                     : ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding:
-                    EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-                    backgroundColor: color5,
-                  ),
-                  onPressed: () {
-                    checkValidation();
-                  },
-                  child: Text(
-                    'Register',
-                    style: TextStyle(fontSize: 18, color: color1),
-                  ),
-                ),
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 30),
+                          backgroundColor: color5,
+                        ),
+                        onPressed: () {
+                          checkValidation();
+                        },
+                        child: Text(
+                          'Register',
+                          style: TextStyle(fontSize: 18, color: color1),
+                        ),
+                      ),
                 SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20.0),
