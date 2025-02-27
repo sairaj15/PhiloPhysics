@@ -18,6 +18,7 @@ class _ModuleMasterState extends State<ModuleMaster> {
   final DatabaseReference databaseReference = FirebaseDatabase.instance.ref();
   List<Map<dynamic, dynamic>> modules = [];
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,6 +47,8 @@ class _ModuleMasterState extends State<ModuleMaster> {
 
               // Sort modules by moduleNo in ascending order
               modules.sort((a, b) => a['moduleNo'].compareTo(b['moduleNo']));
+
+              print(modules);
     }
 
             return Column(

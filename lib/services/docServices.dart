@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:ephysicsapp/shimmer/notesScreenShimmer.dart';
 import 'package:ephysicsapp/widgets/pdfViewer.dart';
 import 'package:ephysicsapp/widgets/popUps.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -105,7 +106,7 @@ Future<void> openFile(String url, BuildContext context, String title) async {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return Center(child: CircularProgressIndicator());
+      return NoteScreenShimmer();
     },
   );
 

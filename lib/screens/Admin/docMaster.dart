@@ -40,7 +40,7 @@ class _DocMasterState extends State<DocMaster> {
     return Scaffold(
       backgroundColor: color1,
       appBar: AppBar(
-        title: Text(widget.moduleName),
+        title: Text(widget.moduleName, overflow: TextOverflow.ellipsis,),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -65,7 +65,7 @@ class _DocMasterState extends State<DocMaster> {
 
                     return ListView.builder(
                       shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
+                      physics: BouncingScrollPhysics(),
                       itemCount: documents.length,
                       itemBuilder: (context, index) {
                         return isLoggedIn()

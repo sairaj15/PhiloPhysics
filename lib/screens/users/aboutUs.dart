@@ -12,7 +12,7 @@ class AboutUs extends StatefulWidget {
 }
 
 class AboutUsState extends State<AboutUs> {
-  List<Slide> slides = [];
+  List<ContentConfig> slides = [];
 
   late Function goToTab;
 
@@ -74,7 +74,7 @@ class AboutUsState extends State<AboutUs> {
   List<Widget> renderListCustomTabs() {
     List<Widget> tabs = [];
     for (int i = 0; i < slides.length; i++) {
-      Slide currentSlide = slides[i];
+      ContentConfig currentSlide = slides[i];
       tabs.add(Container(
         width: double.infinity,
         height: double.infinity,
@@ -126,7 +126,7 @@ class AboutUsState extends State<AboutUs> {
       ),
       body: new IntroSlider(
         // List slides
-        slides: this.slides,
+        listContentConfig: this.slides,
       
         // Skip button
         renderSkipBtn: this.renderSkipBtn(),
@@ -143,13 +143,14 @@ class AboutUsState extends State<AboutUs> {
         //highlightColorDoneBtn: color5,
       
         // Dot indicator
-        colorDot: color5,
-        sizeDot: 13.0,
+        //colorDot: color5,
+        //sizeDot: 13.0,
+
        // typeDotAnimation: dotSliderAnimation.SIZE_TRANSITION,
       
         // Tabs
         listCustomTabs: this.renderListCustomTabs(),
-        backgroundColorAllSlides: Colors.white,
+        backgroundColorAllTabs: Colors.white,
         refFuncGoToTab: (refFunc) {
           this.goToTab = refFunc;
         },

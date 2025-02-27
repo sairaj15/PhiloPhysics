@@ -98,7 +98,11 @@ class _MyHomePageState extends State<MyHomePage> {
            
             _currentIndex = index;
             });
-          _pageController.jumpToPage(index);
+          _pageController.animateToPage(
+            index,
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
         },
         items: <BottomNavyBarItem>[
 

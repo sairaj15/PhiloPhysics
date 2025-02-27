@@ -321,13 +321,14 @@
 //     );
 //   }
 // }
-import 'package:better_player/better_player.dart';
+import 'package:chewie/chewie.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/services/general.dart';
 import 'package:ephysicsapp/widgets/popUps.dart';
+import 'package:video_player/video_player.dart';
 
 class VideosListPage extends StatelessWidget {
   final String section;
@@ -595,49 +596,46 @@ class VideosListPage extends StatelessWidget {
   }
 }
 
+
 class VideoDetailPage extends StatefulWidget {
   final String videoUrl;
   final String videoName;
 
-  VideoDetailPage({required this.videoUrl, required this.videoName});
+  const VideoDetailPage({Key? key, required this.videoUrl, required this.videoName})
+      : super(key: key);
 
   @override
   _VideoDetailPageState createState() => _VideoDetailPageState();
 }
 
 class _VideoDetailPageState extends State<VideoDetailPage> {
-  late BetterPlayerController _betterPlayerController;
+  late VideoPlayerController _videoPlayerController;
+  ChewieController? _chewieController;
 
   @override
   void initState() {
-    print("Video being played from Clodinary");
-    print(widget.videoUrl);
     super.initState();
+    print("Playing video from: ${widget.videoUrl}");
 
-    // Initialize BetterPlayer configuration
-    BetterPlayerConfiguration betterPlayerConfiguration =
-        BetterPlayerConfiguration(
-      aspectRatio: 16 / 9,
-      autoPlay: true,
-      looping: false,
-      fullScreenByDefault: false,
-      controlsConfiguration: BetterPlayerControlsConfiguration(
-          enableQualities: false,
-          showControls: true,
-          enableSkips: true,
-          backwardSkipTimeInMilliseconds: 10000,
-          forwardSkipTimeInMilliseconds: 10000, // 10 seconds
-          enableSubtitles: true),
-    );
-
-    // Specify the video URL
-    BetterPlayerDataSource dataSource = BetterPlayerDataSource(
-      BetterPlayerDataSourceType.network,
-      widget.videoUrl,
-    );
-
-    _betterPlayerController = BetterPlayerController(betterPlayerConfiguration);
-    _betterPlayerController.setupDataSource(dataSource);
+    _videoPlayerController = VideoPlayerController.network(widget.videoUrl)
+      ..initialize().then((_) {
+        setState(() {
+          _chewieController = ChewieController(
+            videoPlayerController: _videoPlayerController,
+            autoPlay: true,
+            looping: false,
+            allowFullScreen: true,
+            allowMuting: true,
+            showControls: true,
+            materialProgressColors: ChewieProgressColors(
+              playedColor: Colors.blue,
+              handleColor: Colors.blueAccent,
+              bufferedColor: Colors.grey,
+              backgroundColor: Colors.black54,
+            ),
+          );
+        });
+      });
   }
 
   @override
@@ -645,16 +643,18 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.videoName)),
       body: Center(
-        child: BetterPlayer(
-          controller: _betterPlayerController,
-        ),
+        child: _chewieController != null && _chewieController!.videoPlayerController.value.isInitialized
+            ? Chewie(controller: _chewieController!)
+            : const CircularProgressIndicator(),
       ),
     );
   }
 
   @override
   void dispose() {
-    _betterPlayerController.dispose();
+    _videoPlayerController.dispose();
+    _chewieController?.dispose();
     super.dispose();
   }
 }
+

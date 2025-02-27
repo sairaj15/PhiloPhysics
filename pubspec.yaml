@@ -35,7 +35,7 @@ dependencies:
   firebase_auth: ^5.1.1
   shared_preferences: ^2.2.3
   url_launcher: ^6.3.0
-  intro_slider: ^3.0.3
+  intro_slider: ^4.2.1
   google_fonts: ^6.2.1
   future_progress_dialog: ^0.2.1
   flutter_pdfview: ^1.3.2
@@ -43,34 +43,33 @@ dependencies:
   bottom_navy_bar: ^6.0.0
   flutter_easyloading: ^3.0.5
   modal_progress_hud_nsn: ^0.5.1
-  flutter_inappwebview: ^5.7.2+3
+  flutter_inappwebview: ^6.1.5
   webview_flutter: ^4.8.0
   pod_player: ^0.2.2
   material_segmented_control: ^5.0.1
   cloud_firestore: ^5.4.2
   firebase_app_check: ^0.3.1+3
   no_screenshot: ^0.3.1
-  intl: ^0.19.0
-  syncfusion_flutter_charts: ^27.1.51
+  intl: ^0.20.2
+  syncfusion_flutter_charts: ^28.2.7
   carousel_slider: ^5.0.0
-  fl_chart: ^0.69.0
+  fl_chart: ^0.70.2
   smooth_page_indicator: ^1.2.0+3
-  youtube_player_flutter: ^8.1.2
   firebase_auth_web: ^5.13.2
   in_app_update: ^4.2.3
-  video_player: ^2.9.2
-  chewie: ^1.8.5
-  better_player: ^0.0.84
-  syncfusion_flutter_pdfviewer: ^27.1.58
+  syncfusion_flutter_pdfviewer: ^28.2.7
   font_awesome_flutter: ^10.8.0
   google_sign_in: ^6.2.2
   percent_indicator: ^4.2.3
   auto_size_text: ^3.0.0
+  video_player: ^2.9.3
+  chewie: ^1.10.0
+  shimmer: ^3.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_launcher_icons: ^0.13.1
+  flutter_launcher_icons: ^0.14.3
 
 flutter_icons:
   android: true

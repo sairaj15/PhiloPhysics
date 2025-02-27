@@ -1,13 +1,10 @@
 import 'dart:collection';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:bubble_tab_indicator/bubble_tab_indicator.dart';
-import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/screens/Admin/adminUserUsageStatistics.dart';
+import 'package:ephysicsapp/shimmer/adminStatisticsShimmer.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 
 class AdminStatistics extends StatefulWidget {
   const AdminStatistics({super.key});
@@ -284,61 +281,65 @@ class _AdminStatisticsState extends State<AdminStatistics>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           'Admin Statistics',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.w500),
+          style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
         ),
         centerTitle: true,
         backgroundColor: Colors.blueAccent, // Updated app bar color
       ),
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? AdminStatisticsShimmer()
           : SingleChildScrollView(
               child: Container(
-                color: Colors.grey.shade100, // Background color for entire page
+                color: Colors.grey.shade100,
                 padding: const EdgeInsets.symmetric(horizontal: 20.0),
                 child: Column(
                   children: [
                     SizedBox(height: 20),
-                    // Stat Box Grid
-                    GridView.count(
-                      crossAxisCount: 3,
-                      crossAxisSpacing: 20.0,
-                      mainAxisSpacing: 20.0,
-                      childAspectRatio: 0.7,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
+                    /// Stat Box Grid
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildStatBox(
-                          Icons.people,
-                          'Total Users',
-                          userCount.toString(),
-                          Colors.blue,
-                          context,
-                          AdminUserAppUsageStats(),
+                        Expanded(
+                          child: _buildStatBox(
+                            Icons.people,
+                            'Total Users',
+                            userCount.toString(),
+                            Colors.blue,
+                            context,
+                            AdminUserAppUsageStats(),
+                          ),
                         ),
-                        _buildStatBox(
-                          Icons.picture_as_pdf,
-                          'PDFs Viewed',
-                          totalPdfsViewed.toString(),
-                          Colors.green,
-                          context,
-                          null,
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: _buildStatBox(
+                            Icons.picture_as_pdf,
+                            'PDFs Viewed',
+                            totalPdfsViewed.toString(),
+                            Colors.green,
+                            context,
+                            null,
+                          ),
                         ),
-                        _buildStatBox(
-                          Icons.video_library,
-                          'Videos Viewed',
-                          totalVideosViewed.toString(),
-                          Colors.orange,
-                          context,
-                          null,
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: _buildStatBox(
+                            Icons.video_library,
+                            'Videos Viewed',
+                            totalVideosViewed.toString(),
+                            Colors.orange,
+                            context,
+                            null,
+                          ),
                         ),
                       ],
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 30),
-                    // Top Users Container
+                    /// Top Users Container
                     _buildTopUsersContainer(),
-                    SizedBox(height: MediaQuery.of(context).size.height / 25),
+                    SizedBox(height: MediaQuery.of(context).size.height / 30),
                     // Usage Stats Box
                     _buildUsageStatsBox(
                       context,
@@ -390,39 +391,50 @@ class _AdminStatisticsState extends State<AdminStatistics>
             ),
           ],
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircleAvatar(
-                radius: MediaQuery.of(context).size.width / 14,
-                backgroundColor: Colors.white.withOpacity(0.3),
-                child: Icon(icon, size: 40, color: Colors.white),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+            CircleAvatar(
+              radius: MediaQuery.of(context).size.width / 17,
+              backgroundColor: Colors.white.withOpacity(0.3),
+              child: Icon(icon, size: MediaQuery.of(context).size.width / 14, color: Colors.white),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: GoogleFonts.poppins(
+                fontSize: MediaQuery.of(context).size.width * 0.0475,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
               ),
-              const SizedBox(height: 12),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.005),
+            Text(
+              formatNumber(int.parse(value)),
+              style: GoogleFonts.poppins(
+                fontSize: MediaQuery.of(context).size.width * 0.0575,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
-              const SizedBox(height: 8),
-              Text(
-                value,
-                style: GoogleFonts.poppins(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01),
+          ],
         ),
       ),
     );
+  }
+
+  String formatNumber(int number) {
+    if (number >= 100000) {
+      return "${(number / 100000).toStringAsFixed(1)}L"; // 1.0L, 10.1L
+    } else if (number >= 10000) {
+      return "${(number / 1000).toStringAsFixed(1)}K"; // 10.0K, 99.9K
+    } else {
+      return number.toString(); // Return as is if less than 10K
+    }
   }
 
   String _formatDuration(Duration duration) {
@@ -458,7 +470,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
     return Column(
       children: List.generate(3, (index) {
         if (index >= users.length)
-          return SizedBox.shrink(); // Prevent excess list tiles if less than 3
+          return SizedBox.shrink();
 
         final user = users[index];
         final medalAsset = _getMedalAsset(index);
@@ -468,10 +480,10 @@ class _AdminStatisticsState extends State<AdminStatistics>
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          elevation: 4,
-          margin: const EdgeInsets.symmetric(
-              vertical: 4), // Reduced margin between tiles
+          elevation: 5,
+          margin: const EdgeInsets.symmetric(vertical: 4), // Reduced margin between tiles
           child: ListTile(
+            dense: true,
             contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
             leading: Text(
               medalAsset,
@@ -487,7 +499,6 @@ class _AdminStatisticsState extends State<AdminStatistics>
             ),
             title: Row(
               children: [
-                // User name with ellipsis if it is too long
                 Expanded(
                   child: Text(
                     user['name'],
@@ -502,9 +513,26 @@ class _AdminStatisticsState extends State<AdminStatistics>
                 ),
               ],
             ),
-            trailing: Tooltip(
-              message:
-                  'Email: ${user['email']}\nClass: ${user['classDiv']}\nUsage: ${_formatCompleteDuration(usageDuration)}',
+            trailing: GestureDetector(
+              onTap: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('User Info'),
+                    content: Text(
+                      'Email: ${user['email']}\n'
+                          'Class: ${user['classDiv']}\n'
+                          'Usage: ${_formatCompleteDuration(usageDuration)}',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              },
               child: Icon(
                 Icons.info_outline,
                 color: Colors.blue,
@@ -518,7 +546,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
 
   Widget _buildTopUsersContainer() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8),
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(12),
@@ -546,13 +574,18 @@ class _AdminStatisticsState extends State<AdminStatistics>
             DefaultTabController(
               length: availableYears.length + 1,
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TabBar(
+                    physics: BouncingScrollPhysics(),
+                    labelPadding: EdgeInsets.symmetric(horizontal: 20),
+                    dividerColor: Colors.transparent,
                     isScrollable: true,
                     unselectedLabelColor: Colors.grey,
-                    labelColor: Colors.black,
+                    labelColor: Colors.white,
+                    indicatorSize: TabBarIndicatorSize.tab,
                     indicator: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(6),
                       color: Colors.blueAccent,
                     ),
                     tabs: [
@@ -560,13 +593,20 @@ class _AdminStatisticsState extends State<AdminStatistics>
                       ...availableYears.take(3).map((year) => Tab(text: year)),
                     ],
                   ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                   SizedBox(
-                    height: 200,
+                    height: MediaQuery.of(context).size.height / 4,
                     child: TabBarView(
                       children: [
-                        _buildTopUsersList(overallTopUsers),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: _buildTopUsersList(overallTopUsers),
+                        ),
                         ...availableYears.map(
-                          (year) => _buildTopUsersList(topUsers[year] ?? []),
+                              (year) => Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                                child: _buildTopUsersList(topUsers[year] ?? []),
+                              ),
                         ),
                       ],
                     ),
@@ -579,6 +619,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
       ),
     );
   }
+
 
   Widget _buildUsageStatsBox(
     BuildContext context,
@@ -613,39 +654,22 @@ class _AdminStatisticsState extends State<AdminStatistics>
         children: [
           // **Left Side**: "Study Material Usage" Title
           SizedBox(
-            width: MediaQuery.of(context).size.width / 4,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Study Material Usage',
-                  style: GoogleFonts.poppins(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Insights into material consumption',
-                  style: GoogleFonts.poppins(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-              ],
+            width: MediaQuery.of(context).size.width / 4.65,
+            child: Text(
+              'Study Material Usage',
+              style: GoogleFonts.poppins(
+                fontSize: MediaQuery.of(context).size.width * 0.045,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
             ),
           ),
-
-          // **Center**: Circular Progress Indicator
           Expanded(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 CircularPercentIndicator(
-                  radius: MediaQuery.of(context).size.width / 10,
+                  radius: MediaQuery.of(context).size.width / 11,
                   lineWidth: 8.0,
                   percent: materialUsagePercent,
                   center: Text(
@@ -660,11 +684,12 @@ class _AdminStatisticsState extends State<AdminStatistics>
                   backgroundColor: Colors.grey.shade300,
                   circularStrokeCap: CircularStrokeCap.round,
                 ),
-                const SizedBox(height: 8),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.001,),
                 Text(
                   'Materials Used by Students',
+                  textAlign: TextAlign.center,
                   style: GoogleFonts.poppins(
-                    fontSize: 12,
+                    fontSize: MediaQuery.of(context).size.width * 0.03,
                     fontWeight: FontWeight.w500,
                     color: Colors.grey.shade700,
                   ),
@@ -681,7 +706,8 @@ class _AdminStatisticsState extends State<AdminStatistics>
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  "$hours Hr $minutes Min",
+                  textAlign: TextAlign.center,
+                  "$hours Hr \n$minutes Min",
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,

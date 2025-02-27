@@ -15,7 +15,7 @@ PreferredSizeWidget themeAppBar(String title){
 
 //about us page slide
 newSlide({String? imgPath,String? discription,String? title}){
-  return Slide(
+  return ContentConfig(
         title: title,
         styleTitle: TextStyle(
            color: color5,

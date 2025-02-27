@@ -4,6 +4,8 @@ import 'package:ephysicsapp/screens/Admin/videosPage.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/services/docServices.dart';
 import 'package:ephysicsapp/widgets/webDisplay.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 
 import '../../../widgets/popUps.dart';
@@ -100,20 +102,65 @@ Widget docUserCard({
           ),
         ),
         trailing: Icon(Icons.keyboard_arrow_right, color: color5, size: 30.0),
-        onTap: () async {
-          // Open the PDF first
-          if (docDetails["downloadUrl"] != null && context != null) {
-            openFile(docDetails["downloadUrl"], context, docDetails["docName"]);
-          }
+          onTap: () async {
+            print("Doc Details : ${docDetails}");
+            print("Section : ${section}");
+            // Open the PDF first
+            if (docDetails["downloadUrl"] != null && context != null) {
+              openFile(docDetails["downloadUrl"], context, docDetails["docName"]);
+            }
 
-          // Increment the view count in the background
-          String? studentUUID = prefs.getString('studentUUID');
-          if (studentUUID != null) {
-            incrementPDFViewCount(studentUUID);
-          } else {
-            showToast("User not logged in.");
-          }
-        },
+            // Increment the view count in the background
+            String? studentUUID = prefs.getString('studentUUID');
+            if (studentUUID != null) {
+              print("Student is logged in");
+              try {
+                incrementPDFViewCount(studentUUID);
+                FirebaseDatabase firebaseDatabase = FirebaseDatabase.instance;
+
+                // Path to the module's documents in the database
+                DatabaseReference documentsRef = firebaseDatabase
+                    .ref()
+                    .child(section!) // Section name passed to the widget
+                    .child(moduleID!) // Module ID passed to the widget
+                    .child("documents");
+
+                // Search for the specific document
+                Query query = documentsRef.orderByChild("docName").equalTo(docDetails["docName"]);
+                DataSnapshot snapshot = await query.get();
+
+                if (snapshot.exists) {
+                  for (DataSnapshot doc in snapshot.children) {
+                    // Increment 'thisNotesViewed' for the matched document
+                    await doc.ref.runTransaction((mutableData) {
+                      if (mutableData == null) {
+                        // Initialize the data if it's null
+                        return Transaction.success({"thisNotesViewed": 1});
+                      }
+
+                      // Safely cast mutableData to Map<String, dynamic>
+                      Map<String, dynamic> docData =
+                      Map<String, dynamic>.from(mutableData as Map<dynamic, dynamic>);
+
+                      // Increment the view count
+                      int currentCount = docData["thisNotesViewed"] ?? 0;
+                      docData["thisNotesViewed"] = currentCount + 1;
+
+                      return Transaction.success(docData);
+                    });
+                    print("View count incremented for document: ${docDetails["docName"]}");
+                  }
+                } else {
+                  print("Document not found: ${docDetails["docName"]}");
+                }
+              } catch (e) {
+                print("Failed to increment view count: $e");
+                showToast("Failed to update view count.");
+              }
+            } else {
+              showToast("User not logged in.");
+            }
+          },
       ),
     ),
   );
