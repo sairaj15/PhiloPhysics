@@ -118,36 +118,36 @@ class _AdminStatisticsState extends State<AdminStatistics>
     yearWiseUsage.forEach((year, usage) {
       final sortedEntries = usage.entries.toList(); // Convert to mutable list
       sortedEntries.sort(
-          (a, b) => b.value.compareTo(a.value)); // Sort in descending order
+              (a, b) => b.value.compareTo(a.value)); // Sort in descending order
 
       topUsersByYear[year] = sortedEntries
           .take(3) // Take top 3 users
           .map((entry) => {
-                'userId': entry.key,
-                'name': usersSnapshot.child('${entry.key}/name').value,
-                'email': usersSnapshot.child('${entry.key}/email').value,
-                'classDiv': usersSnapshot.child('${entry.key}/classDiv').value,
-                'usage': entry.value,
-              })
+        'userId': entry.key,
+        'name': usersSnapshot.child('${entry.key}/name').value,
+        'email': usersSnapshot.child('${entry.key}/email').value,
+        'classDiv': usersSnapshot.child('${entry.key}/classDiv').value,
+        'usage': entry.value,
+      })
           .toList();
     });
 
     // Overall top users
     List<Map<String, dynamic>> overallTopUsers = [];
     final sortedOverallEntries =
-        overallUsage.entries.toList(); // Convert to mutable list
+    overallUsage.entries.toList(); // Convert to mutable list
     sortedOverallEntries
         .sort((a, b) => b.value.compareTo(a.value)); // Sort in descending order
 
     overallTopUsers = sortedOverallEntries
         .take(3) // Take top 3 users
         .map((entry) => {
-              'userId': entry.key,
-              'name': usersSnapshot.child('${entry.key}/name').value,
-              'email': usersSnapshot.child('${entry.key}/email').value,
-              'classDiv': usersSnapshot.child('${entry.key}/classDiv').value,
-              'usage': entry.value,
-            })
+      'userId': entry.key,
+      'name': usersSnapshot.child('${entry.key}/name').value,
+      'email': usersSnapshot.child('${entry.key}/email').value,
+      'classDiv': usersSnapshot.child('${entry.key}/classDiv').value,
+      'usage': entry.value,
+    })
         .toList();
 
     print("Overall Top Usage : \n ${overallTopUsers}");
@@ -165,7 +165,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
     try {
       // Get the data snapshot from Firebase
       DataSnapshot snapshot =
-          await dbRef.get(); // Use .get() instead of .once()
+      await dbRef.get(); // Use .get() instead of .once()
 
       // Log the snapshot to verify data structure
       print('Snapshot data: ${snapshot.value}'); // Log the entire snapshot
@@ -185,7 +185,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
         for (var userSnapshot in snapshot.children) {
           // Type-safe access to user data
           Map<dynamic, dynamic> userData =
-              userSnapshot.value as Map<dynamic, dynamic>;
+          userSnapshot.value as Map<dynamic, dynamic>;
 
           if (userData.containsKey('pdfsViewed')) {
             pdfsViewedTemp += (userData['pdfsViewed'] as num).toInt();
@@ -292,77 +292,77 @@ class _AdminStatisticsState extends State<AdminStatistics>
       body: isLoading
           ? AdminStatisticsShimmer()
           : SingleChildScrollView(
-              child: Container(
-                color: Colors.grey.shade100,
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Column(
-                  children: [
-                    SizedBox(height: 20),
-                    /// Stat Box Grid
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: _buildStatBox(
-                            Icons.people,
-                            'Total Users',
-                            userCount.toString(),
-                            Colors.blue,
-                            context,
-                            AdminUserAppUsageStats(),
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: _buildStatBox(
-                            Icons.picture_as_pdf,
-                            'PDFs Viewed',
-                            totalPdfsViewed.toString(),
-                            Colors.green,
-                            context,
-                            null,
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: _buildStatBox(
-                            Icons.video_library,
-                            'Videos Viewed',
-                            totalVideosViewed.toString(),
-                            Colors.orange,
-                            context,
-                            null,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: MediaQuery.of(context).size.height / 30),
-                    /// Top Users Container
-                    _buildTopUsersContainer(),
-                    SizedBox(height: MediaQuery.of(context).size.height / 30),
-                    // Usage Stats Box
-                    _buildUsageStatsBox(
+        child: Container(
+          color: Colors.grey.shade100,
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Column(
+            children: [
+              SizedBox(height: 20),
+              /// Stat Box Grid
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: _buildStatBox(
+                      Icons.people,
+                      'Total Users',
+                      userCount.toString(),
+                      Colors.blue,
                       context,
-                      pdfViewersCount,
-                      totalUserofApp,
-                      hour,
-                      mins,
+                      AdminUserAppUsageStats(),
                     ),
-                  ],
-                ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: _buildStatBox(
+                      Icons.picture_as_pdf,
+                      'PDFs Viewed',
+                      totalPdfsViewed.toString(),
+                      Colors.green,
+                      context,
+                      null,
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: _buildStatBox(
+                      Icons.video_library,
+                      'Videos Viewed',
+                      totalVideosViewed.toString(),
+                      Colors.orange,
+                      context,
+                      null,
+                    ),
+                  ),
+                ],
               ),
-            ),
+              SizedBox(height: MediaQuery.of(context).size.height / 30),
+              /// Top Users Container
+              _buildTopUsersContainer(),
+              SizedBox(height: MediaQuery.of(context).size.height / 30),
+              // Usage Stats Box
+              _buildUsageStatsBox(
+                context,
+                pdfViewersCount,
+                totalUserofApp,
+                hour,
+                mins,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 
   Widget _buildStatBox(
-    IconData icon,
-    String label,
-    String value,
-    Color color,
-    BuildContext context,
-    Widget? pageToNavigate,
-  ) {
+      IconData icon,
+      String label,
+      String value,
+      Color color,
+      BuildContext context,
+      Widget? pageToNavigate,
+      ) {
     return GestureDetector(
       onTap: () {
         if (pageToNavigate != null) {
@@ -493,8 +493,8 @@ class _AdminStatisticsState extends State<AdminStatistics>
                 color: medalAsset == '1'
                     ? Color(0xFFFFD700) // Gold
                     : medalAsset == '2'
-                        ? Color(0xFFC0C0C0) // Silver
-                        : Color(0xFFCD7F32), // Bronze
+                    ? Color(0xFFC0C0C0) // Silver
+                    : Color(0xFFCD7F32), // Bronze
               ),
             ),
             title: Row(
@@ -604,9 +604,9 @@ class _AdminStatisticsState extends State<AdminStatistics>
                         ),
                         ...availableYears.map(
                               (year) => Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                                child: _buildTopUsersList(topUsers[year] ?? []),
-                              ),
+                            padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                            child: _buildTopUsersList(topUsers[year] ?? []),
+                          ),
                         ),
                       ],
                     ),
@@ -622,12 +622,12 @@ class _AdminStatisticsState extends State<AdminStatistics>
 
 
   Widget _buildUsageStatsBox(
-    BuildContext context,
-    int pdfViewersCount,
-    int totalUsers,
-    int hours,
-    int minutes,
-  ) {
+      BuildContext context,
+      int pdfViewersCount,
+      int totalUsers,
+      int hours,
+      int minutes,
+      ) {
     // Calculate the material usage percentage
     double materialUsagePercent = totalUsers > 0
         ? (pdfViewersCount / totalUsers).clamp(0, 1).toDouble()
@@ -684,7 +684,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
                   backgroundColor: Colors.grey.shade300,
                   circularStrokeCap: CircularStrokeCap.round,
                 ),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.001,),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
                 Text(
                   'Materials Used by Students',
                   textAlign: TextAlign.center,
@@ -706,8 +706,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  textAlign: TextAlign.center,
-                  "$hours Hr \n$minutes Min",
+                  "$hours Hr $minutes Min",
                   style: GoogleFonts.poppins(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
