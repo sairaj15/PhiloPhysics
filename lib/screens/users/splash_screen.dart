@@ -113,7 +113,7 @@ class _SplashScreenState extends State<SplashScreen>
                   const SizedBox(height: 5),
                   Text.rich(
                     TextSpan(
-                      text: 'This app was developed under the guidance of\n',
+                      text: 'This Application is developed under the guidance of\n',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 14,

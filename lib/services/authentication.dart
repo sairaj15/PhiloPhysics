@@ -263,7 +263,8 @@ Future<void> studentLogin(
         showToast("Logged In as Student: $email");
         print("Logged In as Student: $email");
 
-        // Navigate to the home page and remove all previous routes
+        print(prefs.getBool("isStudentLoggedIn"));
+
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => MyApp()),

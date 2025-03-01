@@ -322,6 +322,7 @@
 //   }
 // }
 import 'package:chewie/chewie.dart';
+import 'package:ephysicsapp/widgets/video_screen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:ephysicsapp/globals/colors.dart';
@@ -440,6 +441,8 @@ class VideosListPage extends StatelessWidget {
               child: Text(
                 videoDetails['videoName'] ?? 'No Name',
                 overflow: TextOverflow.ellipsis,
+                softWrap: true,
+                maxLines: 2,
                 style: TextStyle(
                   color: color5,
                   fontWeight: FontWeight.bold,
@@ -595,66 +598,3 @@ class VideosListPage extends StatelessWidget {
     }
   }
 }
-
-
-class VideoDetailPage extends StatefulWidget {
-  final String videoUrl;
-  final String videoName;
-
-  const VideoDetailPage({Key? key, required this.videoUrl, required this.videoName})
-      : super(key: key);
-
-  @override
-  _VideoDetailPageState createState() => _VideoDetailPageState();
-}
-
-class _VideoDetailPageState extends State<VideoDetailPage> {
-  late VideoPlayerController _videoPlayerController;
-  ChewieController? _chewieController;
-
-  @override
-  void initState() {
-    super.initState();
-    print("Playing video from: ${widget.videoUrl}");
-
-    _videoPlayerController = VideoPlayerController.network(widget.videoUrl)
-      ..initialize().then((_) {
-        setState(() {
-          _chewieController = ChewieController(
-            videoPlayerController: _videoPlayerController,
-            autoPlay: true,
-            looping: false,
-            allowFullScreen: true,
-            allowMuting: true,
-            showControls: true,
-            materialProgressColors: ChewieProgressColors(
-              playedColor: Colors.blue,
-              handleColor: Colors.blueAccent,
-              bufferedColor: Colors.grey,
-              backgroundColor: Colors.black54,
-            ),
-          );
-        });
-      });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.videoName)),
-      body: Center(
-        child: _chewieController != null && _chewieController!.videoPlayerController.value.isInitialized
-            ? Chewie(controller: _chewieController!)
-            : const CircularProgressIndicator(),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _videoPlayerController.dispose();
-    _chewieController?.dispose();
-    super.dispose();
-  }
-}
-

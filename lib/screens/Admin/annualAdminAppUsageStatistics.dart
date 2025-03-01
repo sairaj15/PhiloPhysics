@@ -271,7 +271,7 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
                               height: MediaQuery.of(context).size.height / 100),
                           Padding(
                             padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -279,14 +279,7 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
                                   'Usage Statistics :  ',
                                   style: GoogleFonts.poppins(
                                     fontSize:
-                                        MediaQuery.of(context).size.width < 360
-                                            ? 18
-                                            : MediaQuery.of(context)
-                                                        .size
-                                                        .width <
-                                                    600
-                                                ? 22
-                                                : 24,
+                                        MediaQuery.of(context).size.width * 0.05,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
                                     shadows: [
@@ -311,8 +304,7 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
                                       icon: Icon(
                                         Icons.arrow_drop_down,
                                         color: Colors.white,
-                                        size:
-                                            30, // Increase the icon size to make it a little bigger
+                                        size: 30, // Increase the icon size to make it a little bigger
                                       ),
                                       dropdownColor: Colors.white,
                                       // menuWidth:
@@ -329,7 +321,7 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
                                           child: Text(
                                             year,
                                             style: GoogleFonts.poppins(
-                                              fontSize: 16,
+                                              fontSize: MediaQuery.of(context).size.width * 0.05,
                                               color: Colors
                                                   .black, // Normal style for each dropdown item
                                             ),
@@ -354,17 +346,7 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
                                                 decoration:
                                                     TextDecoration.underline,
                                                 decorationColor: Colors.white,
-                                                fontSize: MediaQuery.of(context)
-                                                            .size
-                                                            .width <
-                                                        360
-                                                    ? 18
-                                                    : MediaQuery.of(context)
-                                                                .size
-                                                                .width <
-                                                            600
-                                                        ? 22
-                                                        : 24,
+                                                fontSize: MediaQuery.of(context).size.width * 0.05,
                                                 color: Colors
                                                     .transparent, // Apply custom style for selected item
                                                 fontWeight: FontWeight.w600,
@@ -410,7 +392,6 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
                             getChartData: getEvenSemesterChartData,
                             title: 'Even Semester Usage',
                           ),
-                          const SizedBox(height: 16),
                         ],
                       )
                     : const Center(
@@ -501,16 +482,15 @@ class GraphContainer extends StatelessWidget {
                   groupsSpace: 18,
                   titlesData: FlTitlesData(
                     show: true,
-                    topTitles:
-                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    rightTitles:
-                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 40,
+                        reservedSize: MediaQuery.of(context).size.width * 0.11,
                         interval: yInterval.toDouble(),
                         getTitlesWidget: (value, meta) => Text(
+                          softWrap: false,
                           formatYAxisLabel(value),
                           style: GoogleFonts.poppins(
                             color: Colors.black,
@@ -542,7 +522,7 @@ class GraphContainer extends StatelessWidget {
                     show: true,
                     drawHorizontalLine: true,
                     drawVerticalLine: true,
-                    horizontalInterval: yInterval.toDouble(),
+                    horizontalInterval: yInterval.ceilToDouble(),
                     verticalInterval: 1,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
@@ -573,8 +553,17 @@ class GraphContainer extends StatelessWidget {
   }
 
   String formatYAxisLabel(double value) {
-    double hours = value / 60;
-    return '${hours.toStringAsFixed(1)}h'; // Display hours with one decimal
+    double hours = value / 60; // Convert minutes to hours
+
+    if (hours >= 1000) {
+      return '${(hours / 1000).toStringAsFixed(1)}K H'; // Example: 1800 → 1.8K H
+    } else if (hours >= 100) {
+      return '${hours.round()} H'; // Example: 458.5 → 459H (No decimals)
+    } else if (hours >= 1) {
+      return '${hours.toStringAsFixed(1)} H'; // Example: 90 → 1.5H
+    } else {
+      return '${value.toInt()} H'; // Example: 45 → 45M
+    }
   }
 
   String formatSeconds(double totalSeconds) {
@@ -582,6 +571,6 @@ class GraphContainer extends StatelessWidget {
     int minutes = ((totalSeconds % 3600) / 60).floor();
     int seconds = (totalSeconds % 60).floor();
 
-    return '$hours hours $minutes minutes $seconds seconds';
+    return '$hours hours \n$minutes minutes \n$seconds seconds';
   }
 }

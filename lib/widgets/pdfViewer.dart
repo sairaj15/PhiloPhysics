@@ -250,7 +250,7 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
             enableSwipe: true,
             swipeHorizontal: false,
             autoSpacing: true,
-            pageFling: false,
+            pageFling: true,
             pageSnap: true,
             fitEachPage: true,
             defaultPage: currentPage,
@@ -277,8 +277,10 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
             onViewCreated: (PDFViewController pdfViewController) async {
               _controller.complete(pdfViewController);
 
-              // Add a slight delay and refresh the page to solve the blank screen issue
-              await Future.delayed(Duration(milliseconds: 100));
+              await Future.delayed(Duration(milliseconds: 300));
+              setState(() {
+                print("VIEW CREATED : PDF");
+              });
               pdfViewController.setPage(currentPage);
             },
             onLinkHandler: (String? uri) {

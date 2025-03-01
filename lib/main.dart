@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:ephysicsapp/screens/users/home.dart';
 import 'package:ephysicsapp/screens/users/splash_screen.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -5,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:in_app_update/in_app_update.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
@@ -39,6 +43,36 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     checkForUpdate();
     _checkLoggedInStatus();
+  }
+
+
+  /// Clearin video and pdf caches
+  Future<void> clearAppCache() async {
+    try {
+      final tempDir = await getTemporaryDirectory();
+      final appDocDir = await getApplicationDocumentsDirectory();
+
+      // Delete temporary files
+      if (tempDir.existsSync()) {
+        tempDir.deleteSync(recursive: true);
+        print("Temporary cache cleared.");
+      }
+
+      // Delete cached videos or other files in app directory
+      if (appDocDir.existsSync()) {
+        for (var file in appDocDir.listSync()) {
+          if (file is File) {
+            print(file.path);
+            file.deleteSync();
+          }
+        }
+        print("App document directory cache cleared.");
+      }
+
+      print("✅ All cached files cleared successfully.");
+    } catch (e) {
+      print("⚠️ Error while clearing cache: $e");
+    }
   }
 
   Future<void> _checkLoggedInStatus() async {
@@ -190,6 +224,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    clearAppCache();
     super.dispose();
   }
 
@@ -207,7 +242,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         primarySwatch: createMaterialColor(color5),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: SplashScreen(), // Initial screen of the app
+      home: prefs.getBool("isStudentLoggedIn") == true || prefs.getBool("isLogged") == true ? MyHomePage() : SplashScreen(),
     );
   }
 }

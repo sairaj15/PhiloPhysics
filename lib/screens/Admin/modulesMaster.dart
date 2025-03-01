@@ -18,6 +18,13 @@ class _ModuleMasterState extends State<ModuleMaster> {
   final DatabaseReference databaseReference = FirebaseDatabase.instance.ref();
   List<Map<dynamic, dynamic>> modules = [];
 
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,6 +63,7 @@ class _ModuleMasterState extends State<ModuleMaster> {
                 SizedBox(height: 10),
                 Expanded(
                   child: ListView.builder(
+                    controller: _scrollController,
                     itemCount: modules.length,
                     itemBuilder: (context, index) {
                       return isLoggedIn()

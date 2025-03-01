@@ -17,8 +17,7 @@ class _WeeklyAdminAppUsageStatisticsState
     extends State<WeeklyAdminAppUsageStatistics> {
   Map<String, int> weeklyUsage = {};
   bool _isLoading = true;
-  DateTime _selectedWeek =
-  DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
+  DateTime _selectedWeek = DateTime.now().subtract(Duration(days: DateTime.now().weekday - 1));
   final List<String> weekdays = [
     'Mon',
     'Tue',
@@ -42,49 +41,23 @@ class _WeeklyAdminAppUsageStatisticsState
 
   // Optimized version of fetching data
   Future<Map<String, int>> getWeeklyAppUsageData(DateTime selectedDate) async {
-    final DatabaseReference dbRef =
-    FirebaseDatabase.instance.ref().child('Users');
+    final DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('Users');
     Map<String, int> weeklyUsage = {};
-
-    DateTime startOfWeek =
-    selectedDate.subtract(Duration(days: selectedDate.weekday - 1));
+    DateTime startOfWeek = selectedDate.subtract(Duration(days: selectedDate.weekday - 1));
 
     try {
       DatabaseEvent event = await dbRef.once();
       DataSnapshot snapshot = event.snapshot;
 
       if (snapshot.exists) {
-        List<Future> userDataFutures = [];
+        List<Future> userFutures = [];
 
-        // Get all users' data in parallel
         for (DataSnapshot userSnapshot in snapshot.children) {
           String userId = userSnapshot.key ?? '';
-
-          for (int i = 0; i < 7; i++) {
-            DateTime weekday = startOfWeek.add(Duration(days: i));
-            String dateKey = DateFormat('dd-MM-yyyy').format(weekday);
-            final userAppUsageRef = dbRef
-                .child(userId)
-                .child('AppUsage')
-                .child(DateFormat('MMM yyyy').format(weekday));
-
-            // Fetch all days' usage data for each user in parallel
-            userDataFutures.add(userAppUsageRef.child(dateKey).get().then((dailySnapshot) {
-              if (dailySnapshot.exists) {
-                int totalSeconds =
-                _convertTimeToSeconds(dailySnapshot.value as String);
-                weeklyUsage[weekdays[weekday.weekday - 1]] =
-                    (weeklyUsage[weekdays[weekday.weekday - 1]] ?? 0) +
-                        totalSeconds;
-              } else {
-                weeklyUsage[weekdays[weekday.weekday - 1]] ??= 0;
-              }
-            }));
-          }
+          userFutures.add(fetchUserAppUsage(userId, startOfWeek, weeklyUsage));
         }
 
-        // Wait for all Firebase data fetches to complete
-        await Future.wait(userDataFutures);
+        await Future.wait(userFutures);
       }
     } catch (e) {
       print('Error: $e');
@@ -92,6 +65,33 @@ class _WeeklyAdminAppUsageStatisticsState
 
     return weeklyUsage;
   }
+
+  Future<void> fetchUserAppUsage(String userId, DateTime startOfWeek, Map<String, int> weeklyUsage) async {
+    final DatabaseReference userRef = FirebaseDatabase.instance.ref().child('Users').child(userId).child('AppUsage');
+    String monthKey = DateFormat('MMM yyyy').format(startOfWeek);
+
+    try {
+      DataSnapshot monthSnapshot = (await userRef.child(monthKey).get());
+
+      if (monthSnapshot.exists) {
+        for (int i = 0; i < 7; i++) {
+          DateTime weekday = startOfWeek.add(Duration(days: i));
+          String dateKey = DateFormat('dd-MM-yyyy').format(weekday);
+
+          if (monthSnapshot.child(dateKey).exists) {
+            int totalSeconds = _convertTimeToSeconds(monthSnapshot.child(dateKey).value as String);
+            weeklyUsage[weekdays[weekday.weekday - 1]] =
+                (weeklyUsage[weekdays[weekday.weekday - 1]] ?? 0) + totalSeconds;
+          } else {
+            weeklyUsage[weekdays[weekday.weekday - 1]] ??= 0;
+          }
+        }
+      }
+    } catch (e) {
+      print('Error fetching user $userId data: $e');
+    }
+  }
+
 
   int _convertTimeToSeconds(String time) {
     List<String> parts = time.split(':');
@@ -324,7 +324,7 @@ class GraphContainer extends StatelessWidget {
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 50,
+                        reservedSize: MediaQuery.of(context).size.width * 0.11,
                         interval: yInterval.toDouble(),
                         getTitlesWidget: (value, meta) {
                           return Text(
@@ -397,7 +397,19 @@ class GraphContainer extends StatelessWidget {
 }
 
 // Function to format the Y-axis labels in hours
+
+// Display hours with one decimal
 String formatYAxisLabel(double value) {
-  double hours = value / 60;
-  return '${hours.toStringAsFixed(1)}h'; // Display hours with one decimal
+  double hours = value / 60; // Convert minutes to hours
+
+  if (hours >= 1000) {
+    return '${(hours / 1000).toStringAsFixed(1)}K H'; // Example: 1800 → 1.8K H
+  } else if (hours >= 100) {
+    return '${hours.round()} H'; // Example: 458.5 → 459H (No decimals)
+  } else if (hours >= 1) {
+    return '${hours.toStringAsFixed(1)} H'; // Example: 90 → 1.5H
+  } else {
+    return '${value.toInt()} H'; // Example: 45 → 45M
+  }
 }
+

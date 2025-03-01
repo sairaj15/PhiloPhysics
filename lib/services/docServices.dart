@@ -106,7 +106,7 @@ Future<void> openFile(String url, BuildContext context, String title) async {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return NoteScreenShimmer();
+      return Center(child: CircularProgressIndicator(),);
     },
   );
 
@@ -132,7 +132,8 @@ Future<void> openFile(String url, BuildContext context, String title) async {
   }).catchError((e) {
     Navigator.of(context, rootNavigator: true).pop(); // Dismiss loading on error
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Error downloading PDF. Please try again later.'),
+      duration: Duration(seconds: 5),
+      content: Text('Error downloading PDF. Check your connection.'),
     ));
   });
 }
@@ -161,12 +162,30 @@ Future<File> createFileOfPdfUrl(String pdfUrl) async {
     } else
       print("--------------------Already exist");
 
+    print("Checking stored PDF cache...");
+    await printCacheSize();
     completer.complete(file);
   } catch (e) {
     throw Exception('Error parsing asset file!');
   }
 
   return completer.future;
+}
+
+Future<void> printCacheSize() async {
+  var dir = await getApplicationDocumentsDirectory();
+  int totalSize = 0;
+
+  List<FileSystemEntity> files = Directory(dir.path).listSync();
+  for (var file in files) {
+    if (file is File) {
+      int fileSize = await file.length();
+      totalSize += fileSize;
+      print("File: ${file.path} | Size: ${fileSize / (1024 * 1024)} MB");
+    }
+  }
+
+  print("🔹 Total Cache Size: ${totalSize / (1024 * 1024)} MB");
 }
 
 //  Future getFuture(String url,BuildContext context) {

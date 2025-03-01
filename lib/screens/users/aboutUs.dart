@@ -130,6 +130,15 @@ class AboutUsState extends State<AboutUs> {
       
         // Skip button
         renderSkipBtn: this.renderSkipBtn(),
+        skipButtonStyle: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(color5),
+        ),
+        nextButtonStyle: ButtonStyle(
+          backgroundColor: WidgetStateProperty.all(color5),
+        ),
+        doneButtonStyle: ButtonStyle(
+        backgroundColor: WidgetStateProperty.all(color5),
+      ),
         //colorSkipBtn: color5,
         //highlightColorSkipBtn: color5,
       
@@ -147,7 +156,7 @@ class AboutUsState extends State<AboutUs> {
         //sizeDot: 13.0,
 
        // typeDotAnimation: dotSliderAnimation.SIZE_TRANSITION,
-      
+
         // Tabs
         listCustomTabs: this.renderListCustomTabs(),
         backgroundColorAllTabs: Colors.white,
