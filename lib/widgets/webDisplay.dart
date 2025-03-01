@@ -743,7 +743,7 @@ class QuizAppView extends StatefulWidget {
   final String formUrl;
   final String moduleName;
 
-  const QuizAppView({super.key, required this.formUrl, required this.moduleName});
+  const QuizAppView({Key? key, required this.formUrl, required this.moduleName}) : super(key: key);
 
   @override
   State<QuizAppView> createState() => _QuizAppViewState();

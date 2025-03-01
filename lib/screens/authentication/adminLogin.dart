@@ -82,7 +82,7 @@ class _AdminLoginState extends State<AdminLogin> {
 }
 
 class AdminLoginForm extends StatefulWidget {
-  const AdminLoginForm({super.key});
+  const AdminLoginForm({Key? key}) : super(key: key);
 
   @override
   State<AdminLoginForm> createState() => _AdminLoginFormState();

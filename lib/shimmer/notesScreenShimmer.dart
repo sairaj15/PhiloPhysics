@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 class NoteScreenShimmer extends StatelessWidget {
-  const NoteScreenShimmer({super.key});
+  const NoteScreenShimmer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

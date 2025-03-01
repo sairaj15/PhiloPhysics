@@ -7,7 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
 class AdminStatistics extends StatefulWidget {
-  const AdminStatistics({super.key});
+  const AdminStatistics({Key? key}) : super(key: key);
 
   @override
   _AdminStatisticsState createState() => _AdminStatisticsState();

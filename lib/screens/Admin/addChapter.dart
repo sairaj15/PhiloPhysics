@@ -5,9 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class AddChapter extends StatefulWidget {
-  const AddChapter({super.key, required this.section});
   final String section;
-
+  const AddChapter({Key? key, required this.section}) : super(key: key);
 
   @override
   State<AddChapter> createState() => _AddChapterState();

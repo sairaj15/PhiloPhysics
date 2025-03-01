@@ -99,7 +99,7 @@ class HomeWidgetState extends State<QuizHomePage> with TickerProviderStateMixin 
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30), // Added vertical padding for balance
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: MediaQuery.of(context).size.height * 0.03), // Added vertical padding for balance
               height: MediaQuery.of(context).size.height / 2.5,
               width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
@@ -121,36 +121,36 @@ class HomeWidgetState extends State<QuizHomePage> with TickerProviderStateMixin 
                   Text(
                     'Welcome!',
                     style: GoogleFonts.poppins(
-                      fontSize: 24,
+                      fontSize: MediaQuery.of(context).size.width * 0.065,
                       fontWeight: FontWeight.w600,
                       color: Colors.black87, // Darker text color for contrast
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 15), // Space between texts
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.03), // Space between texts
                   Text(
                     'Login or create an account to access complete content',
                     style: GoogleFonts.lato(
-                      fontSize: 16,
+                      fontSize: MediaQuery.of(context).size.width * 0.0425,
                       fontWeight: FontWeight.w400,
                       color: Colors.black, // Softer text for secondary message
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 20), // Space before next text
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.03), // Space between texts
                   Text(
                     'Click below to navigate to the login/register section',
                     style: GoogleFonts.lato(
-                      fontSize: 16,
+                      fontSize: MediaQuery.of(context).size.width * 0.0425,
                       fontWeight: FontWeight.w400,
                       color: Colors.black,
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 30), // Space before button
+                  SizedBox(height: MediaQuery.of(context).size.width * 0.05), // Space between texts
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 40),
+                      padding: EdgeInsets.symmetric(vertical : MediaQuery.of(context).size.height * 0.02, horizontal: 40),
                       backgroundColor: color5, // More vibrant button color
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(30), // Rounded button

@@ -10,7 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_segmented_control/material_segmented_control.dart';
 
 class AdminUserAppUsageStats extends StatefulWidget {
-  const AdminUserAppUsageStats({super.key});
+  const AdminUserAppUsageStats({Key? key}) : super(key: key);
 
   @override
   State<AdminUserAppUsageStats> createState() => _AdminUserAppUsageStatsState();

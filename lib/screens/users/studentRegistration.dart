@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class StudentRegister extends StatefulWidget {
-  const StudentRegister({super.key});
+  const StudentRegister({Key? key}) : super(key: key);
 
   @override
   State<StudentRegister> createState() => _StudentRegisterState();

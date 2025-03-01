@@ -490,8 +490,8 @@ class GraphContainer extends StatelessWidget {
                         reservedSize: MediaQuery.of(context).size.width * 0.11,
                         interval: yInterval.toDouble(),
                         getTitlesWidget: (value, meta) => Text(
-                          softWrap: false,
                           formatYAxisLabel(value),
+                          softWrap: false,
                           style: GoogleFonts.poppins(
                             color: Colors.black,
                             fontWeight: FontWeight.bold,
