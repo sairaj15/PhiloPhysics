@@ -1,11 +1,8 @@
 import 'dart:io';
-
-import 'package:device_preview_plus/device_preview_plus.dart';
 import 'package:ephysicsapp/screens/users/home.dart';
 import 'package:ephysicsapp/screens/users/splash_screen.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -26,12 +23,7 @@ void main() async {
     androidProvider: AndroidProvider.playIntegrity,
     // appleProvider: AppleProvider.appAttest,
   );
-  runApp(
-      DevicePreview(
-        enabled: !kReleaseMode,
-        builder: (context) => MyApp(), // Wrap your app
-      ),
-  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -142,6 +134,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       } else if (state == AppLifecycleState.paused ||
           state == AppLifecycleState.inactive) {
         print("App Not in Foreground");
+        clearAppCache();
         _logAppUsageTime();
       }
       else if (state == AppLifecycleState.detached)
