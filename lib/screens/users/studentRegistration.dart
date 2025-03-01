@@ -212,44 +212,58 @@ class _StudentRegisterState extends State<StudentRegister> {
                       ),
                       SizedBox(width: 10),
                       Expanded(
-                        child: Row(
+                        child: Wrap(
+                          alignment: WrapAlignment.center, // Ensures items are centered
+                          spacing: MediaQuery.of(context).size.width * 0.02, // Responsive spacing
+                          runSpacing: MediaQuery.of(context).size.height * 0.01, // Prevents tight stacking
                           children: [
-                            Radio<String>(
-                              value: 'Sakec',
-                              groupValue: _selectedCollege,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _selectedCollege = value!;
-                                  _isOtherCollegeSelected = false;
-                                });
-                              },
+                            Row(
+                              mainAxisSize: MainAxisSize.min, // Prevents extra space issues
+                              children: [
+                                Radio<String>(
+                                  value: 'Sakec',
+                                  groupValue: _selectedCollege,
+                                  onChanged: (String? value) {
+                                    setState(() {
+                                      _selectedCollege = value!;
+                                      _isOtherCollegeSelected = false;
+                                    });
+                                  },
+                                ),
+                                Text(
+                                  'SAKEC',
+                                  style: GoogleFonts.roboto(
+                                    fontSize: MediaQuery.of(context).size.width * 0.04, // Responsive text
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.normal,
+                                    color: color5,
+                                  ),
+                                ),
+                              ],
                             ),
-                            Text(
-                              'SAKEC',
-                              style: GoogleFonts.roboto(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  fontStyle: FontStyle.normal,
-                                  color: color5),
-                            ),
-                            SizedBox(width: 10),
-                            Radio<String>(
-                              value: 'Others',
-                              groupValue: _selectedCollege,
-                              onChanged: (String? value) {
-                                setState(() {
-                                  _selectedCollege = value!;
-                                  _isOtherCollegeSelected = true;
-                                });
-                              },
-                            ),
-                            Text(
-                              'OTHER',
-                              style: GoogleFonts.roboto(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  fontStyle: FontStyle.normal,
-                                  color: color5),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Radio<String>(
+                                  value: 'Others',
+                                  groupValue: _selectedCollege,
+                                  onChanged: (String? value) {
+                                    setState(() {
+                                      _selectedCollege = value!;
+                                      _isOtherCollegeSelected = true;
+                                    });
+                                  },
+                                ),
+                                Text(
+                                  'OTHER',
+                                  style: GoogleFonts.roboto(
+                                    fontSize: MediaQuery.of(context).size.width * 0.04,
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.normal,
+                                    color: color5,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

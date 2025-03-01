@@ -19,28 +19,28 @@ class VideoDetailPage extends StatefulWidget {
 class _VideoDetailPageState extends State<VideoDetailPage> {
   late VideoPlayerController _videoPlayerController;
   ChewieController? _chewieController;
+  late File _cacheFile;
+  bool _isDownloading = false;
 
   @override
   void initState() {
     super.initState();
+    print(widget.videoUrl);
     _initializeVideo();
   }
 
   Future<void> _initializeVideo() async {
     String filename = widget.videoUrl.split('/').last;
     Directory dir = await getApplicationDocumentsDirectory();
-    File file = File("${dir.path}/$filename");
+    _cacheFile = File("${dir.path}/$filename");
 
-    if (await file.exists()) {
-      print("Playing from cache: ${file.path}");
-      _videoPlayerController = VideoPlayerController.file(file);
+    if (await _cacheFile.exists()) {
+      print("Playing from cache: ${_cacheFile.path}");
+      _videoPlayerController = VideoPlayerController.file(_cacheFile);
     } else {
-      print("Downloading video and caching...");
-      var request = await HttpClient().getUrl(Uri.parse(widget.videoUrl));
-      var response = await request.close();
-      var bytes = await consolidateHttpClientResponseBytes(response);
-      await file.writeAsBytes(bytes, flush: true);
-      _videoPlayerController = VideoPlayerController.file(file);
+      print("Playing from network & caching in background...");
+      _videoPlayerController = VideoPlayerController.network(widget.videoUrl);
+      _downloadAndCacheVideo(); // Start background download
     }
 
     await _videoPlayerController.initialize();
@@ -63,6 +63,23 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
         ),
       );
     });
+  }
+
+  Future<void> _downloadAndCacheVideo() async {
+    if (_isDownloading) return;
+    _isDownloading = true;
+
+    try {
+      var request = await HttpClient().getUrl(Uri.parse(widget.videoUrl));
+      var response = await request.close();
+      var bytes = await consolidateHttpClientResponseBytes(response);
+      await _cacheFile.writeAsBytes(bytes, flush: true);
+      print("Video cached successfully: ${_cacheFile.path}");
+    } catch (e) {
+      print("Error caching video: $e");
+    }
+
+    _isDownloading = false;
   }
 
   @override

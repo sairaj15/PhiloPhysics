@@ -107,7 +107,7 @@ class _DocMasterState extends State<DocMaster> {
                         moduleID: widget.moduleID,
                         section: widget.section,
                       ))
-                : Container(), // Or any other widget you want to display when moduleName is "copyright-certificate"
+                : SizedBox(), // Or any other widget you want to display when moduleName is "copyright-certificate"
           ],
         ),
       ),

@@ -172,7 +172,7 @@ Widget videosCard({
   required String? moduleID,
   required BuildContext? context}) {
   return Padding(
-    padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+    padding: EdgeInsets.symmetric(horizontal: 10),
     child: Card(
       elevation: 3,
       color: color2,

@@ -54,8 +54,6 @@ class _AddVideoState extends State<AddVideo> {
       thumbnailLink: videothumbnailController.text,
       context: context,
     );
-
-    Navigator.pop(context);
     showResultDialog(context, 'Process Complete');
   }
 
