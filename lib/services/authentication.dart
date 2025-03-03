@@ -1,3 +1,4 @@
+import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/main.dart';
 import 'package:ephysicsapp/screens/users/home.dart';
 import 'package:ephysicsapp/widgets/popUps.dart';
@@ -9,7 +10,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 late SharedPreferences prefs;
-GoogleSignIn _googleSignIn = GoogleSignIn();
 
 Future<void> initializePreferences() async {
   prefs = await SharedPreferences.getInstance();
@@ -34,22 +34,21 @@ Future<void> login(String email, String password, BuildContext context) async {
 
       // Fetch user data from 'Users' node
       final DataSnapshot snapshot = await dbRef.get();
-      if(!snapshot.exists)
-        {
-          print("Snapshot means no data in realtime DB");
-          await prefs.setBool("isLogged", true);
-          Fluttertoast.showToast(
-            msg: "Logged In as: $email",
-            fontSize: 14,
-            timeInSecForIosWeb: 6,
-            toastLength: Toast.LENGTH_LONG,
-          );
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => MyHomePage()),
-                (Route<dynamic> route) => false,
-          );
-        }
+      if (!snapshot.exists) {
+        print("Snapshot means no data in realtime DB");
+        await prefs.setBool("isLogged", true);
+        Fluttertoast.showToast(
+          msg: "Logged In as: $email",
+          fontSize: 14,
+          timeInSecForIosWeb: 6,
+          toastLength: Toast.LENGTH_LONG,
+        );
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+          (Route<dynamic> route) => false,
+        );
+      }
       // Check if snapshot exists and extract the role
       if (snapshot.exists) {
         final Map<dynamic, dynamic> userData =
@@ -109,15 +108,14 @@ Future<void> login(String email, String password, BuildContext context) async {
   }
 }
 
-
 Future<void> Studentregister(
-    String email,
-    String name,
-    String classdiv,
-    String password,
-    String collegeName,
-    BuildContext context,
-    ) async {
+  String email,
+  String name,
+  String classdiv,
+  String password,
+  String collegeName,
+  BuildContext context,
+) async {
   try {
     print("Registration Init");
     FirebaseAuth _auth = FirebaseAuth.instance;
@@ -131,11 +129,9 @@ Future<void> Studentregister(
       print("Has currentUser ${currentUser}");
       await googleSignIn.signOut();
       await googleSignIn.disconnect();
+    } else {
+      print("No currentUser");
     }
-    else
-      {
-        print("No currentUser");
-      }
 
     // Attempt to sign in with Google, prompting the account picker
     GoogleSignInAccount? googleUser = await googleSignIn.signIn();
@@ -146,63 +142,62 @@ Future<void> Studentregister(
       password: password,
     );
 
-    if (userCreation != null) {
-      final dbRef = FirebaseDatabase.instance.ref();
+    final dbRef = FirebaseDatabase.instance.ref();
 
-      // If Google account was selected, link it with the Firebase Authentication user
-      if (googleUser != null) {
-        final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
+    // If Google account was selected, link it with the Firebase Authentication user
+    if (googleUser != null) {
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
-        OAuthCredential googleCredential = GoogleAuthProvider.credential(
-          accessToken: googleAuth.accessToken,
-          idToken: googleAuth.idToken,
-        );
+      OAuthCredential googleCredential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-        // Check if the Google account email matches the provided email
-        if (googleUser.email.toLowerCase() != email.toLowerCase()) {
-          print("The Google account email does not match the provided email.");
-          Fluttertoast.showToast(
-            msg: "The Google account email does not match the provided email. Please try again.",
-            timeInSecForIosWeb: 6,
-          );
-
-          // Instead of deleting the account, just sign out the user
-          await userCreation.user!.delete();
-          await googleSignIn.disconnect();
-          await _auth.signOut();
-          return;
-        }
-
-        // Link Google account with the Firebase Authentication user
-        await userCreation.user!.linkWithCredential(googleCredential);
-        print("Account linked with Google successfully");
-
-        // Show a success message for Google linking
+      // Check if the Google account email matches the provided email
+      if (googleUser.email.toLowerCase() != email.toLowerCase()) {
+        print("The Google account email does not match the provided email.");
         Fluttertoast.showToast(
-          msg: "User Account Created and Linked with Google Successfully",
+          msg:
+              "The Google account email does not match the provided email. Please try again.",
           timeInSecForIosWeb: 6,
         );
-      } else {
-        // Show a success message for email/password registration only
-        Fluttertoast.showToast(
-          msg: "User Account Created Successfully with Email/Password",
-          timeInSecForIosWeb: 6,
-        );
+
+        // Instead of deleting the account, just sign out the user
+        await userCreation.user!.delete();
+        await googleSignIn.disconnect();
+        await _auth.signOut();
+        return;
       }
 
-      // Save user details to the Realtime Database
-      await dbRef.child('Users').child(userCreation.user!.uid).set({
-        'name': name,
-        'classDiv': classdiv,
-        'college': collegeName,
-        'email': email,
-        'role': 'Student',
-      });
+      // Link Google account with the Firebase Authentication user
+      await userCreation.user!.linkWithCredential(googleCredential);
+      print("Account linked with Google successfully");
 
-      // Navigate back to the previous screen
-      Navigator.pop(context);
+      // Show a success message for Google linking
+      Fluttertoast.showToast(
+        msg: "User Account Created and Linked with Google Successfully",
+        timeInSecForIosWeb: 6,
+      );
+    } else {
+      // Show a success message for email/password registration only
+      Fluttertoast.showToast(
+        msg: "User Account Created Successfully with Email/Password",
+        timeInSecForIosWeb: 6,
+      );
     }
+
+    // Save user details to the Realtime Database
+    await dbRef.child('Users').child(userCreation.user!.uid).set({
+      'name': name,
+      'classDiv': classdiv,
+      'college': collegeName,
+      'email': email,
+      'role': 'Student',
+    });
+
+    // Navigate back to the previous screen
+    Navigator.pop(context);
   } catch (e) {
     // Handle registration errors
     print(e.toString());
@@ -218,8 +213,6 @@ Future<void> Studentregister(
     FirebaseAuth.instance.signOut();
   }
 }
-
-
 
 // Optimized Student login method
 Future<void> studentLogin(
@@ -298,6 +291,81 @@ Future<void> studentLogin(
 
 // Logout method
 Future<void> onLogout(BuildContext context) async {
+  // Show confirmation dialog
+  bool? confirmLogout = await showDialog<bool>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        icon: CircleAvatar(
+          child: Icon(
+            Icons.exit_to_app,
+            color: Colors.black,
+          ),
+          backgroundColor: Colors.grey,
+          radius: 24,
+        ),
+        title: Text(
+          'Logout',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to log out?',
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false); // User cancels logout
+                },
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  backgroundColor: Colors.grey,
+                ),
+              ),
+              SizedBox(width: 8), // Space between buttons
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop(true); // User confirms logout
+                },
+                child: Text(
+                  'Logout',
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+                style: ElevatedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  backgroundColor: color5,
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+    },
+  );
+
+  // If user cancels, do nothing
+  if (confirmLogout != true) {
+    return;
+  }
+
+  // User confirmed logout; proceed with logout operations
   try {
     final myAppState = context.findAncestorStateOfType<MyAppState>();
     if (myAppState != null) {
@@ -313,8 +381,7 @@ Future<void> onLogout(BuildContext context) async {
 
     // Reset login preferences
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs
-        .clear(); // Clear all preferences instead of removing specific keys
+    await prefs.clear(); // Clear all preferences
 
     showToast("Logout Successful");
 
@@ -347,8 +414,6 @@ bool isStudentLoggedIn() {
   return (prefs.getBool('isStudentLoggedIn') ?? false);
 }
 
-
-
 // Optimized Google Student Login Method
 Future<void> studentLoginWithGoogle(BuildContext context) async {
   late final GoogleSignIn googleSignIn;
@@ -367,10 +432,13 @@ Future<void> studentLoginWithGoogle(BuildContext context) async {
     }
 
     // Run authentication tasks in parallel
-    final Future<GoogleSignInAuthentication> authFuture = googleUser.authentication;
-    final Future<List<String>> methodsFuture = auth.fetchSignInMethodsForEmail(googleUser.email);
+    final Future<GoogleSignInAuthentication> authFuture =
+        googleUser.authentication;
+    final Future<List<String>> methodsFuture =
+        auth.fetchSignInMethodsForEmail(googleUser.email);
 
-    final List<dynamic> results = await Future.wait([authFuture, methodsFuture]);
+    final List<dynamic> results =
+        await Future.wait([authFuture, methodsFuture]);
     final GoogleSignInAuthentication googleAuth = results[0];
     final List<String> signInMethods = results[1];
 
@@ -379,7 +447,8 @@ Future<void> studentLoginWithGoogle(BuildContext context) async {
         googleSignIn.disconnect(),
         auth.signOut(),
       ]);
-      Fluttertoast.showToast(msg: "Please use email login", timeInSecForIosWeb: 4);
+      Fluttertoast.showToast(
+          msg: "Please use email login", timeInSecForIosWeb: 4);
       return;
     }
 
@@ -424,7 +493,7 @@ Future<void> studentLoginWithGoogle(BuildContext context) async {
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => MyApp()),
-            (route) => false,
+        (route) => false,
       );
 
       context.findAncestorStateOfType<MyAppState>()?.onUserLogin(userId);
@@ -434,7 +503,8 @@ Future<void> studentLoginWithGoogle(BuildContext context) async {
         googleSignIn.disconnect(),
         auth.signOut(),
       ]);
-      Fluttertoast.showToast(msg: "Not authorized as student", timeInSecForIosWeb: 4);
+      Fluttertoast.showToast(
+          msg: "Not authorized as student", timeInSecForIosWeb: 4);
     }
   } catch (e) {
     print("Login error: $e");
@@ -445,9 +515,6 @@ Future<void> studentLoginWithGoogle(BuildContext context) async {
     Fluttertoast.showToast(msg: "Login failed", timeInSecForIosWeb: 4);
   }
 }
-
-
-
 
 // Optimized Admin Google Login Method
 Future<void> adminLoginWithGoogle(BuildContext context) async {
@@ -467,12 +534,14 @@ Future<void> adminLoginWithGoogle(BuildContext context) async {
 
     // First, check if an account exists with this email
     String googleEmail = googleUser.email;
-    List<String> signInMethods = await _auth.fetchSignInMethodsForEmail(googleEmail);
+    List<String> signInMethods =
+        await _auth.fetchSignInMethodsForEmail(googleEmail);
 
     // If there are sign-in methods but Google is not one of them
     if (signInMethods.isNotEmpty && !signInMethods.contains('google.com')) {
       Fluttertoast.showToast(
-          msg: "This email is registered with email/password only. Please use email login.",
+          msg:
+              "This email is registered with email/password only. Please use email login.",
           fontSize: 14,
           timeInSecForIosWeb: 6,
           toastLength: Toast.LENGTH_LONG);
@@ -521,7 +590,7 @@ Future<void> adminLoginWithGoogle(BuildContext context) async {
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => MyHomePage()),
-              (Route<dynamic> route) => false,
+          (Route<dynamic> route) => false,
         );
       } else {
         print("Cannot log in as Admin. User is a Student.");
