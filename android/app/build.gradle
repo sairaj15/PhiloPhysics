@@ -51,8 +51,8 @@ android {
         applicationId "com.philophysics.physicsappli"
         minSdkVersion 23
         targetSdkVersion 34
-        versionCode 7  // Set your version code directly here
-        versionName "3.0.1"  // Set your version name directly here
+        versionCode 8  // Set your version code directly here
+        versionName "3.0.2"  // Set your version name directly here
         multiDexEnabled true
     }
 
