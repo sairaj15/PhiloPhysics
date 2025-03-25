@@ -15,7 +15,11 @@ import 'globals/colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  try {
+    await Firebase.initializeApp();
+  } catch (e) {
+    print("Firebase initialization error: $e");
+  }
   await initializePreferences();
   // Enable offline persistence for Firebase Realtime Database
   FirebaseDatabase.instance.setPersistenceEnabled(true);
@@ -44,9 +48,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     _checkLoggedInStatus();
   }
 
-
   /// Clearin video and pdf caches
   Future<void> clearAppCache() async {
+    print("App Cache Clear");
     try {
       final tempDir = await getTemporaryDirectory();
       final appDocDir = await getApplicationDocumentsDirectory();
@@ -91,15 +95,20 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   // Check for updates
   void checkForUpdate() async {
     try {
-      print("App Version check been performed");
-      final AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
-      if (updateInfo.updateAvailability == UpdateAvailability.updateAvailable) {
-        print("Update found");
-        // Start the immediate update process
-        await InAppUpdate.performImmediateUpdate();
+      if (Platform.isAndroid) {
+        print("App Version check been performed");
+        final AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
+        if (updateInfo.updateAvailability ==
+            UpdateAvailability.updateAvailable) {
+          print("Update found");
+          // Start the immediate update process
+          await InAppUpdate.performImmediateUpdate();
+        }
       }
+
+      if (Platform.isIOS) {}
       print("No Update found");
-      print(updateInfo);
+      // print(updateInfo);
     } catch (e) {
       print("Error checking for updates: $e");
     }
@@ -134,13 +143,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       } else if (state == AppLifecycleState.paused ||
           state == AppLifecycleState.inactive) {
         print("App Not in Foreground");
-        clearAppCache();
         _logAppUsageTime();
+      } else if (state == AppLifecycleState.detached) {
+        clearAppCache();
       }
-      else if (state == AppLifecycleState.detached)
-        {
-          clearAppCache();
-        }
     }
   }
 
@@ -246,7 +252,10 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         primarySwatch: createMaterialColor(color5),
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: prefs.getBool("isStudentLoggedIn") == true || prefs.getBool("isLogged") == true ? MyHomePage() : SplashScreen(),
+      home: prefs.getBool("isStudentLoggedIn") == true ||
+              prefs.getBool("isLogged") == true
+          ? MyHomePage()
+          : SplashScreen(),
     );
   }
 }

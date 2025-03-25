@@ -1,10 +1,13 @@
 import 'dart:collection';
+import 'dart:convert';
+import 'package:ephysicsapp/globals/constants.dart';
 import 'package:ephysicsapp/screens/Admin/adminUserUsageStatistics.dart';
 import 'package:ephysicsapp/shimmer/adminStatisticsShimmer.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:http/http.dart' as http;
 
 class AdminStatistics extends StatefulWidget {
   const AdminStatistics({Key? key}) : super(key: key);
@@ -29,6 +32,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
   List<String> availableYears = [];
   Map<String, List<Map<String, dynamic>>> topUsers = {};
   List<Map<String, dynamic>> overallTopUsers = [];
+  List<String> fetchedColleges = [];
 
   late TabController _tabController;
 
@@ -37,6 +41,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
     super.initState();
     _tabController = new TabController(vsync: this, length: 1);
     initializeData();
+    getAllColleges();
   }
 
   @override
@@ -44,6 +49,17 @@ class _AdminStatisticsState extends State<AdminStatistics>
     // Dispose of the TabController to free resources
     _tabController.dispose();
     super.dispose();
+  }
+
+  Future<void> getAllColleges() async {
+    final url = Uri.parse("$apiUrl/api/unique-colleges");
+
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      fetchedColleges = List<String>.from(data['uniqueColleges']);
+      print(fetchedColleges);
+    }
   }
 
   Future<void> initializeData() async {
@@ -118,36 +134,36 @@ class _AdminStatisticsState extends State<AdminStatistics>
     yearWiseUsage.forEach((year, usage) {
       final sortedEntries = usage.entries.toList(); // Convert to mutable list
       sortedEntries.sort(
-              (a, b) => b.value.compareTo(a.value)); // Sort in descending order
+          (a, b) => b.value.compareTo(a.value)); // Sort in descending order
 
       topUsersByYear[year] = sortedEntries
           .take(3) // Take top 3 users
           .map((entry) => {
-        'userId': entry.key,
-        'name': usersSnapshot.child('${entry.key}/name').value,
-        'email': usersSnapshot.child('${entry.key}/email').value,
-        'classDiv': usersSnapshot.child('${entry.key}/classDiv').value,
-        'usage': entry.value,
-      })
+                'userId': entry.key,
+                'name': usersSnapshot.child('${entry.key}/name').value,
+                'email': usersSnapshot.child('${entry.key}/email').value,
+                'classDiv': usersSnapshot.child('${entry.key}/classDiv').value,
+                'usage': entry.value,
+              })
           .toList();
     });
 
     // Overall top users
     List<Map<String, dynamic>> overallTopUsers = [];
     final sortedOverallEntries =
-    overallUsage.entries.toList(); // Convert to mutable list
+        overallUsage.entries.toList(); // Convert to mutable list
     sortedOverallEntries
         .sort((a, b) => b.value.compareTo(a.value)); // Sort in descending order
 
     overallTopUsers = sortedOverallEntries
         .take(3) // Take top 3 users
         .map((entry) => {
-      'userId': entry.key,
-      'name': usersSnapshot.child('${entry.key}/name').value,
-      'email': usersSnapshot.child('${entry.key}/email').value,
-      'classDiv': usersSnapshot.child('${entry.key}/classDiv').value,
-      'usage': entry.value,
-    })
+              'userId': entry.key,
+              'name': usersSnapshot.child('${entry.key}/name').value,
+              'email': usersSnapshot.child('${entry.key}/email').value,
+              'classDiv': usersSnapshot.child('${entry.key}/classDiv').value,
+              'usage': entry.value,
+            })
         .toList();
 
     print("Overall Top Usage : \n ${overallTopUsers}");
@@ -165,7 +181,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
     try {
       // Get the data snapshot from Firebase
       DataSnapshot snapshot =
-      await dbRef.get(); // Use .get() instead of .once()
+          await dbRef.get(); // Use .get() instead of .once()
 
       // Log the snapshot to verify data structure
       print('Snapshot data: ${snapshot.value}'); // Log the entire snapshot
@@ -185,7 +201,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
         for (var userSnapshot in snapshot.children) {
           // Type-safe access to user data
           Map<dynamic, dynamic> userData =
-          userSnapshot.value as Map<dynamic, dynamic>;
+              userSnapshot.value as Map<dynamic, dynamic>;
 
           if (userData.containsKey('pdfsViewed')) {
             pdfsViewedTemp += (userData['pdfsViewed'] as num).toInt();
@@ -292,79 +308,79 @@ class _AdminStatisticsState extends State<AdminStatistics>
       body: isLoading
           ? AdminStatisticsShimmer()
           : SingleChildScrollView(
-        child: Container(
-          color: Colors.grey.shade100,
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            children: [
-              SizedBox(height: 20),
+              child: Container(
+                color: Colors.grey.shade100,
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: Column(
+                  children: [
+                    SizedBox(height: 20),
 
-              /// Stat Box Grid
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: _buildStatBox(
-                      Icons.people,
-                      'Total\nUsers',
-                      userCount.toString(),
-                      Colors.blue,
-                      context,
-                      AdminUserAppUsageStats(),
+                    /// Stat Box Grid
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: _buildStatBox(
+                            Icons.people,
+                            'Total\nUsers',
+                            userCount.toString(),
+                            Colors.blue,
+                            context,
+                            AdminUserAppUsageStats(),
+                          ),
+                        ),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: _buildStatBox(
+                            Icons.picture_as_pdf,
+                            'PDFs Viewed',
+                            totalPdfsViewed.toString(),
+                            Colors.green,
+                            context,
+                            null,
+                          ),
+                        ),
+                        SizedBox(width: 16),
+                        Expanded(
+                          child: _buildStatBox(
+                            Icons.video_library,
+                            'Videos Viewed',
+                            totalVideosViewed.toString(),
+                            Colors.orange,
+                            context,
+                            null,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: _buildStatBox(
-                      Icons.picture_as_pdf,
-                      'PDFs Viewed',
-                      totalPdfsViewed.toString(),
-                      Colors.green,
-                      context,
-                      null,
-                    ),
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: _buildStatBox(
-                      Icons.video_library,
-                      'Videos Viewed',
-                      totalVideosViewed.toString(),
-                      Colors.orange,
-                      context,
-                      null,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: MediaQuery.of(context).size.height / 30),
+                    SizedBox(height: MediaQuery.of(context).size.height / 30),
 
-              /// Top Users Container
-              _buildTopUsersContainer(),
-              SizedBox(height: MediaQuery.of(context).size.height / 30),
-              // Usage Stats Box
-              _buildUsageStatsBox(
-                context,
-                pdfViewersCount,
-                totalUserofApp,
-                hour,
-                mins,
+                    /// Top Users Container
+                    _buildTopUsersContainer(),
+                    SizedBox(height: MediaQuery.of(context).size.height / 30),
+                    // Usage Stats Box
+                    _buildUsageStatsBox(
+                      context,
+                      pdfViewersCount,
+                      totalUserofApp,
+                      hour,
+                      mins,
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
   Widget _buildStatBox(
-      IconData icon,
-      String label,
-      String value,
-      Color color,
-      BuildContext context,
-      Widget? pageToNavigate,
-      ) {
+    IconData icon,
+    String label,
+    String value,
+    Color color,
+    BuildContext context,
+    Widget? pageToNavigate,
+  ) {
     return GestureDetector(
       onTap: () {
         if (pageToNavigate != null) {
@@ -497,8 +513,8 @@ class _AdminStatisticsState extends State<AdminStatistics>
                 color: medalAsset == '1'
                     ? Color(0xFFFFD700) // Gold
                     : medalAsset == '2'
-                    ? Color(0xFFC0C0C0) // Silver
-                    : Color(0xFFCD7F32), // Bronze
+                        ? Color(0xFFC0C0C0) // Silver
+                        : Color(0xFFCD7F32), // Bronze
               ),
             ),
             title: Row(
@@ -525,8 +541,8 @@ class _AdminStatisticsState extends State<AdminStatistics>
                     title: Text('User Info'),
                     content: Text(
                       'Email: ${user['email']}\n'
-                          'Class: ${user['classDiv']}\n'
-                          'Usage: ${_formatCompleteDuration(usageDuration)}',
+                      'Class: ${user['classDiv']}\n'
+                      'Usage: ${_formatCompleteDuration(usageDuration)}',
                     ),
                     actions: [
                       TextButton(
@@ -569,7 +585,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
           children: [
             Padding(
               padding:
-              const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
               child: Text(
                 'Top Users',
                 style: GoogleFonts.poppins(
@@ -621,15 +637,15 @@ class _AdminStatisticsState extends State<AdminStatistics>
                         ),
                         ...availableYears.take(3).map(
                               (year) => Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 2.0),
-                            // Fix #3 applied to each year tab as well
-                            child: SingleChildScrollView(
-                              child:
-                              _buildTopUsersList(topUsers[year] ?? []),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12.0, vertical: 2.0),
+                                // Fix #3 applied to each year tab as well
+                                child: SingleChildScrollView(
+                                  child:
+                                      _buildTopUsersList(topUsers[year] ?? []),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
                       ],
                     ),
                   ),
@@ -643,12 +659,12 @@ class _AdminStatisticsState extends State<AdminStatistics>
   }
 
   Widget _buildUsageStatsBox(
-      BuildContext context,
-      int pdfViewersCount,
-      int totalUsers,
-      int hours,
-      int minutes,
-      ) {
+    BuildContext context,
+    int pdfViewersCount,
+    int totalUsers,
+    int hours,
+    int minutes,
+  ) {
     // Calculate the material usage percentage
     double materialUsagePercent = totalUsers > 0
         ? (pdfViewersCount / totalUsers).clamp(0, 1).toDouble()

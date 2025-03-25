@@ -1,0 +1,2 @@
+/Users/sairajsawant/Development/PhiloPhysics-App-main2/android/app/.cxx/RelWithDebInfo/3q1q4k40/x86_64/CMakeFiles/rebuild_cache.dir
+/Users/sairajsawant/Development/PhiloPhysics-App-main2/android/app/.cxx/RelWithDebInfo/3q1q4k40/x86_64/CMakeFiles/edit_cache.dir
