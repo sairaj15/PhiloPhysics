@@ -20,7 +20,6 @@ class _StudentLoginState extends State<StudentLogin> {
   bool _isPasswordVisible = false;
   bool isGoogleLoading = false;
 
-
   // Function to reset password
   Future<void> resetPassword(String email) async {
     try {
@@ -105,23 +104,27 @@ class _StudentLoginState extends State<StudentLogin> {
                 obscureText: !_isPasswordVisible,
                 decoration: InputDecoration(
                   suffixIcon: Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min, // Use min to avoid extra width
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                          _isPasswordVisible ? Icons.visibility_off : Icons.visibility ,
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Row(
+                      mainAxisSize:
+                          MainAxisSize.min, // Use min to avoid extra width
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            _isPasswordVisible
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _isPasswordVisible =
+                                  !_isPasswordVisible; // Toggle visibility
+                            });
+                          },
                         ),
-                        onPressed: () {
-                          setState(() {
-                            _isPasswordVisible = !_isPasswordVisible; // Toggle visibility
-                          });
-                        },
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
                   labelText: "Enter Password",
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(width: 2.0),
@@ -133,15 +136,16 @@ class _StudentLoginState extends State<StudentLogin> {
               isLoading
                   ? CircularProgressIndicator()
                   : Container(
-                    height: MediaQuery.of(context).size.height / 16,
-                    width : MediaQuery.of(context).size.width - 20.0,
-                    child: ElevatedButton(
+                      height: MediaQuery.of(context).size.height / 16,
+                      width: MediaQuery.of(context).size.width - 20.0,
+                      child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15), // Same border radius
+                            borderRadius:
+                                BorderRadius.circular(15), // Same border radius
                           ),
-                          padding:
-                              EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 30),
                           backgroundColor: color5,
                         ),
                         onPressed: () {
@@ -149,20 +153,68 @@ class _StudentLoginState extends State<StudentLogin> {
                         },
                         child: Text(
                           'Login',
-                          style: GoogleFonts.poppins(fontSize: 18, color: color1,fontWeight: FontWeight.bold),
+                          style: GoogleFonts.poppins(
+                              fontSize: 18,
+                              color: color1,
+                              fontWeight: FontWeight.bold),
                         ),
                       ),
-                  ),
+                    ),
               SizedBox(height: MediaQuery.of(context).size.height / 50),
               isGoogleLoading
                   ? CircularProgressIndicator()
                   : Container(
+                      height: MediaQuery.of(context).size.height / 16,
+                      width: MediaQuery.of(context).size.width - 20.0,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white30,
+                          foregroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 24),
+                          elevation: 2,
+                        ),
+                        onPressed: () async {
+                          setState(() {
+                            isGoogleLoading = true; // Start loading
+                          });
+                          await studentLoginWithGoogle(context);
+                          setState(() {
+                            isGoogleLoading = false; // Stop loading
+                          });
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              'assets/google_icon.png',
+                              width: 30,
+                              height: 30,
+                            ),
+                            SizedBox(width: 10),
+                            Text(
+                              'Sign in with Google',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+              SizedBox(height: MediaQuery.of(context).size.height / 100),
+
+              // Apple Sign-In Button
+              Container(
                 height: MediaQuery.of(context).size.height / 16,
                 width: MediaQuery.of(context).size.width - 20.0,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white30,
-                    foregroundColor: Colors.black,
+                    backgroundColor: Colors.black,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -170,35 +222,26 @@ class _StudentLoginState extends State<StudentLogin> {
                     elevation: 2,
                   ),
                   onPressed: () async {
-                    setState(() {
-                      isGoogleLoading = true; // Start loading
-                    });
-                    await studentLoginWithGoogle(context);
-                    setState(() {
-                      isGoogleLoading = false; // Stop loading
-                    });
+                    await studentLoginWithApple(context);
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.asset(
-                        'assets/google_icon.png',
-                        width: 30,
-                        height: 30,
-                      ),
+                      Icon(Icons.apple, color: Colors.white, size: 28),
                       SizedBox(width: 10),
                       Text(
-                        'Sign in with Google',
+                        'Sign in with Apple',
                         style: GoogleFonts.poppins(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
+                          color: Colors.white,
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              SizedBox(height: MediaQuery.of(context).size.height / 100),
+
               // Forgot Password Button
               TextButton(
                 onPressed: () {
@@ -236,9 +279,7 @@ class _StudentLoginState extends State<StudentLogin> {
                       'REGISTER',
                       style: TextStyle(
                           shadows: [
-                            Shadow(
-                                color: color5,
-                                offset: Offset(0, -2))
+                            Shadow(color: color5, offset: Offset(0, -2))
                           ],
                           decoration: TextDecoration.underline,
                           decorationThickness: 3,
