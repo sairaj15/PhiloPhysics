@@ -5,6 +5,7 @@ import 'package:ephysicsapp/screens/users/widgets/cards.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class ModuleMaster extends StatefulWidget {
   ModuleMaster({Key? key, required this.section}) : super(key: key);
@@ -35,7 +36,8 @@ class _ModuleMasterState extends State<ModuleMaster> {
         builder: (context, snapshot) {
           if (snapshot.hasData && !snapshot.hasError) {
             DataSnapshot dataSnapshot = snapshot.data!.snapshot;
-            Map<dynamic, dynamic>? data = dataSnapshot.value as Map<dynamic, dynamic>?;
+            Map<dynamic, dynamic>? data =
+                dataSnapshot.value as Map<dynamic, dynamic>?;
 
             modules.clear();
             if (data != null) {
@@ -44,19 +46,23 @@ class _ModuleMasterState extends State<ModuleMaster> {
                   modules.add({
                     'moduleId': key,
                     'moduleName': value['moduleName'] ?? 'Unknown',
-                    'moduleNo': value['moduleNo'] is int ? value['moduleNo'] : int.tryParse(value['moduleNo']) ?? 0,
+                    'moduleNo': value['moduleNo'] is int
+                        ? value['moduleNo']
+                        : int.tryParse(value['moduleNo']) ?? 0,
                   });
                 }
               });
 
               // Filter out modules without moduleNo
-              modules = modules.where((module) => module.containsKey('moduleNo')).toList();
+              modules = modules
+                  .where((module) => module.containsKey('moduleNo'))
+                  .toList();
 
               // Sort modules by moduleNo in ascending order
               modules.sort((a, b) => a['moduleNo'].compareTo(b['moduleNo']));
 
               print(modules);
-    }
+            }
 
             return Column(
               children: <Widget>[
@@ -68,17 +74,17 @@ class _ModuleMasterState extends State<ModuleMaster> {
                     itemBuilder: (context, index) {
                       return isLoggedIn()
                           ? moduleCard(
-                        index: index,
-                        moduleDetails: modules[index],
-                        context: context,
-                        section: widget.section,
-                      )
+                              index: index,
+                              moduleDetails: modules[index],
+                              context: context,
+                              section: widget.section,
+                            )
                           : moduleUserCard(
-                        index: index,
-                        moduleDetails: modules[index],
-                        context: context,
-                        section: widget.section,
-                      );
+                              index: index,
+                              moduleDetails: modules[index],
+                              context: context,
+                              section: widget.section,
+                            );
                     },
                   ),
                 ),
@@ -92,7 +98,7 @@ class _ModuleMasterState extends State<ModuleMaster> {
             );
           } else {
             return Center(
-              child: CircularProgressIndicator(),
+              child: SpinKitRotatingCircle(),
             );
           }
         },
@@ -100,18 +106,18 @@ class _ModuleMasterState extends State<ModuleMaster> {
       floatingActionButton: !isLoggedIn()
           ? Container()
           : FloatingActionButton(
-        backgroundColor: color4,
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => AddChapter(section: widget.section),
+              backgroundColor: color4,
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddChapter(section: widget.section),
+                  ),
+                );
+              },
+              tooltip: 'Add Document',
+              child: Icon(Icons.add),
             ),
-          );
-        },
-        tooltip: 'Add Document',
-        child: Icon(Icons.add),
-      ),
     );
   }
 }

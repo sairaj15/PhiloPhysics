@@ -1,7 +1,10 @@
+import 'dart:io';
+
 import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/widgets/popUps.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class StudentRegister extends StatefulWidget {
@@ -64,32 +67,46 @@ class _StudentRegisterState extends State<StudentRegister> {
     String collegeName =
         _selectedCollege == 'Sakec' ? 'Sakec' : otherCollegeNameController.text;
 
-    // Show the pop-up dialog to inform the user about Google Sign-In
-    await showDialog(
+    // Platform-aware sign-in choice
+    String? chosenProvider = await showDialog<String>(
       context: context,
-      barrierDismissible: false, // Prevent dismissing by tapping outside
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Important Notice"),
-          content: Text(
-            "A Google Sign-In popup will appear. If you don't wish to link your Google account, please press the back button on your device to skip linking. This is required to complete registration.",
+          title: Text("Choose Sign-In Method"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.account_circle),
+                title: Text("Google Sign-In"),
+                onTap: () => Navigator.of(context).pop('google'),
+              ),
+              if (Platform.isIOS) // Only show Apple Sign-In on iOS
+                ListTile(
+                  leading: Icon(Icons.apple),
+                  title: Text("Apple Sign-In"),
+                  onTap: () => Navigator.of(context).pop('apple'),
+                ),
+              ListTile(
+                leading: Icon(Icons.person_outline),
+                title: Text("Skip (No Social Sign-In)"),
+                onTap: () => Navigator.of(context).pop('none'),
+              ),
+            ],
           ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text("Got it"),
-            ),
-          ],
         );
       },
     );
 
+    if (chosenProvider == null) return; // Dialog dismissed
+
     setState(() {
       isLoading = true;
     });
+
     try {
+      // Register student account
       await Studentregister(
         studentAccCreationemailController.text,
         studentAccCreationnameController.text,
@@ -98,9 +115,23 @@ class _StudentRegisterState extends State<StudentRegister> {
         collegeName,
         context,
       );
+
+      // Perform sign-in based on choice
+      switch (chosenProvider) {
+        case 'google':
+          await studentLoginWithGoogle(
+              context); // <-- Your existing Google sign-in logic
+          break;
+        case 'apple':
+          await studentLoginWithApple(
+              context); // <-- You'll implement this next
+          break;
+        case 'none':
+          break;
+      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Login failed! Please Try Again')),
+        SnackBar(content: Text('Registration failed! Please try again')),
       );
     } finally {
       setState(() {
@@ -213,12 +244,16 @@ class _StudentRegisterState extends State<StudentRegister> {
                       SizedBox(width: 10),
                       Expanded(
                         child: Wrap(
-                          alignment: WrapAlignment.center, // Ensures items are centered
-                          spacing: MediaQuery.of(context).size.width * 0.02, // Responsive spacing
-                          runSpacing: MediaQuery.of(context).size.height * 0.01, // Prevents tight stacking
+                          alignment: WrapAlignment
+                              .center, // Ensures items are centered
+                          spacing: MediaQuery.of(context).size.width *
+                              0.02, // Responsive spacing
+                          runSpacing: MediaQuery.of(context).size.height *
+                              0.01, // Prevents tight stacking
                           children: [
                             Row(
-                              mainAxisSize: MainAxisSize.min, // Prevents extra space issues
+                              mainAxisSize: MainAxisSize
+                                  .min, // Prevents extra space issues
                               children: [
                                 Radio<String>(
                                   value: 'Sakec',
@@ -233,7 +268,9 @@ class _StudentRegisterState extends State<StudentRegister> {
                                 Text(
                                   'SAKEC',
                                   style: GoogleFonts.roboto(
-                                    fontSize: MediaQuery.of(context).size.width * 0.04, // Responsive text
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.04, // Responsive text
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.normal,
                                     color: color5,
@@ -257,7 +294,9 @@ class _StudentRegisterState extends State<StudentRegister> {
                                 Text(
                                   'OTHER',
                                   style: GoogleFonts.roboto(
-                                    fontSize: MediaQuery.of(context).size.width * 0.04,
+                                    fontSize:
+                                        MediaQuery.of(context).size.width *
+                                            0.04,
                                     fontWeight: FontWeight.bold,
                                     fontStyle: FontStyle.normal,
                                     color: color5,
@@ -449,7 +488,7 @@ class _StudentRegisterState extends State<StudentRegister> {
                 ),
                 SizedBox(height: 20),
                 isLoading
-                    ? CircularProgressIndicator()
+                    ? SpinKitRotatingCircle()
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(

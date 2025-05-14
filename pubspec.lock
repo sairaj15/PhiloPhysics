@@ -455,7 +455,7 @@ packages:
     source: hosted
     version: "1.4.0"
   flutter_spinkit:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: flutter_spinkit
       sha256: d2696eed13732831414595b98863260e33e8882fc069ee80ec35d4ac9ddb0472
@@ -689,7 +689,7 @@ packages:
     source: hosted
     version: "0.3.1"
   package_info_plus:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: package_info_plus
       sha256: "7976bfe4c583170d6cdc7077e3237560b364149fcd268b5f53d95a991963b191"

@@ -5,6 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:no_screenshot/no_screenshot.dart';
@@ -296,7 +297,7 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
           errorMessage.isEmpty
               ? !isReady
                   ? Center(
-                      child: CircularProgressIndicator(),
+                      child: SpinKitRotatingCircle(),
                     )
                   : Container()
               : Center(

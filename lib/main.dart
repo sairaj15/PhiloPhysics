@@ -1,17 +1,22 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:ephysicsapp/screens/users/home.dart';
 import 'package:ephysicsapp/screens/users/splash_screen.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:in_app_update/in_app_update.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'globals/colors.dart';
+import 'package:http/http.dart' as http;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -107,11 +112,79 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       }
 
       if (Platform.isIOS) {}
-      print("No Update found");
-      // print(updateInfo);
+      final packageInfo = await PackageInfo.fromPlatform();
+      final currentVersion = packageInfo.version;
+
+      // Replace with your app's App Store ID
+      const appStoreId = 'YOUR_APP_STORE_ID_HERE';
+      final url = 'https://itunes.apple.com/lookup?id=$appStoreId';
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        final storeVersion = json['results'][0]['version'];
+
+        if (_isVersionNewer(storeVersion, currentVersion)) {
+          print("Update found on App Store");
+          // Show a dialog to the user
+          _promptUserToUpdate(context);
+        } else {
+          print("No update found on App Store");
+        }
+      }
     } catch (e) {
       print("Error checking for updates: $e");
     }
+  }
+
+  bool _isVersionNewer(String storeVersion, String localVersion) {
+    List<int> storeParts =
+        storeVersion.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+    List<int> localParts =
+        localVersion.split('.').map((e) => int.tryParse(e) ?? 0).toList();
+
+    for (int i = 0; i < storeParts.length; i++) {
+      if (i >= localParts.length || storeParts[i] > localParts[i]) {
+        return true;
+      } else if (storeParts[i] < localParts[i]) {
+        return false;
+      }
+    }
+    return false;
+  }
+
+  void _promptUserToUpdate(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: Text("Update Available"),
+          content: Text(
+            "A new version of the app is available. Please update to continue using the app smoothly.",
+          ),
+          actions: <CupertinoDialogAction>[
+            CupertinoDialogAction(
+              isDefaultAction: true,
+              child: Text("Update"),
+              onPressed: () async {
+                const appStoreUrl =
+                    'https://apps.apple.com/app/idYOUR_APP_STORE_ID';
+                if (await canLaunchUrl(Uri.parse(appStoreUrl))) {
+                  launchUrl(Uri.parse(appStoreUrl),
+                      mode: LaunchMode.externalApplication);
+                }
+              },
+            ),
+            CupertinoDialogAction(
+              child: Text("Later"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> onUserLogin(String userId) async {

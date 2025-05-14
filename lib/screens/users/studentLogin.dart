@@ -3,6 +3,7 @@ import 'package:ephysicsapp/screens/users/studentRegistration.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class StudentLogin extends StatefulWidget {
@@ -134,7 +135,7 @@ class _StudentLoginState extends State<StudentLogin> {
               SizedBox(height: 30),
 
               isLoading
-                  ? CircularProgressIndicator()
+                  ? SpinKitRotatingCircle()
                   : Container(
                       height: MediaQuery.of(context).size.height / 16,
                       width: MediaQuery.of(context).size.width - 20.0,
@@ -162,7 +163,7 @@ class _StudentLoginState extends State<StudentLogin> {
                     ),
               SizedBox(height: MediaQuery.of(context).size.height / 50),
               isGoogleLoading
-                  ? CircularProgressIndicator()
+                  ? SpinKitRotatingCircle()
                   : Container(
                       height: MediaQuery.of(context).size.height / 16,
                       width: MediaQuery.of(context).size.width - 20.0,

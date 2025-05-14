@@ -3,6 +3,7 @@ import 'package:ephysicsapp/screens/users/studentLogin.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/widgets/generalWidgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_segmented_control/material_segmented_control.dart';
 
@@ -97,7 +98,6 @@ class _AdminLoginFormState extends State<AdminLoginForm> {
   bool isLoading = false;
   bool isGoogleLoading = false;
 
-
   Future<void> checkValidation() async {
     if (_formKeyValue.currentState!.validate()) {
       setState(() {
@@ -119,10 +119,7 @@ class _AdminLoginFormState extends State<AdminLoginForm> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            SizedBox(height: MediaQuery
-                .of(context)
-                .size
-                .height / 30),
+            SizedBox(height: MediaQuery.of(context).size.height / 30),
             Text(
               'Admin Login',
               style: GoogleFonts.merriweather(
@@ -152,8 +149,9 @@ class _AdminLoginFormState extends State<AdminLoginForm> {
                 labelText: "Enter Password",
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _isPasswordVisible ? Icons.visibility_off : Icons
-                        .visibility,
+                    _isPasswordVisible
+                        ? Icons.visibility_off
+                        : Icons.visibility,
                   ),
                   onPressed: () {
                     setState(() {
@@ -168,73 +166,78 @@ class _AdminLoginFormState extends State<AdminLoginForm> {
             ),
             const SizedBox(height: 30),
             isLoading
-                ? CircularProgressIndicator()
+                ? SpinKitRotatingCircle()
                 : Container(
-              height: MediaQuery.of(context).size.height / 16,
-              width : MediaQuery.of(context).size.width - 20.0,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15), // Same border radius
-                  ),
-                  padding:
-                  EdgeInsets.symmetric(vertical: 10, horizontal: 30),
-                  backgroundColor: color5,
-                ),
-                onPressed: () {
-                  checkValidation();
-                },
-                child: Text(
-                  'Login',
-                  style: GoogleFonts.poppins(fontSize: 18, color: color1,fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            SizedBox(height: MediaQuery.of(context).size.height / 50),
-            isGoogleLoading
-                ? CircularProgressIndicator()
-                : Container(
-              height: MediaQuery.of(context).size.height / 16,
-              width: MediaQuery.of(context).size.width - 20.0,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white30,
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                  elevation: 2,
-                ),
-                onPressed: () async {
-                  setState(() {
-                    isGoogleLoading = true; // Start loading
-                  });
-                  await adminLoginWithGoogle(context);
-                  setState(() {
-                    isGoogleLoading = false; // Stop loading
-                  });
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset(
-                      'assets/google_icon.png',
-                      width: 30,
-                      height: 30,
-                    ),
-                    SizedBox(width: 10),
-                    Text(
-                      'Sign in with Google',
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                    height: MediaQuery.of(context).size.height / 16,
+                    width: MediaQuery.of(context).size.width - 20.0,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(15), // Same border radius
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                        backgroundColor: color5,
+                      ),
+                      onPressed: () {
+                        checkValidation();
+                      },
+                      child: Text(
+                        'Login',
+                        style: GoogleFonts.poppins(
+                            fontSize: 18,
+                            color: color1,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
-                  ],
-                ),
-              ),
-            ),
+                  ),
+            SizedBox(height: MediaQuery.of(context).size.height / 50),
+            isGoogleLoading
+                ? SpinKitRotatingCircle()
+                : Container(
+                    height: MediaQuery.of(context).size.height / 16,
+                    width: MediaQuery.of(context).size.width - 20.0,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white30,
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        padding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                        elevation: 2,
+                      ),
+                      onPressed: () async {
+                        setState(() {
+                          isGoogleLoading = true; // Start loading
+                        });
+                        await adminLoginWithGoogle(context);
+                        setState(() {
+                          isGoogleLoading = false; // Stop loading
+                        });
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset(
+                            'assets/google_icon.png',
+                            width: 30,
+                            height: 30,
+                          ),
+                          SizedBox(width: 10),
+                          Text(
+                            'Sign in with Google',
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
           ],
         ),
       ),

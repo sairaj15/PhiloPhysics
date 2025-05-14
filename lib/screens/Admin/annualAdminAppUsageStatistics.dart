@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'dart:math' as math;
 
 const List<String> months = [
@@ -34,7 +34,6 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
   bool isLoading = true;
   List<String> availableAcademicYears = [];
   int currentYearIndex = 0;
-  final PageController _pageController = PageController();
   String? currentAcademicYear;
 
   @override
@@ -254,7 +253,7 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: SpinKitRotatingCircle())
           : Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -271,7 +270,7 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
                               height: MediaQuery.of(context).size.height / 100),
                           Padding(
                             padding:
-                            const EdgeInsets.symmetric(horizontal: 8.0),
+                                const EdgeInsets.symmetric(horizontal: 8.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -279,7 +278,8 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
                                   'Usage Statistics :  ',
                                   style: GoogleFonts.poppins(
                                     fontSize:
-                                        MediaQuery.of(context).size.width * 0.05,
+                                        MediaQuery.of(context).size.width *
+                                            0.05,
                                     color: Colors.white,
                                     fontWeight: FontWeight.w600,
                                     shadows: [
@@ -304,7 +304,8 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
                                       icon: Icon(
                                         Icons.arrow_drop_down,
                                         color: Colors.white,
-                                        size: 30, // Increase the icon size to make it a little bigger
+                                        size:
+                                            30, // Increase the icon size to make it a little bigger
                                       ),
                                       dropdownColor: Colors.white,
                                       // menuWidth:
@@ -321,7 +322,10 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
                                           child: Text(
                                             year,
                                             style: GoogleFonts.poppins(
-                                              fontSize: MediaQuery.of(context).size.width * 0.05,
+                                              fontSize: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.05,
                                               color: Colors
                                                   .black, // Normal style for each dropdown item
                                             ),
@@ -346,7 +350,10 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
                                                 decoration:
                                                     TextDecoration.underline,
                                                 decorationColor: Colors.white,
-                                                fontSize: MediaQuery.of(context).size.width * 0.05,
+                                                fontSize: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.05,
                                                 color: Colors
                                                     .transparent, // Apply custom style for selected item
                                                 fontWeight: FontWeight.w600,
@@ -474,6 +481,7 @@ class GraphContainer extends StatelessWidget {
                           ),
                         );
                       },
+                      getTooltipColor: (group) => Colors.blueGrey,
                     ),
                   ),
                   alignment: BarChartAlignment.spaceAround,
@@ -482,8 +490,10 @@ class GraphContainer extends StatelessWidget {
                   groupsSpace: 18,
                   titlesData: FlTitlesData(
                     show: true,
-                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles:
+                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    rightTitles:
+                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,

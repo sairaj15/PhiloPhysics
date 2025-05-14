@@ -8,6 +8,7 @@ import 'package:ephysicsapp/services/general.dart';
 import 'package:ephysicsapp/widgets/generalWidgets.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class DocMaster extends StatefulWidget {
   DocMaster(
@@ -40,7 +41,10 @@ class _DocMasterState extends State<DocMaster> {
     return Scaffold(
       backgroundColor: color1,
       appBar: AppBar(
-        title: Text(widget.moduleName, overflow: TextOverflow.ellipsis,),
+        title: Text(
+          widget.moduleName,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -91,7 +95,7 @@ class _DocMasterState extends State<DocMaster> {
                     return Center(child: Text("Error: ${snap.error}"));
                   }
                 } else {
-                  return Center(child: CircularProgressIndicator());
+                  return Center(child: SpinKitRotatingCircle());
                 }
               },
             ),

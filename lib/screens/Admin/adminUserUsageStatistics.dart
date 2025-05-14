@@ -6,6 +6,7 @@ import 'package:ephysicsapp/screens/Admin/monthlyAdminAppUsageStatistics.dart';
 import 'package:ephysicsapp/screens/Admin/weeklyAdminAppUsageStatistics.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_segmented_control/material_segmented_control.dart';
 
@@ -101,13 +102,11 @@ class _AdminUserAppUsageStatsState extends State<AdminUserAppUsageStats> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Admin Statistics",style: GoogleFonts.poppins()),
+        title: Text("Admin Statistics", style: GoogleFonts.poppins()),
         centerTitle: true,
       ),
       body: isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? Center(child: SpinKitRotatingCircle())
           : SingleChildScrollView(
               child: Column(
                 children: [

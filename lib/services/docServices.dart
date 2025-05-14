@@ -6,6 +6,7 @@ import 'package:ephysicsapp/widgets/popUps.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
@@ -81,7 +82,6 @@ Future<void> addVideo({
   }
 }
 
-
 deleteDoc(
     {required String docID,
     required String moduleID,
@@ -106,7 +106,9 @@ Future<void> openFile(String url, BuildContext context, String title) async {
   showDialog(
     context: context,
     builder: (BuildContext context) {
-      return Center(child: CircularProgressIndicator(),);
+      return Center(
+        child: SpinKitRotatingCircle(),
+      );
     },
   );
 
@@ -130,15 +132,14 @@ Future<void> openFile(String url, BuildContext context, String title) async {
       );
     }
   }).catchError((e) {
-    Navigator.of(context, rootNavigator: true).pop(); // Dismiss loading on error
+    Navigator.of(context, rootNavigator: true)
+        .pop(); // Dismiss loading on error
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       duration: Duration(seconds: 5),
       content: Text('Error downloading PDF. Check your connection.'),
     ));
   });
 }
-
-
 
 Future<File> createFileOfPdfUrl(String pdfUrl) async {
   Completer<File> completer = Completer();
@@ -202,15 +203,11 @@ Future<void> printCacheSize() async {
 //     showResultDialog(context, result);
 //   }
 
-
-
-
 // fetchDocs(String section,String moduleID ) async{
 // var connectivityResult = await (Connectivity().checkConnectivity());
 // if (connectivityResult != ConnectivityResult.none) {
 //   final databaseReference = FirebaseDatabase.instance.reference();
 //  databaseReference.child(section).child(moduleID).child("documents").once().then((value){
-
 
 //    return value.value;
 //  });
@@ -221,13 +218,15 @@ Future<void> printCacheSize() async {
 //   }
 // }
 
-
 // Student PDF Views Increment
 Future<void> incrementPDFViewCount(String studentUUID) async {
   try {
     DatabaseReference dbRef = FirebaseDatabase.instance.ref();
-    DatabaseEvent event =
-    await dbRef.child('Users').child(studentUUID).child('pdfsViewed').once();
+    DatabaseEvent event = await dbRef
+        .child('Users')
+        .child(studentUUID)
+        .child('pdfsViewed')
+        .once();
 
     DataSnapshot snapshot = event.snapshot;
     if (snapshot.exists) {
@@ -238,11 +237,7 @@ Future<void> incrementPDFViewCount(String studentUUID) async {
       });
       print("Incremented in User");
     } else {
-      await dbRef
-          .child('Users')
-          .child(studentUUID)
-          .child('pdfsViewed')
-          .set(1);
+      await dbRef.child('Users').child(studentUUID).child('pdfsViewed').set(1);
       print("Initialized in User");
     }
   } catch (e) {

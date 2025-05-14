@@ -3,6 +3,7 @@ import 'package:ephysicsapp/widgets/graphContainer.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:math' as math;
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -18,20 +19,40 @@ class MonthlyAdminAppUsageStatistics extends StatefulWidget {
 
 class _MonthlyAdminAppUsageStatisticsState
     extends State<MonthlyAdminAppUsageStatistics> with WidgetsBindingObserver {
-
-
   bool isLoading = true;
   final List<String> months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
   ];
 
   final List<String> years = [
-    '2023', '2024', '2025', '2026', '2027', '2028',
-    '2029', '2030', '2031', '2032', '2033', '2034', '2035'
+    '2023',
+    '2024',
+    '2025',
+    '2026',
+    '2027',
+    '2028',
+    '2029',
+    '2030',
+    '2031',
+    '2032',
+    '2033',
+    '2034',
+    '2035'
   ];
 
-  Map<String, Map<int, int>> cachedData = {}; // Cache for month-year combinations
+  Map<String, Map<int, int>> cachedData =
+      {}; // Cache for month-year combinations
   Map<int, int> weeklyUsage = {};
   String selectedYear = DateTime.now().year.toString();
   int selectedMonthIndex = DateTime.now().month - 1;
@@ -42,7 +63,8 @@ class _MonthlyAdminAppUsageStatisticsState
   @override
   void initState() {
     super.initState();
-    _networkSubscription = Connectivity().onConnectivityChanged.listen((results) {
+    _networkSubscription =
+        Connectivity().onConnectivityChanged.listen((results) {
       if (results.contains(ConnectivityResult.wifi)) {
         print("Switched to WiFi: Allowing (50) concurrent requests");
         semaphore = LocalSemaphore(70); // Increase limit for WiFi
@@ -63,7 +85,8 @@ class _MonthlyAdminAppUsageStatisticsState
       semaphore = LocalSemaphore(70);
     } else {
       print("Mobile data detected: Limiting to 10 concurrent requests");
-      semaphore = LocalSemaphore(10); // Limit to 10 concurrent requests on mobile data
+      semaphore =
+          LocalSemaphore(10); // Limit to 10 concurrent requests on mobile data
     }
 
     final String monthYearKey = "${months[selectedMonthIndex]} $selectedYear";
@@ -128,9 +151,11 @@ class _MonthlyAdminAppUsageStatisticsState
     }
   }
 
-  Future<Map<String, int>> getTotalMonthlyUsage(String userId, String monthYear) async {
+  Future<Map<String, int>> getTotalMonthlyUsage(
+      String userId, String monthYear) async {
     final DatabaseReference ref = FirebaseDatabase.instance.ref();
-    final userAppUsageRef = ref.child('Users').child(userId).child('AppUsage').child(monthYear);
+    final userAppUsageRef =
+        ref.child('Users').child(userId).child('AppUsage').child(monthYear);
 
     Map<String, int> dailyUsageMap = {};
     DataSnapshot snapshot = await userAppUsageRef.get();
@@ -149,7 +174,9 @@ class _MonthlyAdminAppUsageStatisticsState
 
   int convertTimeToSeconds(String time) {
     List<String> parts = time.split(':');
-    return int.parse(parts[0]) * 3600 + int.parse(parts[1]) * 60 + int.parse(parts[2]);
+    return int.parse(parts[0]) * 3600 +
+        int.parse(parts[1]) * 60 +
+        int.parse(parts[2]);
   }
 
   int getWeekNumber(DateTime date) {
@@ -200,7 +227,8 @@ class _MonthlyAdminAppUsageStatisticsState
   double getMaxY() {
     double maxUsage = weeklyUsage.values.isEmpty
         ? 10.0
-        : weeklyUsage.values.fold(0, (max, value) => math.max(max, value / 60.0));
+        : weeklyUsage.values
+            .fold(0, (max, value) => math.max(max, value / 60.0));
     return (maxUsage / 5).ceil() * 5.0;
   }
 
@@ -209,11 +237,12 @@ class _MonthlyAdminAppUsageStatisticsState
   }
 
   List<BarChartGroupData> getWeeklyChartData() {
-    int totalWeeks = getTotalWeeks(int.parse(selectedYear), selectedMonthIndex + 1);
+    int totalWeeks =
+        getTotalWeeks(int.parse(selectedYear), selectedMonthIndex + 1);
 
     return List.generate(
       totalWeeks,
-          (index) {
+      (index) {
         int weekNumber = index + 1;
         double usage = (weeklyUsage[weekNumber] ?? 0) / 60.0;
         return BarChartGroupData(
@@ -239,65 +268,72 @@ class _MonthlyAdminAppUsageStatisticsState
   Widget build(BuildContext context) {
     return Scaffold(
       body: isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(child: SpinKitRotatingCircle())
           : Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Colors.blueAccent, Colors.white],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: 24),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Row(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.blueAccent, Colors.white],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                ),
+              ),
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
-                    Expanded(
-                      child: buildDropdown<String>(
-                        selectedYear,
-                        years,
-                            (value) => onMonthYearChanged(value!, selectedMonthIndex),
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: buildDropdown<String>(
+                              selectedYear,
+                              years,
+                              (value) => onMonthYearChanged(
+                                  value!, selectedMonthIndex),
+                            ),
+                          ),
+                          Expanded(
+                            child: buildDropdown<String>(
+                              months[selectedMonthIndex],
+                              months,
+                              (value) {
+                                if (value != null) {
+                                  int newMonthIndex = months.indexOf(
+                                      value); // Get the index of the selected month
+                                  onMonthYearChanged(selectedYear,
+                                      newMonthIndex); // Pass the new month index
+                                }
+                              },
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    Expanded(
-                      child: buildDropdown<String>(
-                        months[selectedMonthIndex],
-                        months,
-                            (value) {
-                          if (value != null) {
-                            int newMonthIndex = months.indexOf(value); // Get the index of the selected month
-                            onMonthYearChanged(selectedYear, newMonthIndex); // Pass the new month index
-                          }
-                        },
-                      ),
-                    ),
+                    const SizedBox(height: 24),
+                    weeklyUsage.isEmpty
+                        ? Center(
+                            child: Text(
+                                'No data available for ${months[selectedMonthIndex]} $selectedYear'))
+                        : GraphContainer(
+                            maxY: getMaxY(),
+                            yInterval: calculateYAxisInterval(getMaxY()),
+                            getChartData: getWeeklyChartData,
+                            title:
+                                'Weekly Usage for ${months[selectedMonthIndex]} $selectedYear',
+                            selectedMonthIndex: selectedMonthIndex,
+                            selectedYear: selectedYear,
+                          ),
+                    const SizedBox(height: 24),
                   ],
                 ),
               ),
-              const SizedBox(height: 24),
-              weeklyUsage.isEmpty
-                  ? Center(child: Text('No data available for ${months[selectedMonthIndex]} $selectedYear'))
-                  : GraphContainer(
-                maxY: getMaxY(),
-                yInterval: calculateYAxisInterval(getMaxY()),
-                getChartData: getWeeklyChartData,
-                title: 'Weekly Usage for ${months[selectedMonthIndex]} $selectedYear',
-                selectedMonthIndex: selectedMonthIndex,
-                selectedYear: selectedYear,
-              ),
-              const SizedBox(height: 24),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
-  Widget buildDropdown<T>(T selectedValue, List<T> items, ValueChanged<T?> onChanged) {
+  Widget buildDropdown<T>(
+      T selectedValue, List<T> items, ValueChanged<T?> onChanged) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -319,10 +355,12 @@ class _MonthlyAdminAppUsageStatisticsState
         underline: const SizedBox(),
         icon: const Icon(Icons.arrow_drop_down, color: Colors.black),
         style: GoogleFonts.poppins(fontSize: 16, color: Colors.black),
-        items: items.map((e) => DropdownMenuItem(
-          value: e,
-          child: Text(e.toString()),
-        )).toList(),
+        items: items
+            .map((e) => DropdownMenuItem(
+                  value: e,
+                  child: Text(e.toString()),
+                ))
+            .toList(),
         onChanged: onChanged,
       ),
     );
@@ -336,5 +374,4 @@ class _MonthlyAdminAppUsageStatisticsState
     cachedData.clear();
     super.dispose();
   }
-
 }

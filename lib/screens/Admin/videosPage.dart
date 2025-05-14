@@ -329,6 +329,7 @@ import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/services/general.dart';
 import 'package:ephysicsapp/widgets/popUps.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:video_player/video_player.dart';
 
 class VideosListPage extends StatelessWidget {
@@ -391,7 +392,7 @@ class VideosListPage extends StatelessWidget {
           } else if (snap.hasError) {
             return Center(child: Text("Error: ${snap.error}"));
           } else {
-            return Center(child: CircularProgressIndicator());
+            return Center(child: SpinKitRotatingCircle());
           }
         },
       ),
@@ -425,8 +426,7 @@ class VideosListPage extends StatelessWidget {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black, width: 2.5),
-                  borderRadius:
-                      BorderRadius.vertical(top: Radius.circular(10)),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
                   image: DecorationImage(
                     image: NetworkImage(
                         videoDetails['thumbnailDownloadUrl'] ?? ''),
