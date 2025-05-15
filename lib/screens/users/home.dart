@@ -3,6 +3,7 @@ import 'package:ephysicsapp/screens/Admin/adminStatistics.dart';
 import 'package:ephysicsapp/screens/Admin/noteshomepage.dart';
 import 'package:ephysicsapp/screens/users/intro.dart';
 import 'package:ephysicsapp/screens/authentication/adminLogin.dart';
+import 'package:ephysicsapp/screens/users/queryScreen.dart';
 import 'package:ephysicsapp/screens/users/quiz/quizHomePage.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/widgets/bottom_navy_bar.dart';
@@ -52,6 +53,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         MaterialPageRoute(
                             builder: (context) => AdminStatistics()));
                   })
+              : SizedBox.shrink(),
+          (isLoggedIn() || isStudentLoggedIn())
+              ? IconButton(
+                  icon: Icon(Icons.question_answer),
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => QueryFormScreen()));
+                  },
+                )
               : SizedBox.shrink(),
           isLoggedIn() || isStudentLoggedIn()
               ? IconButton(
