@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/screens/users/studentRegistration.dart';
 import 'package:ephysicsapp/services/authentication.dart';
@@ -135,7 +137,10 @@ class _StudentLoginState extends State<StudentLogin> {
               SizedBox(height: 30),
 
               isLoading
-                  ? SpinKitRotatingCircle()
+                  ? SpinKitFadingCircle(
+                      color: color5,
+                      size: 30.0,
+                    )
                   : Container(
                       height: MediaQuery.of(context).size.height / 16,
                       width: MediaQuery.of(context).size.width - 20.0,
@@ -163,7 +168,10 @@ class _StudentLoginState extends State<StudentLogin> {
                     ),
               SizedBox(height: MediaQuery.of(context).size.height / 50),
               isGoogleLoading
-                  ? SpinKitRotatingCircle()
+                  ? SpinKitFadingCircle(
+                      color: color5,
+                      size: 30.0,
+                    )
                   : Container(
                       height: MediaQuery.of(context).size.height / 16,
                       width: MediaQuery.of(context).size.width - 20.0,
@@ -210,38 +218,41 @@ class _StudentLoginState extends State<StudentLogin> {
               SizedBox(height: MediaQuery.of(context).size.height / 100),
 
               // Apple Sign-In Button
-              Container(
-                height: MediaQuery.of(context).size.height / 16,
-                width: MediaQuery.of(context).size.width - 20.0,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                    elevation: 2,
-                  ),
-                  onPressed: () async {
-                    await studentLoginWithApple(context);
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.apple, color: Colors.white, size: 28),
-                      SizedBox(width: 10),
-                      Text(
-                        'Sign in with Apple',
-                        style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
+              (Platform.isIOS)
+                  ? Container(
+                      height: MediaQuery.of(context).size.height / 16,
+                      width: MediaQuery.of(context).size.width - 20.0,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 12, horizontal: 24),
+                          elevation: 2,
+                        ),
+                        onPressed: () async {
+                          await studentLoginWithApple(context);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.apple, color: Colors.white, size: 28),
+                            SizedBox(width: 10),
+                            Text(
+                              'Sign in with Apple',
+                              style: GoogleFonts.poppins(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
+                    )
+                  : SizedBox(),
 
               // Forgot Password Button
               TextButton(

@@ -392,7 +392,12 @@ class VideosListPage extends StatelessWidget {
           } else if (snap.hasError) {
             return Center(child: Text("Error: ${snap.error}"));
           } else {
-            return Center(child: SpinKitRotatingCircle());
+            return Center(
+              child: SpinKitFadingCircle(
+                color: color5,
+                size: 30.0,
+              ),
+            );
           }
         },
       ),

@@ -1,3 +1,4 @@
+import 'package:ephysicsapp/globals/colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -157,7 +158,12 @@ class _WeeklyAdminAppUsageStatisticsState
   Widget build(BuildContext context) {
     return Scaffold(
       body: _isLoading
-          ? Center(child: SpinKitRotatingCircle())
+          ? Center(
+              child: SpinKitFadingCircle(
+                color: color5,
+                size: 30.0,
+              ),
+            )
           : Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(

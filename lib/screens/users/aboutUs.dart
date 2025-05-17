@@ -134,47 +134,42 @@ class AboutUsState extends State<AboutUs> {
   List<Widget> renderListCustomTabs() {
     List<Widget> tabs = [];
     for (int i = 0; i < slides.length; i++) {
-      ContentConfig currentSlide = slides[i];
-      tabs.add(Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: Container(
-          child: ListView(
-            children: <Widget>[
-              SizedBox(
-                height: 50,
-              ),
-              GestureDetector(
-                  child: Image.asset(
-                currentSlide.pathImage!,
-                width: 200.0,
-                height: 200.0,
-                fit: BoxFit.contain,
-              )),
-              Container(
-                child: Text(
+      final currentSlide = slides[i];
+      tabs.add(
+        Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(height: 50),
+                Image.asset(
+                  currentSlide.pathImage!,
+                  width: 200,
+                  height: 200,
+                  fit: BoxFit.contain,
+                ),
+                SizedBox(height: 20),
+                Text(
                   currentSlide.title!,
                   style: currentSlide.styleTitle,
                   textAlign: TextAlign.center,
                 ),
-                margin: EdgeInsets.only(top: 20.0, left: 20, right: 20),
-              ),
-              Container(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20.0, vertical: 20.0),
-                  child: Text(
-                    currentSlide.description!,
-                    style: currentSlide.styleDescription,
-                    textAlign: TextAlign.center,
-                  ),
+                SizedBox(height: 20),
+                Text(
+                  currentSlide.description!,
+                  style: currentSlide.styleDescription,
+                  textAlign: TextAlign.center,
                 ),
-                height: 300, // Optional: control scroll height inside slide
-              ),
-            ],
+                // Add any extra bottom padding if needed
+                SizedBox(height: 50),
+              ],
+            ),
           ),
         ),
-      ));
+      );
     }
     return tabs;
   }
@@ -187,7 +182,12 @@ class AboutUsState extends State<AboutUs> {
         backgroundColor: Colors.white,
       ),
       body: isLoadingSlides
-          ? Center(child: SpinKitRotatingCircle())
+          ? Center(
+              child: SpinKitFadingCircle(
+                color: color5,
+                size: 30.0,
+              ),
+            )
           : IntroSlider(
               listContentConfig: this.slides,
               renderSkipBtn: this.renderSkipBtn(),

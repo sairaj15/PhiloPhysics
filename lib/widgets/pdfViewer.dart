@@ -297,7 +297,10 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
           errorMessage.isEmpty
               ? !isReady
                   ? Center(
-                      child: SpinKitRotatingCircle(),
+                      child: SpinKitFadingCircle(
+                        color: color5,
+                        size: 30.0,
+                      ),
                     )
                   : Container()
               : Center(

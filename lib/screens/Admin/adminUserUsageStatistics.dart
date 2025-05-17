@@ -106,7 +106,12 @@ class _AdminUserAppUsageStatsState extends State<AdminUserAppUsageStats> {
         centerTitle: true,
       ),
       body: isLoading
-          ? Center(child: SpinKitRotatingCircle())
+          ? Center(
+              child: SpinKitFadingCircle(
+                color: color5,
+                size: 30.0,
+              ),
+            )
           : SingleChildScrollView(
               child: Column(
                 children: [

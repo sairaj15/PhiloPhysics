@@ -5,6 +5,7 @@ import 'package:ephysicsapp/screens/users/intro.dart';
 import 'package:ephysicsapp/screens/authentication/adminLogin.dart';
 import 'package:ephysicsapp/screens/users/queryScreen.dart';
 import 'package:ephysicsapp/screens/users/quiz/quizHomePage.dart';
+import 'package:ephysicsapp/screens/users/v-labs/vabs_home_screen.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/widgets/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,7 @@ class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
   late PageController _pageController;
   String appbarText = "Home";
-  List titles = ["Home", "Notes", "Play Quiz"];
+  List titles = ["Home", "Notes", "Play Quiz", "Virtual Labs"];
 
   @override
   void initState() {
@@ -93,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
             IntroPage(),
             NotesHomePage(),
             QuizHomePage(),
+            VlabsHomeScreen(),
           ],
         ),
       ),
@@ -131,6 +133,13 @@ class _MyHomePageState extends State<MyHomePage> {
             textAlign: TextAlign.center,
             title: Text('Quizzes', style: TextStyle(color: color5)),
             icon: Icon(Icons.timer, color: color5),
+          ),
+          BottomNavyBarItem(
+            activeColor: color2,
+            inactiveColor: Colors.white,
+            textAlign: TextAlign.center,
+            title: Text('V-Labs', style: TextStyle(color: color5)),
+            icon: Icon(Icons.science_rounded, color: color5),
           ),
         ],
       ),

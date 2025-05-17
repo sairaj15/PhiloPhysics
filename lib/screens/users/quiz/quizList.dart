@@ -72,8 +72,10 @@ class _QuizListState extends State<QuizList> {
             );
           } else {
             return Center(
-              child: SpinKitRotatingCircle(),
-            );
+                child: SpinKitFadingCircle(
+              color: color5,
+              size: 30.0,
+            ));
           }
         },
       ),

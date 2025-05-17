@@ -166,7 +166,10 @@ class _AdminLoginFormState extends State<AdminLoginForm> {
             ),
             const SizedBox(height: 30),
             isLoading
-                ? SpinKitRotatingCircle()
+                ? SpinKitFadingCircle(
+                    color: color5,
+                    size: 30.0,
+                  )
                 : Container(
                     height: MediaQuery.of(context).size.height / 16,
                     width: MediaQuery.of(context).size.width - 20.0,
@@ -194,7 +197,10 @@ class _AdminLoginFormState extends State<AdminLoginForm> {
                   ),
             SizedBox(height: MediaQuery.of(context).size.height / 50),
             isGoogleLoading
-                ? SpinKitRotatingCircle()
+                ? SpinKitFadingCircle(
+                    color: color5,
+                    size: 30.0,
+                  )
                 : Container(
                     height: MediaQuery.of(context).size.height / 16,
                     width: MediaQuery.of(context).size.width - 20.0,

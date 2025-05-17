@@ -98,7 +98,10 @@ class _ModuleMasterState extends State<ModuleMaster> {
             );
           } else {
             return Center(
-              child: SpinKitRotatingCircle(),
+              child: SpinKitFadingCircle(
+                color: color5,
+                size: 30.0,
+              ),
             );
           }
         },

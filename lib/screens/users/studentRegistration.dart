@@ -488,7 +488,10 @@ class _StudentRegisterState extends State<StudentRegister> {
                 ),
                 SizedBox(height: 20),
                 isLoading
-                    ? SpinKitRotatingCircle()
+                    ? SpinKitFadingCircle(
+                        color: color5,
+                        size: 30.0,
+                      )
                     : ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.symmetric(

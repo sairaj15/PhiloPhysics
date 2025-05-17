@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:chewie/chewie.dart';
+import 'package:ephysicsapp/globals/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:video_player/video_player.dart';
@@ -97,7 +98,10 @@ class _VideoDetailPageState extends State<VideoDetailPage> {
         child: _chewieController != null &&
                 _chewieController!.videoPlayerController.value.isInitialized
             ? Chewie(controller: _chewieController!)
-            : SpinKitRotatingCircle(),
+            : SpinKitFadingCircle(
+                color: color5,
+                size: 30.0,
+              ),
       ),
     );
   }

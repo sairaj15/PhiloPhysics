@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/shimmer/notesScreenShimmer.dart';
 import 'package:ephysicsapp/widgets/pdfViewer.dart';
 import 'package:ephysicsapp/widgets/popUps.dart';
@@ -107,7 +108,10 @@ Future<void> openFile(String url, BuildContext context, String title) async {
     context: context,
     builder: (BuildContext context) {
       return Center(
-        child: SpinKitRotatingCircle(),
+        child: SpinKitFadingCircle(
+          color: color5,
+          size: 30.0,
+        ),
       );
     },
   );
