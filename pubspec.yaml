@@ -58,10 +58,11 @@ dependencies:
   modal_progress_hud_nsn: ^0.5.1
   no_screenshot: ^0.3.1
   package_info_plus: ^8.3.0
-  path: ^1.9.1
+  path: ^1.9.0
   path_provider: ^2.0.15
   percent_indicator: ^4.2.3
   pool: ^1.5.1
+  random_avatar: ^0.0.8
   semaphore: ^0.2.1
   shared_preferences: ^2.2.3
   shimmer: ^3.0.0
