@@ -5,6 +5,7 @@ import 'package:ephysicsapp/screens/users/intro.dart';
 import 'package:ephysicsapp/screens/authentication/adminLogin.dart';
 import 'package:ephysicsapp/screens/users/queryScreen.dart';
 import 'package:ephysicsapp/screens/users/quiz/quizHomePage.dart';
+import 'package:ephysicsapp/screens/users/sidebar.dart';
 import 'package:ephysicsapp/screens/users/v-labs/vabs_home_screen.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/widgets/bottom_navy_bar.dart';
@@ -21,6 +22,8 @@ class _MyHomePageState extends State<MyHomePage> {
   String appbarText = "Home";
   List titles = ["Home", "Notes", "Play Quiz", "Virtual Labs"];
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
@@ -36,7 +39,15 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
+        leading: isLoggedIn()
+            ? IconButton(
+                icon: Icon(Icons.menu),
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
+                })
+            : SizedBox.shrink(),
         title: Text(
           appbarText,
           style: TextStyle(color: color5),
@@ -143,6 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
+      drawer: isLoggedIn() ? const ProfileSidebarDrawer() : null,
     );
   }
 }
