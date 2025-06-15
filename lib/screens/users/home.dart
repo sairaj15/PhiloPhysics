@@ -8,6 +8,7 @@ import 'package:ephysicsapp/screens/users/queryScreen.dart';
 import 'package:ephysicsapp/screens/users/quiz/quizHomePage.dart';
 import 'package:ephysicsapp/screens/users/sidebar.dart';
 import 'package:ephysicsapp/screens/users/studentLogin.dart';
+import 'package:ephysicsapp/screens/users/studentRegistration.dart';
 import 'package:ephysicsapp/screens/users/v-labs/vabs_home_screen.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/widgets/bottom_navy_bar.dart';

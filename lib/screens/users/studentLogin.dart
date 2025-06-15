@@ -269,9 +269,9 @@ class _StudentLoginState extends State<StudentLogin> {
                       Text(
                         'Sign in with Google',
                         style: GoogleFonts.poppins(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white
                         ),
                       ),
                     ],
@@ -283,12 +283,12 @@ class _StudentLoginState extends State<StudentLogin> {
               // Apple Sign-In Button
               (Platform.isIOS)
                   ? Column(
-                    children: [
-                      SizedBox(height: MediaQuery.of(context).size.height / 100),
-                      Container(
-                      height: MediaQuery.of(context).size.height / 16,
-                      width: MediaQuery.of(context).size.width - 20.0,
-                        child: ElevatedButton(
+                children: [
+                  SizedBox(height: MediaQuery.of(context).size.height / 100),
+                  Container(
+                    height: MediaQuery.of(context).size.height / 16,
+                    width: MediaQuery.of(context).size.width - 20.0,
+                    child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
@@ -316,10 +316,10 @@ class _StudentLoginState extends State<StudentLogin> {
                           ),
                         ],
                       ),
-                                      ),
-                                    ),
-                    ],
-                  )
+                    ),
+                  ),
+                ],
+              )
                   : SizedBox(),
 
               // Forgot Password Button
