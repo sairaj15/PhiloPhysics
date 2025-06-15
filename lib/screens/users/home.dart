@@ -1,4 +1,5 @@
 import 'package:ephysicsapp/globals/colors.dart';
+import 'package:ephysicsapp/main.dart';
 import 'package:ephysicsapp/screens/Admin/adminStatistics.dart';
 import 'package:ephysicsapp/screens/Admin/noteshomepage.dart';
 import 'package:ephysicsapp/screens/users/intro.dart';
@@ -6,6 +7,7 @@ import 'package:ephysicsapp/screens/authentication/adminLogin.dart';
 import 'package:ephysicsapp/screens/users/queryScreen.dart';
 import 'package:ephysicsapp/screens/users/quiz/quizHomePage.dart';
 import 'package:ephysicsapp/screens/users/sidebar.dart';
+import 'package:ephysicsapp/screens/users/studentLogin.dart';
 import 'package:ephysicsapp/screens/users/v-labs/vabs_home_screen.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/widgets/bottom_navy_bar.dart';
@@ -36,18 +38,23 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 
+  void _onSidebarItemSelected(int index) {
+    setState(() {
+      _currentIndex = index;
+      appbarText = titles[index];
+    });
+    _pageController.jumpToPage(index);
+  }
+
+  bool get isAdmin => isLoggedIn();
+  bool get isStudent => isStudentLoggedIn();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        leading: isLoggedIn()
-            ? IconButton(
-                icon: Icon(Icons.menu),
-                onPressed: () {
-                  _scaffoldKey.currentState?.openDrawer();
-                })
-            : SizedBox.shrink(),
+        centerTitle: false,
         title: Text(
           appbarText,
           style: TextStyle(color: color5),
@@ -55,42 +62,6 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: color1,
         iconTheme: IconThemeData(color: color5),
         elevation: 0,
-        actions: [
-          isLoggedIn()
-              ? IconButton(
-                  icon: Icon(Icons.insights),
-                  onPressed: () async {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => AdminStatistics()));
-                  })
-              : SizedBox.shrink(),
-          (isLoggedIn() || isStudentLoggedIn())
-              ? IconButton(
-                  icon: Icon(Icons.question_answer),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => QueryFormScreen()));
-                  },
-                )
-              : SizedBox.shrink(),
-          isLoggedIn() || isStudentLoggedIn()
-              ? IconButton(
-                  icon: Icon(Icons.exit_to_app),
-                  onPressed: () {
-                    onLogout(context);
-                  },
-                )
-              : IconButton(
-                  icon: Icon(Icons.person),
-                  onPressed: () async {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => AdminLogin()));
-                  }),
-        ],
       ),
       body: SafeArea(
         child: PageView(
@@ -154,7 +125,30 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      drawer: isLoggedIn() ? const ProfileSidebarDrawer() : null,
+      endDrawer: ProfileSidebarDrawer(
+        selectedIndex: _currentIndex,
+        onItemSelected: _onSidebarItemSelected,
+        isAdmin: isLoggedIn(),
+        isStudent: isStudentLoggedIn(),
+        onLogout: () => onLogout(context),
+        onLogin: () {
+          // Navigate to your login page
+          navigatorKey.currentState
+              ?.push(MaterialPageRoute(builder: (context) => StudentLogin()));
+        },
+        onAdminLogin: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => AdminLogin()));
+        },
+        onQuery: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => QueryFormScreen()));
+        },
+        onAdminStats: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => AdminStatistics()));
+        },
+      ),
     );
   }
 }

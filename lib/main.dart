@@ -18,6 +18,8 @@ import 'package:url_launcher/url_launcher.dart';
 import 'globals/colors.dart';
 import 'package:http/http.dart' as http;
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   try {
@@ -32,7 +34,16 @@ void main() async {
     androidProvider: AndroidProvider.playIntegrity,
     // appleProvider: AppleProvider.appAttest,
   );
-  runApp(MyApp());
+  runApp(MaterialApp(
+    navigatorKey: navigatorKey,
+    debugShowCheckedModeBanner: false,
+    title: 'Philo Physics',
+    theme: ThemeData(
+      primarySwatch: createMaterialColor(color5),
+      visualDensity: VisualDensity.adaptivePlatformDensity,
+    ),
+    home: MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -318,17 +329,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       DeviceOrientation.portraitDown,
     ]);
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Philo Physics',
-      theme: ThemeData(
-        primarySwatch: createMaterialColor(color5),
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: prefs.getBool("isStudentLoggedIn") == true ||
-              prefs.getBool("isLogged") == true
-          ? MyHomePage()
-          : SplashScreen(),
-    );
+    return prefs.getBool("isStudentLoggedIn") == true ||
+            prefs.getBool("isLogged") == true
+        ? MyHomePage()
+        : SplashScreen();
   }
 }
