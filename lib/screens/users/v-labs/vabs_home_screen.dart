@@ -100,7 +100,7 @@ class _VlabsHomeScreenState extends State<VlabsHomeScreen> {
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
                         padding:
-                            EdgeInsets.symmetric(vertical: 12, horizontal: 32),
+                        EdgeInsets.symmetric(vertical: 12, horizontal: 32),
                         backgroundColor: color5,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -130,7 +130,9 @@ class _VlabsHomeScreenState extends State<VlabsHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Stack(
       children: [
         SafeArea(
@@ -138,74 +140,81 @@ class _VlabsHomeScreenState extends State<VlabsHomeScreen> {
             backgroundColor: Colors.white,
             body: Center(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
                 child: IntrinsicHeight(
-                  child: Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade200,
-                      borderRadius: BorderRadius.circular(15),
-                      border: Border.all(color: Colors.black, width: 1),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(18),
-                          ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(15),
-                            child: Image.asset(
-                              "assets/vlabsgif-ezgif.com-crop.gif",
-                              height: 150,
-                              width: double.infinity,
-                              fit: BoxFit.fill,
+                  child: Center(
+                    child: Container(
+                      padding: EdgeInsets.all(screenWidth * 0.04),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(screenWidth * 0.04),
+                        border: Border.all(color: Colors.black, width: 1),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(screenWidth * 0.025),
+                            decoration: BoxDecoration(
+                              color: Colors.black,
+                              borderRadius:
+                              BorderRadius.circular(screenWidth * 0.045),
                             ),
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          "Applied Physics\nVirtual Laboratory",
-                          style: GoogleFonts.poppins(
-                            color: Colors.black,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          "Experience physics experiments in an interactive virtual environment. Learn, explore, and discover the laws of physics from anywhere.",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.black.withOpacity(0.50),
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            ElevatedButton.icon(
-                              onPressed: () => _navigateToVlabs(context),
-                              iconAlignment: IconAlignment.end,
-                              icon: Icon(Icons.arrow_forward_rounded,
-                                  color: Colors.white),
-                              label: Text("Explore Experiments  "),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.blue,
-                                foregroundColor: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(15),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 12),
+                            child: ClipRRect(
+                              borderRadius:
+                              BorderRadius.circular(screenWidth * 0.037),
+                              child: Image.asset(
+                                "assets/virtualLabs.gif",
+                                height: screenHeight * 0.18,
+                                width: double.infinity,
+                                fit: BoxFit.fitWidth,
                               ),
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          SizedBox(height: screenHeight * 0.02),
+                          Text(
+                            "Applied Physics\nVirtual Laboratory",
+                            style: GoogleFonts.poppins(
+                              color: Colors.black,
+                              fontSize: screenWidth * 0.05,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          SizedBox(height: screenHeight * 0.015),
+                          Text(
+                            "Experience physics experiments in an interactive virtual environment. Learn, explore, and discover the laws of physics from anywhere.",
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.035,
+                              color: Colors.black.withOpacity(0.5),
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SizedBox(height: screenHeight * 0.02),
+                          Row(
+                            children: [
+                              ElevatedButton.icon(
+                                onPressed: () => _navigateToVlabs(context),
+                                iconAlignment: IconAlignment.end,
+                                icon: Icon(Icons.arrow_forward_rounded,
+                                    color: Colors.white),
+                                label: Text("Explore Experiments  "),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                  foregroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        screenWidth * 0.037),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: screenWidth * 0.05,
+                                    vertical: screenHeight * 0.015,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -228,7 +237,7 @@ class _VlabsHomeScreenState extends State<VlabsHomeScreen> {
                     borderRadius: BorderRadius.circular(16),
                     elevation: 4,
                     child: Container(
-                      width: size.width * 0.7,
+                      width: screenWidth * 0.7,
                       padding: EdgeInsets.all(24),
                       decoration: BoxDecoration(
                         color: Colors.white,

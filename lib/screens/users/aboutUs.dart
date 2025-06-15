@@ -144,7 +144,7 @@ class AboutUsState extends State<AboutUs> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                SizedBox(height: 50),
+                SizedBox(height: 25),
                 Image.asset(
                   currentSlide.pathImage!,
                   width: 200,

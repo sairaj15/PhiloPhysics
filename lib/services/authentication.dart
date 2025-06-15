@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
@@ -20,7 +21,7 @@ Future<void> initializePreferences() async {
   prefs = await SharedPreferences.getInstance();
 }
 
-// Admin login method
+// Admin login method via Email / Pass
 Future<void> login(String email, String password, BuildContext context) async {
   try {
     final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -113,113 +114,7 @@ Future<void> login(String email, String password, BuildContext context) async {
   }
 }
 
-Future<void> Studentregister(
-  String email,
-  String name,
-  String classdiv,
-  String password,
-  String collegeName,
-  BuildContext context,
-) async {
-  try {
-    print("Registration Init");
-    FirebaseAuth _auth = FirebaseAuth.instance;
-    GoogleSignIn googleSignIn = GoogleSignIn();
-
-    // Check if there's a signed-in Google account
-    GoogleSignInAccount? currentUser = googleSignIn.currentUser;
-
-    // Sign out if there's a user signed in
-    if (currentUser != null) {
-      print("Has currentUser ${currentUser}");
-      await googleSignIn.signOut();
-      await googleSignIn.disconnect();
-    } else {
-      print("No currentUser");
-    }
-
-    // Attempt to sign in with Google, prompting the account picker
-    GoogleSignInAccount? googleUser = await googleSignIn.signIn();
-
-    // Start creating user with email and password
-    final userCreation = await _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
-
-    final dbRef = FirebaseDatabase.instance.ref();
-
-    // If Google account was selected, link it with the Firebase Authentication user
-    if (googleUser != null) {
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-
-      OAuthCredential googleCredential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
-      );
-
-      // Check if the Google account email matches the provided email
-      if (googleUser.email.toLowerCase() != email.toLowerCase()) {
-        print("The Google account email does not match the provided email.");
-        Fluttertoast.showToast(
-          msg:
-              "The Google account email does not match the provided email. Please try again.",
-          timeInSecForIosWeb: 6,
-        );
-
-        // Instead of deleting the account, just sign out the user
-        await userCreation.user!.delete();
-        await googleSignIn.disconnect();
-        await _auth.signOut();
-        return;
-      }
-
-      // Link Google account with the Firebase Authentication user
-      await userCreation.user!.linkWithCredential(googleCredential);
-      print("Account linked with Google successfully");
-
-      // Show a success message for Google linking
-      Fluttertoast.showToast(
-        msg: "User Account Created and Linked with Google Successfully",
-        timeInSecForIosWeb: 6,
-      );
-    } else {
-      // Show a success message for email/password registration only
-      Fluttertoast.showToast(
-        msg: "User Account Created Successfully with Email/Password",
-        timeInSecForIosWeb: 6,
-      );
-    }
-
-    // Save user details to the Realtime Database
-    await dbRef.child('Users').child(userCreation.user!.uid).set({
-      'name': name,
-      'classDiv': classdiv,
-      'college': collegeName,
-      'email': email,
-      'role': 'Student',
-    });
-
-    // Navigate back to the previous screen
-    Navigator.pop(context);
-  } catch (e) {
-    // Handle registration errors
-    print(e.toString());
-    Fluttertoast.showToast(
-      msg: "Error in registration: ${e.toString()}",
-      timeInSecForIosWeb: 6,
-    );
-
-    // Ensure user is fully signed out on error to prevent cached accounts
-    GoogleSignIn googleSignIn = GoogleSignIn();
-    await googleSignIn.disconnect();
-    await googleSignIn.signOut();
-    FirebaseAuth.instance.signOut();
-  }
-}
-
-// Optimized Student login method
+// Optimized Student login method via email / pass
 Future<void> studentLogin(
     String email, String password, BuildContext context) async {
   try {
@@ -632,6 +527,7 @@ Future<void> adminLoginWithGoogle(BuildContext context) async {
   }
 }
 
+// Student Login Via Apple
 Future<void> studentLoginWithApple(BuildContext context) async {
   try {
     final rawNonce = _generateNonce();
@@ -650,14 +546,158 @@ Future<void> studentLoginWithApple(BuildContext context) async {
       rawNonce: rawNonce,
     );
 
+    final UserCredential result =
     await FirebaseAuth.instance.signInWithCredential(oauthCredential);
-    Navigator.pushReplacementNamed(context, '/studentHome');
+    if (result.user == null) {
+      Fluttertoast.showToast(msg: "Sign-in failed", timeInSecForIosWeb: 4);
+      return;
+    }
+
+    final String userId = result.user!.uid;
+
+    final DatabaseReference dbRef = FirebaseDatabase.instance.ref();
+    final DataSnapshot snapshot = await dbRef.child('Users/$userId').get();
+
+    if (!snapshot.exists) {
+      await FirebaseAuth.instance.signOut();
+      Fluttertoast.showToast(msg: "No account found", timeInSecForIosWeb: 4);
+      return;
+    }
+
+    final userData = snapshot.value as Map<dynamic, dynamic>;
+    final String role = userData['role'] ?? '';
+
+    // 6. Check role
+    if (role == 'Student') {
+      await Future.wait([
+        prefs.setString('studentUUID', userId),
+        prefs.setBool('isStudentLoggedIn', true),
+      ]);
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => MyApp()),
+            (route) => false,
+      );
+
+      context.findAncestorStateOfType<MyAppState>()?.onUserLogin(userId);
+      Fluttertoast.showToast(msg: "Login successful", timeInSecForIosWeb: 4);
+    } else {
+      await FirebaseAuth.instance.signOut();
+      Fluttertoast.showToast(
+          msg: "Not authorized as student", timeInSecForIosWeb: 4);
+    }
   } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Apple sign-in failed: $e')),
-    );
+    print("Apple Login error: $e");
+    await FirebaseAuth.instance.signOut();
+    Fluttertoast.showToast(msg: "Login failed", timeInSecForIosWeb: 4);
   }
 }
+
+// Admin Login Via Apple
+Future<void> adminLoginWithApple(BuildContext context) async {
+  try {
+    final rawNonce = _generateNonce();
+    final nonce = _sha256ofString(rawNonce);
+
+    final appleCredential = await SignInWithApple.getAppleIDCredential(
+      scopes: [
+        AppleIDAuthorizationScopes.email,
+        AppleIDAuthorizationScopes.fullName,
+      ],
+      nonce: nonce,
+    );
+
+    // Create OAuth credential from Apple
+    final oauthCredential = OAuthProvider("apple.com").credential(
+      idToken: appleCredential.identityToken,
+      rawNonce: rawNonce,
+    );
+
+    final FirebaseAuth _auth = FirebaseAuth.instance;
+
+    // Check if email already exists and is not linked with Apple
+    if (appleCredential.email != null) {
+      List<String> signInMethods =
+      await _auth.fetchSignInMethodsForEmail(appleCredential.email!);
+
+      if (signInMethods.isNotEmpty &&
+          !signInMethods.contains("apple.com")) {
+        Fluttertoast.showToast(
+            msg:
+            "This email is registered with email/password only. Please use email login.",
+            fontSize: 14,
+            timeInSecForIosWeb: 6,
+            toastLength: Toast.LENGTH_LONG);
+        return;
+      }
+    }
+
+    // Sign in with Firebase
+    final UserCredential result =
+    await _auth.signInWithCredential(oauthCredential);
+
+    if (result.user == null) {
+      Fluttertoast.showToast(
+          msg: "Firebase sign-in failed", timeInSecForIosWeb: 6);
+      return;
+    }
+
+    String userId = result.user!.uid;
+    final dbRef = FirebaseDatabase.instance.ref();
+
+    final snapshot = await dbRef.child('Users/$userId').get();
+
+    if (snapshot.exists) {
+      final userData = snapshot.value as Map<dynamic, dynamic>;
+      final String role = userData['role'] ?? '';
+
+      if (role != 'Student') {
+        print("Logged In as Admin");
+
+        prefs.setBool("isLogged", true); // Mark as admin logged in
+
+        Fluttertoast.showToast(
+          msg: "Logged In as Admin: ${result.user!.email}",
+          fontSize: 14,
+          timeInSecForIosWeb: 6,
+          toastLength: Toast.LENGTH_LONG,
+        );
+
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (context) => MyHomePage()),
+              (route) => false,
+        );
+      } else {
+        print("Cannot log in as Admin. User is a Student.");
+        Fluttertoast.showToast(
+          msg: "Cannot log in as Admin. User is a Student.",
+          fontSize: 14,
+          timeInSecForIosWeb: 6,
+          toastLength: Toast.LENGTH_LONG,
+        );
+        await _auth.signOut();
+      }
+    } else {
+      print("No account found in the database.");
+      Fluttertoast.showToast(
+        msg: "No Account Found for this Apple account.",
+        timeInSecForIosWeb: 6,
+        toastLength: Toast.LENGTH_LONG,
+      );
+      await _auth.signOut();
+    }
+  } catch (e) {
+    print("Apple login failed: $e");
+    Fluttertoast.showToast(
+      msg: "Apple login failed. Please try again.",
+      timeInSecForIosWeb: 6,
+    );
+    await FirebaseAuth.instance.signOut();
+  }
+}
+
 
 // Utility functions
 String _generateNonce([int length = 32]) {
@@ -672,4 +712,275 @@ String _sha256ofString(String input) {
   final bytes = utf8.encode(input);
   final digest = sha256.convert(bytes);
   return digest.toString();
+}
+
+
+// Register
+Future<void> Studentregister(
+    String email,
+    String name,
+    String classdiv,
+    String password,
+    String collegeName,
+    BuildContext context,
+    ) async {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn googleSignIn = GoogleSignIn();
+  final dbRef = FirebaseDatabase.instance.ref();
+
+  try {
+    await FirebaseAuth.instance.signOut();
+    print("Registration Init");
+
+    // Check if there's a signed-in Google account
+    GoogleSignInAccount? currentUser = googleSignIn.currentUser;
+    //Sign out if there's a user signed in
+    if (currentUser != null) {
+      print("Has currentUser ${currentUser}");
+      await googleSignIn.signOut();
+       await googleSignIn.disconnect();
+    } else {
+      print("No currentUser");
+    }
+
+    // Platform-specific account linking flow
+    if (Platform.isAndroid) {
+      // Android - Show notice about Google Sign-In
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Important Notice"),
+            content: const Text(
+              "A Google Sign-In popup will appear. If you don't wish to link your Google account, press the back button to skip.",
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("Got it"),
+              ),
+            ],
+          );
+        },
+      );
+
+      // Try Google Sign-In for Android
+      try {
+        print("Attempting Google Sign-In for Android");
+        final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+        if (googleUser != null) {
+          print("Google user selected: ${googleUser.email}");
+          if (googleUser.email.toLowerCase() != email.toLowerCase()) {
+            print("Email mismatch between Google and registration");
+            Fluttertoast.showToast(
+              msg: "Google account email doesn't match registration email",
+              timeInSecForIosWeb: 6,
+            );
+            return;
+          }
+
+          // Create user with email/password first
+          final userCredential = await _auth.createUserWithEmailAndPassword(
+            email: email,
+            password: password,
+          );
+
+          // Link Google account
+          final googleAuth = await googleUser.authentication;
+          final credential = GoogleAuthProvider.credential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken,
+          );
+          await userCredential.user!.linkWithCredential(credential);
+          print("Google account linked successfully");
+
+          // Save user data
+          await _saveUserData(dbRef, userCredential.user!.uid, name, classdiv, collegeName, email);
+
+          Fluttertoast.showToast(
+            msg: "Account created & linked with Google",
+            timeInSecForIosWeb: 6,
+          );
+          Navigator.pop(context);
+          return;
+        }
+      } catch (e) {
+        print("Google Sign-In skipped or failed: $e");
+        // Continue with normal email/password registration
+      }
+    }
+    else if (Platform.isIOS) {
+      // iOS - Show provider selection
+      final selectedProvider = await showDialog<String>(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text("Link Account (Optional)"),
+            content: const Text("Would you like to link a Google or Apple account?"),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop("google"),
+                child: const Text("Google"),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop("apple"),
+                child: const Text("Apple"),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(null),
+                child: const Text("Skip"),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (selectedProvider != null) {
+        try {
+          if (selectedProvider == "google") {
+            print("Attempting Google Sign-In for iOS");
+            final GoogleSignInAccount? googleUser = await googleSignIn.signIn();
+
+            if (googleUser != null) {
+              if (googleUser.email.toLowerCase() != email.toLowerCase()) {
+                Fluttertoast.showToast(
+                  msg: "Google account email doesn't match registration email",
+                  timeInSecForIosWeb: 6,
+                );
+                return;
+              }
+
+              // Create user with email/password first
+              final userCredential = await _auth.createUserWithEmailAndPassword(
+                email: email,
+                password: password,
+              );
+
+              // Link Google account
+              final googleAuth = await googleUser.authentication;
+              final credential = GoogleAuthProvider.credential(
+                accessToken: googleAuth.accessToken,
+                idToken: googleAuth.idToken,
+              );
+              await userCredential.user!.linkWithCredential(credential);
+              print("Google account linked successfully");
+
+              await _saveUserData(dbRef, userCredential.user!.uid, name, classdiv, collegeName, email);
+
+              Fluttertoast.showToast(
+                msg: "Account created & linked with Google",
+                timeInSecForIosWeb: 6,
+              );
+              Navigator.pop(context);
+              return;
+            }
+          }
+          else if (selectedProvider == "apple") {
+            print("Attempting Apple Sign-In");
+            final appleProvider = AppleAuthProvider();
+            final userCredential = await _auth.createUserWithEmailAndPassword(
+              email: email,
+              password: password,
+            );
+
+            // Link Apple account
+            await userCredential.user!.linkWithProvider(appleProvider);
+            print("Apple account linked successfully");
+
+            await _saveUserData(dbRef, userCredential.user!.uid, name, classdiv, collegeName, email);
+
+            Fluttertoast.showToast(
+              msg: "Account created & linked with Apple",
+              timeInSecForIosWeb: 6,
+            );
+            Navigator.pop(context);
+            return;
+          }
+        } catch (e) {
+          print("$selectedProvider Sign-In failed: $e");
+          Fluttertoast.showToast(
+            msg: "Account linking failed. Creating email/password account only",
+            timeInSecForIosWeb: 6,
+          );
+          // Continue with normal registration
+        }
+      }
+    }
+
+    // Fallback to normal email/password registration if linking skipped or failed
+    print("Creating email/password account only");
+    final userCredential = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+
+    await _saveUserData(dbRef, userCredential.user!.uid, name, classdiv, collegeName, email);
+
+    Fluttertoast.showToast(
+      msg: "Account created successfully",
+      timeInSecForIosWeb: 6,
+    );
+    Navigator.pop(context);
+
+  } on FirebaseAuthException catch (e) {
+    print("Firebase Error: ${e.code} - ${e.message}");
+    String errorMessage = _getFirebaseErrorMessage(e);
+
+    Fluttertoast.showToast(
+      msg: errorMessage,
+      timeInSecForIosWeb: 6,
+      toastLength: Toast.LENGTH_LONG,
+    );
+
+    // Clean up
+    await googleSignIn.signOut();
+    await _auth.signOut();
+  } catch (e) {
+    print("Unknown Error: $e");
+    Fluttertoast.showToast(
+      msg: "Something went wrong. Please try again.",
+      timeInSecForIosWeb: 6,
+      toastLength: Toast.LENGTH_LONG,
+    );
+    await googleSignIn.signOut();
+    await _auth.signOut();
+  }
+}
+
+// Helper function to save user data
+Future<void> _saveUserData(
+    DatabaseReference dbRef,
+    String uid,
+    String name,
+    String classdiv,
+    String collegeName,
+    String email,
+    ) async {
+  await dbRef.child('Users').child(uid).set({
+    'name': name,
+    'classDiv': classdiv,
+    'college': collegeName,
+    'email': email,
+    'role': 'Student',
+  });
+  print("User data saved to database");
+}
+
+// Helper function for error messages
+String _getFirebaseErrorMessage(FirebaseAuthException e) {
+  switch (e.code) {
+    case 'email-already-in-use':
+      return "This email is already registered. Try logging in instead.";
+    case 'invalid-email':
+      return "Invalid email address. Please check and try again.";
+    case 'weak-password':
+      return "Your password is too weak. Use a stronger password.";
+    case 'operation-not-allowed':
+      return "Email/password accounts are not enabled. Contact admin.";
+    default:
+      return "Registration failed: ${e.message}";
+  }
 }

@@ -1,8 +1,10 @@
+import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/main.dart';
-import 'package:ephysicsapp/screens/users/studentLogin.dart';
+import 'package:ephysicsapp/screens/authentication/adminLogin.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:random_avatar/random_avatar.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ProfileSidebarDrawer extends StatefulWidget {
@@ -42,285 +44,303 @@ class _ProfileSidebarDrawerState extends State<ProfileSidebarDrawer> {
   bool get isLoggedIn => widget.isAdmin || widget.isStudent;
 
   @override
-  void initState() {
-    super.initState();
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     if (isLoggedIn) {
-      _loadUserDataFromPrefs();
+      _loadUserData();
     } else {
       _isLoading = false;
     }
   }
 
-  Future<void> _loadUserDataFromPrefs() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    await Future.delayed(const Duration(seconds: 2));
-    setState(() {
-      userName = prefs.getString('name') ?? '';
-      userEmail = prefs.getString('email') ?? '';
-      userClassDiv = prefs.getString('classDiv') ?? '';
+  @override
+  void initState() {
+    super.initState();
+    if (isLoggedIn) {
+      _loadUserData();
+    } else {
       _isLoading = false;
-    });
+    }
+  }
+
+  Future<void> _loadUserData() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final snapshot = await FirebaseDatabase.instance
+            .ref()
+            .child('Users')
+            .child(user.uid)
+            .get();
+        if (snapshot.exists) {
+          final data = snapshot.value as Map;
+          userName = data['name'] ?? '';
+          userEmail = data['email'] ?? '';
+          userClassDiv = data['classDiv'] ?? '';
+        }
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final String avatarSeed = userName ?? 'User';
-    final Color selectedColor = const Color(0xFFE6E6E6);
+    final Color selectedColor = color2;
 
-    return Padding(
-      padding: const EdgeInsets.only(top: 48),
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.7,
-        decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(30))),
-        child: _isLoading
-            ? _SidebarSkeletonLoader()
-            : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 60),
-                  // Profile Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: _isLoading
-                        ? const Center(
-                            child: Padding(
-                              padding: EdgeInsets.symmetric(vertical: 40),
-                              child: CircularProgressIndicator(),
-                            ),
-                          )
-                        : isLoggedIn
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 70,
-                                    height: 70,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.purple[100],
-                                    ),
-                                    child: ClipOval(
-                                      child: RandomAvatar(
-                                        avatarSeed,
-                                        trBackground: true,
-                                        height: 70,
-                                        width: 70,
-                                      ),
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.80,
+      decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.all(Radius.circular(12))),
+      child: _isLoading
+          ? _SidebarSkeletonLoader()
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: MediaQuery.of(context).size.height * 0.10),
+                // Profile Section
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: _isLoading
+                      ? const Center(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 40),
+                            child: CircularProgressIndicator(),
+                          ),
+                        )
+                      : isLoggedIn
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 70,
+                                  height: 70,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.purple[100],
+                                  ),
+                                  child: ClipOval(
+                                    child: RandomAvatar(
+                                      avatarSeed,
+                                      trBackground: true,
+                                      height: 70,
+                                      width: 70,
                                     ),
                                   ),
-                                  const SizedBox(height: 10),
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  userName ?? 'No Name',
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 4),
+                                if (userClassDiv != null &&
+                                    userClassDiv!.isNotEmpty)
                                   Text(
-                                    userName ?? 'No Name',
+                                    userClassDiv!,
                                     style: const TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  if (userClassDiv != null &&
-                                      userClassDiv!.isNotEmpty)
-                                    Text(
-                                      userClassDiv!,
-                                      style: const TextStyle(
-                                          color: Colors.grey, fontSize: 14),
-                                    ),
-                                  if (userEmail != null &&
-                                      userEmail!.isNotEmpty)
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 2.0),
-                                      child: Text(
-                                        userEmail!,
-                                        style: const TextStyle(
-                                            color: Colors.grey, fontSize: 13),
-                                      ),
-                                    ),
-                                  const SizedBox(height: 20),
-                                  const Divider(
-                                      thickness: 1, color: Color(0xFFE0E0E0)),
-                                ],
-                              )
-                            : Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    width: 70,
-                                    height: 70,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.purple[100],
-                                    ),
-                                    child: const Icon(Icons.person,
-                                        size: 40, color: Colors.white),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  const Text(
-                                    "Welcome User!",
-                                    style: TextStyle(
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  const Text(
-                                    "Please log in to continue",
-                                    style: TextStyle(
                                         color: Colors.grey, fontSize: 14),
                                   ),
-                                  const SizedBox(height: 20),
-                                  const Divider(
-                                      thickness: 1, color: Color(0xFFE0E0E0)),
-                                ],
-                              ),
-                  ),
-                  const SizedBox(height: 10),
+                                if (userEmail != null &&
+                                    userEmail!.isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(top: 2.0),
+                                    child: Text(
+                                      userEmail!,
+                                      style: const TextStyle(
+                                          color: Colors.grey, fontSize: 13),
+                                    ),
+                                  ),
+                                const SizedBox(height: 20),
+                                const Divider(
+                                    thickness: 1, color: Color(0xFFE0E0E0)),
+                              ],
+                            )
+                          : Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  width: 70,
+                                  height: 70,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.purple[100],
+                                  ),
+                                  child: const Icon(Icons.person,
+                                      size: 40, color: Colors.white),
+                                ),
+                                const SizedBox(height: 10),
+                                const Text(
+                                  "Welcome User!",
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 4),
+                                const Text(
+                                  "Please log in to continue",
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 14),
+                                ),
+                                const SizedBox(height: 20),
+                                const Divider(
+                                    thickness: 1, color: Color(0xFFE0E0E0)),
+                              ],
+                            ),
+                ),
+                const SizedBox(height: 10),
 
-                  // Menu Items (unchanged, use your logic here)
-                  Expanded(
-                    child: ListView(
-                      padding: EdgeInsets.zero,
-                      children: [
+                Expanded(
+                  child: ListView(
+                    padding: EdgeInsets.zero,
+                    children: [
+                      SidebarItem(
+                        icon: Icons.home_rounded,
+                        label: "Home",
+                        isSelected: widget.selectedIndex == 0,
+                        selectedColor: selectedColor,
+                        onTap: () {
+                          widget.onItemSelected(0);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      SidebarItem(
+                        icon: Icons.book_rounded,
+                        label: "Notes",
+                        isSelected: widget.selectedIndex == 1,
+                        selectedColor: selectedColor,
+                        onTap: () {
+                          widget.onItemSelected(1);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      SidebarItem(
+                        icon: Icons.timer,
+                        label: "Quizzes",
+                        isSelected: widget.selectedIndex == 2,
+                        selectedColor: selectedColor,
+                        onTap: () {
+                          widget.onItemSelected(2);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      SidebarItem(
+                        icon: Icons.science_rounded,
+                        label: "V-Labs",
+                        isSelected: widget.selectedIndex == 3,
+                        selectedColor: selectedColor,
+                        onTap: () {
+                          widget.onItemSelected(3);
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                      if (widget.isAdmin)
                         SidebarItem(
-                          icon: Icons.home_rounded,
-                          label: "Home",
-                          isSelected: widget.selectedIndex == 0,
+                          icon: Icons.insights,
+                          label: "Admin Statistics",
+                          isSelected: false,
                           selectedColor: selectedColor,
                           onTap: () {
-                            widget.onItemSelected(0);
                             Navigator.of(context).pop();
+                            widget.onAdminStats();
                           },
                         ),
+                      if (widget.isAdmin || widget.isStudent)
                         SidebarItem(
-                          icon: Icons.book_rounded,
-                          label: "Notes",
-                          isSelected: widget.selectedIndex == 1,
+                          icon: Icons.bug_report,
+                          label: "Raise a bug / Query",
+                          isSelected: false,
                           selectedColor: selectedColor,
                           onTap: () {
-                            widget.onItemSelected(1);
                             Navigator.of(context).pop();
+                            widget.onQuery();
                           },
                         ),
-                        SidebarItem(
-                          icon: Icons.timer,
-                          label: "Quizzes",
-                          isSelected: widget.selectedIndex == 2,
-                          selectedColor: selectedColor,
-                          onTap: () {
-                            widget.onItemSelected(2);
-                            Navigator.of(context).pop();
-                          },
+                    ],
+                  ),
+                ),
+
+                // Login/Logout Button at the Bottom
+                if (isLoggedIn)
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.1, vertical: 12),
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: color5,
+                        minimumSize: const Size.fromHeight(48),
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
                         ),
-                        SidebarItem(
-                          icon: Icons.science_rounded,
-                          label: "V-Labs",
-                          isSelected: widget.selectedIndex == 3,
-                          selectedColor: selectedColor,
-                          onTap: () {
-                            widget.onItemSelected(3);
-                            Navigator.of(context).pop();
-                          },
+                        side: BorderSide(color: Colors.transparent),
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                      icon: const Icon(Icons.logout, color: Colors.white),
+                      label: const Text(
+                        'Logout',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
                         ),
-                        if (widget.isAdmin)
-                          SidebarItem(
-                            icon: Icons.insights,
-                            label: "Admin Statistics",
-                            isSelected: false,
-                            selectedColor: selectedColor,
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              widget.onAdminStats();
-                            },
-                          ),
-                        if (widget.isAdmin || widget.isStudent)
-                          SidebarItem(
-                            icon: Icons.bug_report,
-                            label: "Raise a bug / Query",
-                            isSelected: false,
-                            selectedColor: selectedColor,
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              widget.onQuery();
-                            },
-                          ),
-                      ],
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        widget.onLogout();
+                      },
                     ),
                   ),
-
-                  // Login/Logout Button at the Bottom
-                  if (isLoggedIn)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 12),
-                      child: ElevatedButton.icon(
+                if (!isLoggedIn)
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 0.1, vertical: 12),
+                    child: Builder(
+                      builder: (context) => ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red[50],
-                          foregroundColor: Colors.red[700],
+                          backgroundColor: color5,
+                          foregroundColor: Colors.green[700],
                           minimumSize: const Size.fromHeight(48),
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(50),
                           ),
-                          side: const BorderSide(color: Colors.red),
+                          //side: const BorderSide(color: Colors.green),
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                         ),
-                        icon: const Icon(Icons.logout, color: Colors.red),
+                        icon: const Icon(Icons.login, color: Colors.white),
                         label: const Text(
-                          'Logout',
+                          'LOGIN',
                           style: TextStyle(
-                            color: Colors.red,
+                            color: Colors.white,
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),
                         ),
                         onPressed: () {
                           Navigator.of(context).pop();
-                          widget.onLogout();
+                          Future.delayed(const Duration(milliseconds: 250),
+                              () {
+                            navigatorKey.currentState?.push(
+                              MaterialPageRoute(
+                                  builder: (context) => AdminLogin()),
+                            );
+                          });
                         },
                       ),
                     ),
-                  if (!isLoggedIn)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 12),
-                      child: Builder(
-                        builder: (context) => ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green[50],
-                            foregroundColor: Colors.green[700],
-                            minimumSize: const Size.fromHeight(48),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            side: const BorderSide(color: Colors.green),
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                          ),
-                          icon: const Icon(Icons.login, color: Colors.green),
-                          label: const Text(
-                            'Login',
-                            style: TextStyle(
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            Future.delayed(const Duration(milliseconds: 250),
-                                () {
-                              navigatorKey.currentState?.push(
-                                MaterialPageRoute(
-                                    builder: (context) => StudentLogin()),
-                              );
-                            });
-                          },
-                        ),
-                      ),
-                    ),
-                  const SizedBox(height: 32),
-                ],
-              ),
-      ),
+                  ),
+                const SizedBox(height: 32),
+              ],
+            ),
     );
   }
 }
@@ -348,7 +368,7 @@ class SidebarItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
       child: Container(
         decoration: isSelected
             ? BoxDecoration(
@@ -357,8 +377,8 @@ class SidebarItem extends StatelessWidget {
               )
             : null,
         child: ListTile(
-          horizontalTitleGap: 10,
-          leading: Icon(icon, color: iconColor ?? Colors.black),
+          horizontalTitleGap: 12,
+          leading: Icon(icon, color: iconColor ?? color5),
           title: Text(
             label,
             style: TextStyle(
@@ -383,6 +403,7 @@ class _SidebarSkeletonLoader extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.10),
           // Avatar
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -422,6 +443,13 @@ class _SidebarSkeletonLoader extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: const Divider(
+                thickness: 1, color: Color(0xFFE0E0E0)),
+          ),
+          SizedBox(height: 10,),
           const SizedBox(height: 16),
           // Menu items
           ...List.generate(

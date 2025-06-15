@@ -62,6 +62,18 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: color1,
         iconTheme: IconThemeData(color: color5),
         elevation: 0,
+        actions: [
+          isLoggedIn() || isStudentLoggedIn()
+              ? IconButton(icon: Icon(Icons.menu_outlined), onPressed: () {
+                _scaffoldKey.currentState?.openEndDrawer();
+          },)
+              : IconButton(
+              icon: Icon(Icons.person),
+              onPressed: () async {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AdminLogin()));
+              }),
+        ],
       ),
       body: SafeArea(
         child: PageView(
@@ -125,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ],
       ),
-      endDrawer: ProfileSidebarDrawer(
+      endDrawer:  isLoggedIn() || isStudentLoggedIn() ? ProfileSidebarDrawer(
         selectedIndex: _currentIndex,
         onItemSelected: _onSidebarItemSelected,
         isAdmin: isLoggedIn(),
@@ -134,7 +146,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onLogin: () {
           // Navigate to your login page
           navigatorKey.currentState
-              ?.push(MaterialPageRoute(builder: (context) => StudentLogin()));
+              ?.push(MaterialPageRoute(builder: (context) => AdminLogin()));
         },
         onAdminLogin: () {
           Navigator.push(
@@ -148,7 +160,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => AdminStatistics()));
         },
-      ),
+      ) : null,
     );
   }
 }

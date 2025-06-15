@@ -329,261 +329,249 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
   Widget _buildQueryForm() {
     return SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
+        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 24),
+        child: Container(
+          decoration: BoxDecoration(
+            color: color3,
             borderRadius: BorderRadius.circular(20),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              color: color2,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.grey.withOpacity(0.2),
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 20,
-                  spreadRadius: 1,
-                  offset: Offset(0, 8),
-                ),
-              ],
+            border: Border.all(
+              color: Colors.grey.withOpacity(0.2),
+              width: 1,
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Padding(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    children: [
-                      // Header
-                      Center(
-                        child: Column(
-                          children: [
-                            Text(
-                              'Submit your query',
-                              style: TextStyle(
-                                fontSize: 22,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              "Fill in the form below, and we'll get in touch with you shortly.",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.grey[600],
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 24),
-                          ],
-                        ),
-                      ),
-                      _buildReadOnlyField('Name', _nameController),
-                      _buildReadOnlyField('Email', _emailController),
-
-                      Row(
-                        children: [
-                          Expanded(
-                              child: _buildEditableField(
-                                  'Class / Div', _classDivController,
-                                  small: true)),
-                          const SizedBox(width: 12),
-                          Expanded(
-                              child: _buildEditableField(
-                                  'Roll No', _rollNoController,
-                                  small: true)),
-                        ],
-                      ),
-
-                      const SizedBox(height: 12),
-
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.03),
-                              blurRadius: 10,
-                              spreadRadius: 2,
-                            ),
-                          ],
-                        ),
-                        child: TextField(
-                          controller: _messageController,
-                          maxLines: 5,
-                          decoration: InputDecoration(
-                            hintText: 'Message / Query',
-                            hintStyle: TextStyle(color: Colors.grey[500]),
-                            floatingLabelBehavior: FloatingLabelBehavior.always,
-                            alignLabelWithHint: true,
-                            filled: true,
-                            fillColor: Colors.white.withOpacity(0.7),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide.none,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(
-                                  color: Colors.grey.shade200.withOpacity(0.5)),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12),
-                              borderSide: BorderSide(color: color5, width: 1.5),
-                            ),
-                            contentPadding: EdgeInsets.all(16),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      if (_isUploading)
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 8.0),
-                          child: SpinKitThreeBounce(
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: Colors.grey.withOpacity(0.1),
+            //     blurRadius: 20,
+            //     spreadRadius: 1,
+            //     offset: Offset(0, 8),
+            //   ),
+            // ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  // Header
+                  Center(
+                    child: Column(
+                      children: [
+                        Text(
+                          'Submit your query',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
                             color: color5,
-                            size: 20,
-                          ),
-                        )
-                      else
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            gradient: LinearGradient(
-                              colors: [
-                                color5.withOpacity(0.8),
-                                color5.withOpacity(1),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: color5.withOpacity(0.2),
-                                blurRadius: 10,
-                                spreadRadius: 1,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: ElevatedButton.icon(
-                            onPressed: _pickFile,
-                            icon: Icon(Icons.attach_file, color: Colors.white),
-                            label: Text(
-                              'Choose Attachment',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: EdgeInsets.all(14),
-                              elevation: 0,
-                            ),
                           ),
                         ),
-
-                      if (selectedFiles.isNotEmpty) ...[
-                        const SizedBox(height: 12),
-                        Wrap(
-                          spacing: 8,
-                          children: List.generate(selectedFiles.length, (index) {
-                            return Chip(
-                              label: Text(
-                                selectedFiles[index].path,
-                                style: TextStyle(fontSize: 12),
-                              ),
-                              deleteIcon: Icon(Icons.close, size: 16),
-                              onDeleted: () {
-                                setState(() {
-                                  selectedFiles.removeAt(index);
-                                  selectedFiles.removeAt(index);
-                                });
-                              },
-                              backgroundColor: Colors.white.withOpacity(0.7),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                side: BorderSide(
-                                    color: Colors.grey.shade200, width: 1),
-                              ),
-                            );
-                          }),
-                        ),
-                        SizedBox(height: 8),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            '${selectedFiles.length}/3 attached',
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Colors.grey[600],
-                            ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Fill in the form below, and we'll get in touch with you shortly.",
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
                           ),
+                          textAlign: TextAlign.center,
                         ),
+                        const SizedBox(height: 24),
                       ],
-                      const SizedBox(height: 20),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            gradient: LinearGradient(
-                              colors: [
-                                color5.withOpacity(0.8),
-                                color5.withOpacity(1),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: color5.withOpacity(0.2),
-                                blurRadius: 10,
-                                spreadRadius: 1,
-                                offset: Offset(0, 3),
-                              ),
-                            ],
-                          ),
-                          child: ElevatedButton(
-                            onPressed: _isSubmitting ? null : _submitQuery,
-                            child: _isSubmitting
-                                ? SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: SpinKitFadingCircle(
-                                color: color1,
-                              )
-                            )
-                                : Text(
-                              'Submit Query',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.transparent,
-                              shadowColor: Colors.transparent,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              padding: EdgeInsets.symmetric(vertical: 16),
-                              elevation: 0,
-                            ),
-                          ),
-                        ),
-                      ),
+                    ),
+                  ),
+                  _buildReadOnlyField('Name', _nameController),
+                  _buildReadOnlyField('Email', _emailController),
+
+                  Row(
+                    children: [
+                      Expanded(
+                          child: _buildEditableField(
+                              'Class / Div', _classDivController,
+                              small: true)),
+                      const SizedBox(width: 12),
+                      Expanded(
+                          child: _buildEditableField(
+                              'Roll No', _rollNoController,
+                              small: true)),
                     ],
                   ),
-                ),
+
+                  const SizedBox(height: 5),
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: TextField(
+                      controller: _messageController,
+                      maxLines: 5,
+                      decoration: InputDecoration(
+                        hintText: 'Message / Query',
+                        hintStyle: TextStyle(color: Colors.grey[500]),
+                        floatingLabelBehavior: FloatingLabelBehavior.always,
+                        alignLabelWithHint: true,
+                        filled: true,
+                        fillColor: Colors.white.withOpacity(0.7),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                              color: Colors.grey.shade200.withOpacity(0.5)),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: color5, width: 1.5),
+                        ),
+                        contentPadding: EdgeInsets.all(16),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  if (_isUploading)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      child: SpinKitThreeBounce(
+                        color: color5,
+                        size: 20,
+                      ),
+                    )
+                  else
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        gradient: LinearGradient(
+                          colors: [
+                            color5.withOpacity(0.8),
+                            color5.withOpacity(1),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: color5.withOpacity(0.2),
+                            blurRadius: 10,
+                            spreadRadius: 1,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton.icon(
+                        onPressed: _pickFile,
+                        icon: Icon(Icons.attach_file, color: Colors.white),
+                        label: Text(
+                          'Choose Attachment',
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: EdgeInsets.all(14),
+                          elevation: 0,
+                        ),
+                      ),
+                    ),
+
+                  if (selectedFiles.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    Wrap(
+                      spacing: 8,
+                      children: List.generate(selectedFiles.length, (index) {
+                        return Chip(
+                          label: Text(
+                            path.basename(selectedFiles[index].path),
+                            style: TextStyle(fontSize: 12),
+                          ),
+                          deleteIcon: Icon(Icons.close, size: 16),
+                          onDeleted: () {
+                            setState(() {
+                              selectedFiles.removeAt(index);
+                            });
+                          },
+                          backgroundColor: Colors.white.withOpacity(0.7),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            side: BorderSide(
+                                color: Colors.grey.shade200, width: 1),
+                          ),
+                        );
+                      }),
+                    ),
+                    SizedBox(height: 8),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        '${selectedFiles.length}/3 attached',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        gradient: LinearGradient(
+                          colors: [
+                            color5.withOpacity(0.8),
+                            color5.withOpacity(1),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: color5.withOpacity(0.2),
+                            blurRadius: 10,
+                            spreadRadius: 1,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: ElevatedButton(
+                        onPressed: _isSubmitting ? null : _submitQuery,
+                        child: _isSubmitting
+                            ? SizedBox(
+                          height: 24,
+                          width: 24,
+                          child: SpinKitFadingCircle(
+                            color: color1,
+                          )
+                        )
+                            : Text(
+                          'Submit Query',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.transparent,
+                          shadowColor: Colors.transparent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          elevation: 0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -613,7 +601,7 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
             borderSide: BorderSide(
                 color: Colors.grey.shade200.withOpacity(0.5), width: 1),
           ),
-          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         ),
       ),
     );
@@ -647,7 +635,7 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
               borderSide: BorderSide(color: color5, width: 1.5),
             ),
             contentPadding: EdgeInsets.symmetric(
-                horizontal: 16, vertical: small ? 14 : 16),
+                horizontal: 16, vertical: small ? 8 : 8),
           ),
         ),
       ),

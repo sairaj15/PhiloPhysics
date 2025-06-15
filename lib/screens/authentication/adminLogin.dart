@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/screens/users/studentLogin.dart';
 import 'package:ephysicsapp/services/authentication.dart';
@@ -97,6 +99,7 @@ class _AdminLoginFormState extends State<AdminLoginForm> {
   bool _isPasswordVisible = false;
   bool isLoading = false;
   bool isGoogleLoading = false;
+  bool _isAppleLoading = false;
 
   Future<void> checkValidation() async {
     if (_formKeyValue.currentState!.validate()) {
@@ -123,35 +126,50 @@ class _AdminLoginFormState extends State<AdminLoginForm> {
             Text(
               'Admin Login',
               style: GoogleFonts.merriweather(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.italic,
-                  color: color5),
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                fontStyle: FontStyle.italic,
+                color: color5,
+              ),
             ),
             const SizedBox(height: 30),
+
+            /// Email Field
             TextFormField(
               controller: emailController,
               validator: (value) => value!.isEmpty ? "Enter Email" : null,
               keyboardType: TextInputType.emailAddress,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: "Enter Email",
+                prefixIcon: Icon(Icons.email_outlined, color: Colors.grey[700]),
+                labelStyle: TextStyle(color: Colors.grey[700]),
+                filled: true,
+                fillColor: Colors.grey[100],
+                contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(width: 2.0),
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(color: color5, width: 2),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
                 ),
               ),
             ),
             const SizedBox(height: 20),
+
+            /// Password Field
             TextFormField(
               controller: passwordController,
               validator: (value) => value!.isEmpty ? "Enter Password" : null,
               obscureText: !_isPasswordVisible,
               decoration: InputDecoration(
                 labelText: "Enter Password",
+                prefixIcon: Icon(Icons.lock_outline, color: Colors.grey[700]),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _isPasswordVisible
-                        ? Icons.visibility_off
-                        : Icons.visibility,
+                    _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.grey[700],
                   ),
                   onPressed: () {
                     setState(() {
@@ -159,12 +177,22 @@ class _AdminLoginFormState extends State<AdminLoginForm> {
                     });
                   },
                 ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(width: 2.0),
+                labelStyle: TextStyle(color: Colors.grey[700]),
+                filled: true,
+                fillColor: Colors.grey[100],
+                contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(color: color5, width: 2),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
                 ),
               ),
             ),
             const SizedBox(height: 30),
+
             isLoading
                 ? SpinKitFadingCircle(
                     color: color5,
@@ -196,6 +224,33 @@ class _AdminLoginFormState extends State<AdminLoginForm> {
                     ),
                   ),
             SizedBox(height: MediaQuery.of(context).size.height / 50),
+            Row(
+              children: <Widget>[
+                Expanded(
+                  child: Divider(
+                    color: Colors.grey,
+                    thickness: 1,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    "OR",
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Divider(
+                    color: Colors.grey,
+                    thickness: 1,
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height / 50),
             isGoogleLoading
                 ? SpinKitFadingCircle(
                     color: color5,
@@ -206,7 +261,7 @@ class _AdminLoginFormState extends State<AdminLoginForm> {
                     width: MediaQuery.of(context).size.width - 20.0,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white30,
+                        backgroundColor: Colors.blueGrey,
                         foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
@@ -231,6 +286,7 @@ class _AdminLoginFormState extends State<AdminLoginForm> {
                             'assets/google_icon.png',
                             width: 30,
                             height: 30,
+                            color: Colors.white,
                           ),
                           SizedBox(width: 10),
                           Text(
@@ -238,12 +294,67 @@ class _AdminLoginFormState extends State<AdminLoginForm> {
                             style: GoogleFonts.poppins(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
+                              color: Colors.white
                             ),
                           ),
                         ],
                       ),
                     ),
                   ),
+            SizedBox(height: MediaQuery.of(context).size.height / 100),
+
+            (Platform.isIOS)
+                ? Column(
+              children: [
+                SizedBox(height: MediaQuery.of(context).size.height / 100),
+                _isAppleLoading ?
+                      SpinKitFadingCircle(
+                        color: color5,
+                        size: 30.0,
+                      )
+                    : Container(
+                  height: MediaQuery.of(context).size.height / 16,
+                  width: MediaQuery.of(context).size.width - 20.0,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      padding: EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 24),
+                      elevation: 2,
+                    ),
+                    onPressed: () async {
+                      setState(() {
+                        _isAppleLoading = true; // Start loading
+                      });
+                      await adminLoginWithApple(context);
+                      setState(() {
+                        _isAppleLoading = false; // Stop loading
+                      });
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.apple, color: Colors.white, size: 28),
+                        SizedBox(width: 10),
+                        Text(
+                          'Sign in with Apple',
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            )
+                : SizedBox(),
+
           ],
         ),
       ),

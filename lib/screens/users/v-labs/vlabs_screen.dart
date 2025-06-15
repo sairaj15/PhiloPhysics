@@ -41,7 +41,7 @@ class _VlabsScreenState extends State<VlabsScreen> {
             onPressed: () => Navigator.of(context).pop(),
           ),
           title: Text(
-            'V - Labs',
+            'Sakec V-Labs',
             style: TextStyle(
               fontFamily: 'Poppins',
               fontWeight: FontWeight.w500,

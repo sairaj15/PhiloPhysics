@@ -48,6 +48,98 @@ class _StudentRegisterState extends State<StudentRegister> {
 
   bool isLoading = false;
 
+  // Future<void> checkValidation() async {
+  //   if (!_formKeyValue.currentState!.validate()) {
+  //     showToast("Please fill all the fields correctly");
+  //     return;
+  //   }
+  //
+  //   if (!hasUppercase || !hasSpecialChar || !hasNumber || !hasMinLength) {
+  //     showToast("Password does not meet all criteria");
+  //     return;
+  //   }
+  //
+  //   if (!isPasswordMatching) {
+  //     showToast("Passwords do not match");
+  //     return;
+  //   }
+  //
+  //   String collegeName =
+  //       _selectedCollege == 'Sakec' ? 'Sakec' : otherCollegeNameController.text;
+  //
+  //   // Platform-aware sign-in choice
+  //   String? chosenProvider = await showDialog<String>(
+  //     context: context,
+  //     barrierDismissible: false,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: Text("Choose Sign-In Method"),
+  //         content: Column(
+  //           mainAxisSize: MainAxisSize.min,
+  //           children: [
+  //             ListTile(
+  //               leading: Icon(Icons.account_circle),
+  //               title: Text("Google Sign-In"),
+  //               onTap: () => Navigator.of(context).pop('google'),
+  //             ),
+  //             if (Platform.isIOS) // Only show Apple Sign-In on iOS
+  //               ListTile(
+  //                 leading: Icon(Icons.apple),
+  //                 title: Text("Apple Sign-In"),
+  //                 onTap: () => Navigator.of(context).pop('apple'),
+  //               ),
+  //             ListTile(
+  //               leading: Icon(Icons.person_outline),
+  //               title: Text("Skip (No Social Sign-In)"),
+  //               onTap: () => Navigator.of(context).pop('none'),
+  //             ),
+  //           ],
+  //         ),
+  //       );
+  //     },
+  //   );
+  //
+  //   if (chosenProvider == null) return; // Dialog dismissed
+  //
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //
+  //   try {
+  //     // Register student account
+  //     await Studentregister(
+  //       studentAccCreationemailController.text,
+  //       studentAccCreationnameController.text,
+  //       studentAccCreationYearDivController.text,
+  //       studentAccCreationpasswordController.text,
+  //       collegeName,
+  //       context,
+  //     );
+  //
+  //     // Perform sign-in based on choice
+  //     switch (chosenProvider) {
+  //       case 'google':
+  //         await studentLoginWithGoogle(
+  //             context); // <-- Your existing Google sign-in logic
+  //         break;
+  //       case 'apple':
+  //         await studentLoginWithApple(
+  //             context); // <-- You'll implement this next
+  //         break;
+  //       case 'none':
+  //         break;
+  //     }
+  //   } catch (e) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       SnackBar(content: Text('Registration failed! Please try again')),
+  //     );
+  //   } finally {
+  //     setState(() {
+  //       isLoading = false;
+  //     });
+  //   }
+  // }
+
   Future<void> checkValidation() async {
     if (!_formKeyValue.currentState!.validate()) {
       showToast("Please fill all the fields correctly");
@@ -65,48 +157,34 @@ class _StudentRegisterState extends State<StudentRegister> {
     }
 
     String collegeName =
-        _selectedCollege == 'Sakec' ? 'Sakec' : otherCollegeNameController.text;
+    _selectedCollege == 'Sakec' ? 'Sakec' : otherCollegeNameController.text;
 
-    // Platform-aware sign-in choice
-    String? chosenProvider = await showDialog<String>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Choose Sign-In Method"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ListTile(
-                leading: Icon(Icons.account_circle),
-                title: Text("Google Sign-In"),
-                onTap: () => Navigator.of(context).pop('google'),
-              ),
-              if (Platform.isIOS) // Only show Apple Sign-In on iOS
-                ListTile(
-                  leading: Icon(Icons.apple),
-                  title: Text("Apple Sign-In"),
-                  onTap: () => Navigator.of(context).pop('apple'),
-                ),
-              ListTile(
-                leading: Icon(Icons.person_outline),
-                title: Text("Skip (No Social Sign-In)"),
-                onTap: () => Navigator.of(context).pop('none'),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-
-    if (chosenProvider == null) return; // Dialog dismissed
+    // // Show the pop-up dialog to inform the user about Google Sign-In
+    // await showDialog(
+    //   context: context,
+    //   barrierDismissible: false,
+    //   builder: (BuildContext context) {
+    //     return AlertDialog(
+    //       title: Text("Important Notice"),
+    //       content: Text(
+    //         "A Google Sign-In popup will appear. If you don't wish to link your Google account, please press the back button on your device to skip linking. This is required to complete registration.",
+    //       ),
+    //       actions: <Widget>[
+    //         TextButton(
+    //           onPressed: () {
+    //             Navigator.of(context).pop(); // Close the dialog
+    //           },
+    //           child: Text("Got it"),
+    //         ),
+    //       ],
+    //     );
+    //   },
+    // );
 
     setState(() {
       isLoading = true;
     });
-
     try {
-      // Register student account
       await Studentregister(
         studentAccCreationemailController.text,
         studentAccCreationnameController.text,
@@ -115,23 +193,9 @@ class _StudentRegisterState extends State<StudentRegister> {
         collegeName,
         context,
       );
-
-      // Perform sign-in based on choice
-      switch (chosenProvider) {
-        case 'google':
-          await studentLoginWithGoogle(
-              context); // <-- Your existing Google sign-in logic
-          break;
-        case 'apple':
-          await studentLoginWithApple(
-              context); // <-- You'll implement this next
-          break;
-        case 'none':
-          break;
-      }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Registration failed! Please try again')),
+        SnackBar(content: Text('Login failed! Please Try Again')),
       );
     } finally {
       setState(() {
@@ -139,6 +203,7 @@ class _StudentRegisterState extends State<StudentRegister> {
       });
     }
   }
+
 
   @override
   void initState() {
@@ -193,8 +258,10 @@ class _StudentRegisterState extends State<StudentRegister> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text('Create An Account'),
+        backgroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -223,12 +290,22 @@ class _StudentRegisterState extends State<StudentRegister> {
                     return null;
                   },
                   keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    labelStyle: TextStyle(color: Colors.grey[700]),
+                    prefixIcon: Icon(Icons.person_2_outlined, color: Colors.grey[700]), // optional
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(color: color5, width: 2),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
                     border: OutlineInputBorder(),
                     labelText: "Enter Name",
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(width: 2.0),
-                    ),
                   ),
                 ),
                 SizedBox(height: 20),
@@ -237,11 +314,12 @@ class _StudentRegisterState extends State<StudentRegister> {
                   child: Row(
                     children: [
                       Text(
-                        "Enter College: ",
+                        "Select College : ",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w400),
                       ),
-                      SizedBox(width: 10),
+                      SizedBox(width: MediaQuery.of(context).size.width *
+                          0.01),
                       Expanded(
                         child: Wrap(
                           alignment: WrapAlignment
@@ -326,12 +404,22 @@ class _StudentRegisterState extends State<StudentRegister> {
                         },
                         keyboardType: TextInputType.text,
                         decoration: InputDecoration(
+                          filled: true,
+                          fillColor: Colors.grey[100],
+                          contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          labelStyle: TextStyle(color: Colors.grey[700]),
+                          prefixIcon: Icon(Icons.school_outlined, color: Colors.grey[700]), // optional
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: color5, width: 2),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
+                          ),
                           border: OutlineInputBorder(),
                           hintMaxLines: 2,
                           labelText: "Enter College Name",
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(width: 2.0),
-                          ),
                         ),
                       ),
                     ],
@@ -344,12 +432,22 @@ class _StudentRegisterState extends State<StudentRegister> {
                     return null;
                   },
                   keyboardType: TextInputType.emailAddress,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    labelStyle: TextStyle(color: Colors.grey[700]),
+                    prefixIcon: Icon(Icons.email_outlined, color: Colors.grey[700]), // optional
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(color: color5, width: 2),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
                     border: OutlineInputBorder(),
                     labelText: "Enter Email",
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(width: 2.0),
-                    ),
                   ),
                 ),
                 SizedBox(height: 20),
@@ -360,13 +458,24 @@ class _StudentRegisterState extends State<StudentRegister> {
                     return null;
                   },
                   keyboardType: TextInputType.text,
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    labelStyle: TextStyle(color: Colors.grey[700]),
+                    prefixIcon: Icon(Icons.class_outlined, color: Colors.grey[700]), // optional
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(color: color5, width: 2),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+
                     border: OutlineInputBorder(),
                     labelText: "Enter Class-Div",
                     hintText: "Enter like Eg. FE-9",
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(width: 2.0),
-                    ),
                   ),
                 ),
                 SizedBox(height: 20),
@@ -382,11 +491,22 @@ class _StudentRegisterState extends State<StudentRegister> {
                   },
                   obscureText: !_isPasswordVisible,
                   decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    labelStyle: TextStyle(color: Colors.grey[700]),
+                    prefixIcon: Icon(Icons.lock_outline_rounded, color: Colors.grey[700]), // optional
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(color: color5, width: 2),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+
                     border: const OutlineInputBorder(),
                     labelText: "Enter Password",
-                    focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(width: 2.0),
-                    ),
                     hintText: 'Enter your password',
                     // Adjusting the suffix icon for consistent height
                     suffixIcon: Padding(
@@ -456,6 +576,19 @@ class _StudentRegisterState extends State<StudentRegister> {
                   },
                   obscureText: !_isConfPasswordVisible,
                   decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.grey[100],
+                    contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    labelStyle: TextStyle(color: Colors.grey[700]),
+                    prefixIcon: Icon(Icons.lock_outline_rounded, color: Colors.grey[700]), // optional
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(color: color5, width: 2),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
                     labelText: 'Confirm Password',
                     border: OutlineInputBorder(),
                     suffixIcon: Padding(
