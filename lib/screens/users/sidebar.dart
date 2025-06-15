@@ -1,5 +1,3 @@
-import 'package:ephysicsapp/main.dart';
-import 'package:ephysicsapp/screens/users/studentLogin.dart';
 import 'package:flutter/material.dart';
 import 'package:random_avatar/random_avatar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,9 +10,9 @@ class ProfileSidebarDrawer extends StatefulWidget {
   final bool isStudent;
   final VoidCallback onLogout;
   final VoidCallback onLogin;
-  final VoidCallback onAdminLogin;
   final VoidCallback onQuery;
   final VoidCallback onAdminStats;
+  final VoidCallback onRegister;
 
   const ProfileSidebarDrawer({
     Key? key,
@@ -24,9 +22,9 @@ class ProfileSidebarDrawer extends StatefulWidget {
     required this.isStudent,
     required this.onLogout,
     required this.onLogin,
-    required this.onAdminLogin,
     required this.onQuery,
     required this.onAdminStats,
+    required this.onRegister,
   }) : super(key: key);
 
   @override
@@ -282,41 +280,76 @@ class _ProfileSidebarDrawerState extends State<ProfileSidebarDrawer> {
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 12, vertical: 12),
-                      child: Builder(
-                        builder: (context) => ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.green[50],
-                            foregroundColor: Colors.green[700],
-                            minimumSize: const Size.fromHeight(48),
-                            elevation: 0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.green[50],
+                              foregroundColor: Colors.green[700],
+                              minimumSize: const Size.fromHeight(48),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              side: const BorderSide(color: Colors.green),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
                             ),
-                            side: const BorderSide(color: Colors.green),
-                            padding: const EdgeInsets.symmetric(horizontal: 16),
-                          ),
-                          icon: const Icon(Icons.login, color: Colors.green),
-                          label: const Text(
-                            'Login',
-                            style: TextStyle(
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                            icon: const Icon(Icons.login, color: Colors.green),
+                            label: const Text(
+                              'Login',
+                              style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
                             ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              Future.delayed(const Duration(milliseconds: 250),
+                                  () {
+                                widget.onLogin();
+                              });
+                            },
                           ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            Future.delayed(const Duration(milliseconds: 250),
-                                () {
-                              navigatorKey.currentState?.push(
-                                MaterialPageRoute(
-                                    builder: (context) => StudentLogin()),
-                              );
-                            });
-                          },
-                        ),
+                          const SizedBox(height: 8),
+                          ElevatedButton.icon(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue[50],
+                              foregroundColor: Colors.blue[700],
+                              minimumSize: const Size.fromHeight(48),
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              side: const BorderSide(color: Colors.blue),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                            ),
+                            icon: const Icon(Icons.app_registration,
+                                color: Colors.blue),
+                            label: const Text(
+                              'Register',
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              Future.delayed(const Duration(milliseconds: 250),
+                                  () {
+                                widget.onRegister();
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 8),
+                        ],
                       ),
                     ),
+
                   const SizedBox(height: 32),
                 ],
               ),

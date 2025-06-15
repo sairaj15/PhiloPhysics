@@ -7,7 +7,7 @@ import 'package:ephysicsapp/screens/authentication/adminLogin.dart';
 import 'package:ephysicsapp/screens/users/queryScreen.dart';
 import 'package:ephysicsapp/screens/users/quiz/quizHomePage.dart';
 import 'package:ephysicsapp/screens/users/sidebar.dart';
-import 'package:ephysicsapp/screens/users/studentLogin.dart';
+import 'package:ephysicsapp/screens/users/studentRegistration.dart';
 import 'package:ephysicsapp/screens/users/v-labs/vabs_home_screen.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/widgets/bottom_navy_bar.dart';
@@ -134,11 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
         onLogin: () {
           // Navigate to your login page
           navigatorKey.currentState
-              ?.push(MaterialPageRoute(builder: (context) => StudentLogin()));
-        },
-        onAdminLogin: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AdminLogin()));
+              ?.push(MaterialPageRoute(builder: (context) => AdminLogin()));
         },
         onQuery: () {
           Navigator.push(context,
@@ -147,6 +143,11 @@ class _MyHomePageState extends State<MyHomePage> {
         onAdminStats: () {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => AdminStatistics()));
+        },
+        onRegister: () {
+          navigatorKey.currentState?.push(
+            MaterialPageRoute(builder: (context) => StudentRegister()),
+          );
         },
       ),
     );
