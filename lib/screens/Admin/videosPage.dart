@@ -455,30 +455,26 @@ class VideosListPage extends StatelessWidget {
                 ),
               ),
             ),
-            // Icon button to navigate to the video details page
+
             Align(
               alignment: Alignment.topRight,
               child: IconButton(
                 icon: Icon(Icons.play_arrow, color: color5, size: 30.0),
                 onPressed: () async {
-                  // Retrieve the studentUUID from SharedPreferences
                   String? studentUUID = prefs.getString('studentUUID');
                   if (studentUUID != null) {
                     print("Studnet id not null, ${studentUUID}");
-                    // Reference to the Realtime Database
                     DatabaseReference dbRef = FirebaseDatabase.instance.ref();
 
-                    // Fetch the current videosViewed count for the specific student
                     DatabaseEvent event = await dbRef
                         .child('Users')
                         .child(studentUUID)
                         .child('videosViewed')
                         .once();
                     DataSnapshot snapshot = event
-                        .snapshot; // Get the snapshot from the DatabaseEvent
+                        .snapshot;
 
                     if (snapshot.exists) {
-                      // Get the current videosViewed count and increment it
                       int currentViewCount = snapshot.value as int;
                       await dbRef
                           .child('Users')
@@ -486,7 +482,6 @@ class VideosListPage extends StatelessWidget {
                           .update({'videosViewed': currentViewCount + 1});
                       print("Incremented in User Videos");
                     } else {
-                      // If the videosViewed does not exist, initialize it to 1
                       await dbRef
                           .child('Users')
                           .child(studentUUID)
@@ -495,7 +490,6 @@ class VideosListPage extends StatelessWidget {
                       print("Init in User Video");
                     }
                   } else {
-                    // Handle the case when studentUUID is not found
                     showToast("User not logged in.");
                   }
                   navigateToVideoDetailPage(context, videoDetails);
@@ -530,7 +524,6 @@ class VideosListPage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Thumbnail image
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Container(
@@ -561,7 +554,6 @@ class VideosListPage extends StatelessWidget {
                   ),
                 ),
               ),
-              // Icon button to delete the video
               Align(
                 alignment: Alignment.topRight,
                 child: IconButton(

@@ -1,10 +1,13 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/globals/constants.dart';
 import 'package:ephysicsapp/screens/Admin/adminUserUsageStatistics.dart';
+import 'package:ephysicsapp/services/dataAutomateService.dart';
 import 'package:ephysicsapp/shimmer/adminStatisticsShimmer.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:http/http.dart' as http;
@@ -293,6 +296,100 @@ class _AdminStatisticsState extends State<AdminStatistics>
     mins = totalMinutes.toInt() % 60; // Get the remainder for minutes
   }
 
+  void showUpdateConfirmationDialog(BuildContext context) {
+    bool isLoading = false;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Dialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              child: Stack(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 35, 20, 20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Are you sure you want to update data?',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: isLoading
+                              ? null
+                              : () async {
+                            setState(() => isLoading = true);
+                            try {
+                              await DataAutomateService().updateGoogleSheetData();
+                              Navigator.pop(dialogContext);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("Sheet updated successfully")),
+                              );
+                            } catch (e) {
+                              Navigator.pop(dialogContext);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text("Failed to update sheet")),
+                              );
+                            }
+                          },
+                          child: Container(
+                            constraints: BoxConstraints(minWidth: 100),
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Colors.blue, Colors.indigo],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Center(
+                                child: isLoading
+                                    ? SpinKitFadingCircle(
+                                  color: Colors.white,
+                                  size: 15.0,
+                                )
+                                    : Text(
+                                  'Update',
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    right: 0,
+                    top: 0,
+                    child: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: isLoading ? null : () => Navigator.pop(dialogContext),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -303,7 +400,16 @@ class _AdminStatisticsState extends State<AdminStatistics>
           style: TextStyle(fontWeight: FontWeight.w500, color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: Colors.blueAccent, // Updated app bar color
+        backgroundColor: Colors.blueAccent,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: InkWell(
+                onTap: () => showUpdateConfirmationDialog(context),
+                child: Icon(Icons.refresh_rounded)
+            ),
+          ),
+        ],
       ),
       body: isLoading
           ? AdminStatisticsShimmer()

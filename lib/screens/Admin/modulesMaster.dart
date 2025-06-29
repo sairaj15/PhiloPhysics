@@ -109,7 +109,7 @@ class _ModuleMasterState extends State<ModuleMaster> {
       floatingActionButton: !isLoggedIn()
           ? Container()
           : FloatingActionButton(
-              backgroundColor: color4,
+              backgroundColor: color5,
               onPressed: () {
                 Navigator.push(
                   context,
@@ -119,7 +119,7 @@ class _ModuleMasterState extends State<ModuleMaster> {
                 );
               },
               tooltip: 'Add Document',
-              child: Icon(Icons.add),
+              child: Icon(Icons.add, color: Colors.white,),
             ),
     );
   }

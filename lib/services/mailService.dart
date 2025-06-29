@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:ephysicsapp/globals/credentials.dart';
+import 'package:ephysicsapp/globals/constants.dart';
 import 'package:http/http.dart' as http;
 
 class MailServices {
@@ -13,10 +13,8 @@ class MailServices {
     List<String>? attachmentUrls,
   }) async {
 
-    final credentialsData = CrendentialsData();
-
-    final mailtrapToken = credentialsData.mailTrapToken;
-    final mailtrapEndpoint = credentialsData.mailTrapHost;
+    final mailtrapToken = mailTrapToken;
+    final mailtrapEndpoint = mailTrapHost;
 
     final htmlBody = """
   <div style="font-family: 'Segoe UI', Roboto, Arial, sans-serif; background:#f4f6f9; color:#333; padding:30px 15px;">

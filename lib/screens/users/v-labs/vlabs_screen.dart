@@ -35,23 +35,23 @@ class _VlabsScreenState extends State<VlabsScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Text(
-            'Sakec V-Labs',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w500,
-              color: Colors.black,
-            ),
-          ),
-          centerTitle: false,
-          backgroundColor: Colors.transparent,
-          elevation: 2,
-        ),
+        // appBar: AppBar(
+        //   leading: IconButton(
+        //     icon: Icon(Icons.arrow_back, color: Colors.black),
+        //     onPressed: () => Navigator.of(context).pop(),
+        //   ),
+        //   title: Text(
+        //     'Sakec V-Labs',
+        //     style: TextStyle(
+        //       fontFamily: 'Poppins',
+        //       fontWeight: FontWeight.w500,
+        //       color: Colors.black,
+        //     ),
+        //   ),
+        //   centerTitle: false,
+        //   backgroundColor: Colors.transparent,
+        //   elevation: 2,
+        // ),
         body: WillPopScope(
           onWillPop: () async {
             if (await _controller.canGoBack()) {

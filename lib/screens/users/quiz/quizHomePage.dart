@@ -207,7 +207,7 @@ class HomeWidgetState extends State<QuizHomePage>
       ),
       floatingActionButton: isLoggedIn()
           ? FloatingActionButton(
-              backgroundColor: color4,
+              backgroundColor: color5,
               onPressed: () {
                 Navigator.push(
                   context,
@@ -216,6 +216,7 @@ class HomeWidgetState extends State<QuizHomePage>
               },
               child: Icon(
                 Icons.add,
+                color: Colors.white,
               ),
             )
           : Container(),

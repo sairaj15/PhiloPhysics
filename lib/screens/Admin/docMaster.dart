@@ -128,7 +128,7 @@ class _DocMasterState extends State<DocMaster> {
                   padding: const EdgeInsets.all(8.0),
                   child: FloatingActionButton(
                     heroTag: 'videoHero',
-                    backgroundColor: color4,
+                    backgroundColor: color5,
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -141,14 +141,14 @@ class _DocMasterState extends State<DocMaster> {
                       );
                     },
                     tooltip: 'Add Video',
-                    child: Icon(Icons.video_collection_outlined),
+                    child: Icon(Icons.video_collection_outlined, color: Colors.white,),
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: FloatingActionButton(
                     heroTag: 'documentHero',
-                    backgroundColor: color4,
+                    backgroundColor: color5,
                     onPressed: () {
                       Navigator.push(
                         context,
@@ -161,7 +161,7 @@ class _DocMasterState extends State<DocMaster> {
                       );
                     },
                     tooltip: 'Add Document',
-                    child: Icon(Icons.add),
+                    child: Icon(Icons.add,color: Colors.white),
                   ),
                 ),
               ],
