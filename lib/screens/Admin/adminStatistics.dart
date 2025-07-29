@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'dart:convert';
-import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/globals/constants.dart';
 import 'package:ephysicsapp/screens/Admin/adminUserUsageStatistics.dart';
 import 'package:ephysicsapp/services/dataAutomateService.dart';
@@ -307,7 +306,8 @@ class _AdminStatisticsState extends State<AdminStatistics>
           builder: (context, setState) {
             return Dialog(
               backgroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               child: Stack(
                 children: [
                   Padding(
@@ -318,27 +318,33 @@ class _AdminStatisticsState extends State<AdminStatistics>
                         Text(
                           'Are you sure you want to update data?',
                           textAlign: TextAlign.center,
-                          style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),
+                          style: GoogleFonts.poppins(
+                              fontSize: 16, fontWeight: FontWeight.w500),
                         ),
                         const SizedBox(height: 20),
                         GestureDetector(
                           onTap: isLoading
                               ? null
                               : () async {
-                            setState(() => isLoading = true);
-                            try {
-                              await DataAutomateService().updateGoogleSheetData();
-                              Navigator.pop(dialogContext);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Sheet updated successfully")),
-                              );
-                            } catch (e) {
-                              Navigator.pop(dialogContext);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text("Failed to update sheet")),
-                              );
-                            }
-                          },
+                                  setState(() => isLoading = true);
+                                  try {
+                                    await DataAutomateService()
+                                        .updateGoogleSheetData();
+                                    Navigator.pop(dialogContext);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              "Sheet updated successfully")),
+                                    );
+                                  } catch (e) {
+                                    Navigator.pop(dialogContext);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content:
+                                              Text("Failed to update sheet")),
+                                    );
+                                  }
+                                },
                           child: Container(
                             constraints: BoxConstraints(minWidth: 100),
                             padding: const EdgeInsets.symmetric(vertical: 6),
@@ -355,17 +361,17 @@ class _AdminStatisticsState extends State<AdminStatistics>
                               child: Center(
                                 child: isLoading
                                     ? SpinKitFadingCircle(
-                                  color: Colors.white,
-                                  size: 15.0,
-                                )
+                                        color: Colors.white,
+                                        size: 15.0,
+                                      )
                                     : Text(
-                                  'Update',
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.white,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
+                                        'Update',
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
                               ),
                             ),
                           ),
@@ -378,7 +384,8 @@ class _AdminStatisticsState extends State<AdminStatistics>
                     top: 0,
                     child: IconButton(
                       icon: const Icon(Icons.close),
-                      onPressed: isLoading ? null : () => Navigator.pop(dialogContext),
+                      onPressed:
+                          isLoading ? null : () => Navigator.pop(dialogContext),
                     ),
                   ),
                 ],
@@ -406,8 +413,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
             padding: const EdgeInsets.only(right: 16.0),
             child: InkWell(
                 onTap: () => showUpdateConfirmationDialog(context),
-                child: Icon(Icons.refresh_rounded)
-            ),
+                child: Icon(Icons.refresh_rounded)),
           ),
         ],
       ),

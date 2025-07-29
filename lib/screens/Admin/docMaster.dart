@@ -2,24 +2,26 @@ import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/screens/Admin/addDoc.dart';
 import 'package:ephysicsapp/screens/Admin/addVideo.dart';
 import 'package:ephysicsapp/screens/Admin/widgets/docCard.dart';
+import 'package:ephysicsapp/screens/Admin/widgets/practicalCard.dart';
 import 'package:ephysicsapp/screens/users/widgets/cards.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/services/general.dart';
-import 'package:ephysicsapp/widgets/generalWidgets.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class DocMaster extends StatefulWidget {
-  DocMaster(
-      {Key? key,
-      required this.section,
-      required this.moduleID,
-      required this.moduleName})
-      : super(key: key);
+  DocMaster({
+    Key? key,
+    required this.section,
+    required this.moduleID,
+    required this.moduleName,
+    this.practicalUrl = '',
+  }) : super(key: key);
   final String section;
   final String moduleID;
   final String moduleName;
+  final String practicalUrl;
 
   @override
   _DocMasterState createState() => _DocMasterState();
@@ -49,6 +51,13 @@ class _DocMasterState extends State<DocMaster> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // Practical Experiment Card (if practicalUrl exists)
+            if (widget.practicalUrl.isNotEmpty)
+              practicalUserCard(
+                practicalUrl: widget.practicalUrl,
+                moduleName: widget.moduleName,
+                context: context,
+              ),
             StreamBuilder<DatabaseEvent>(
               stream: databaseReference
                   .ref()
@@ -141,7 +150,10 @@ class _DocMasterState extends State<DocMaster> {
                       );
                     },
                     tooltip: 'Add Video',
-                    child: Icon(Icons.video_collection_outlined, color: Colors.white,),
+                    child: Icon(
+                      Icons.video_collection_outlined,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 Padding(
@@ -161,7 +173,7 @@ class _DocMasterState extends State<DocMaster> {
                       );
                     },
                     tooltip: 'Add Document',
-                    child: Icon(Icons.add,color: Colors.white),
+                    child: Icon(Icons.add, color: Colors.white),
                   ),
                 ),
               ],

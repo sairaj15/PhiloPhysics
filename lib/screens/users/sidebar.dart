@@ -149,8 +149,7 @@ class _ProfileSidebarDrawerState extends State<ProfileSidebarDrawer> {
                                     style: const TextStyle(
                                         color: Colors.grey, fontSize: 14),
                                   ),
-                                if (userEmail != null &&
-                                    userEmail!.isNotEmpty)
+                                if (userEmail != null && userEmail!.isNotEmpty)
                                   Padding(
                                     padding: const EdgeInsets.only(top: 2.0),
                                     child: Text(
@@ -232,16 +231,6 @@ class _ProfileSidebarDrawerState extends State<ProfileSidebarDrawer> {
                           Navigator.of(context).pop();
                         },
                       ),
-                      SidebarItem(
-                        icon: Icons.science_rounded,
-                        label: "V-Labs",
-                        isSelected: widget.selectedIndex == 3,
-                        selectedColor: selectedColor,
-                        onTap: () {
-                          widget.onItemSelected(3);
-                          Navigator.of(context).pop();
-                        },
-                      ),
                       if (widget.isAdmin)
                         SidebarItem(
                           icon: Icons.insights,
@@ -272,7 +261,8 @@ class _ProfileSidebarDrawerState extends State<ProfileSidebarDrawer> {
                 if (isLoggedIn)
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.1, vertical: 12),
+                        horizontal: MediaQuery.of(context).size.width * 0.1,
+                        vertical: 12),
                     child: ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: color5,
@@ -302,7 +292,8 @@ class _ProfileSidebarDrawerState extends State<ProfileSidebarDrawer> {
                 if (!isLoggedIn)
                   Padding(
                     padding: EdgeInsets.symmetric(
-                        horizontal: MediaQuery.of(context).size.width * 0.1, vertical: 12),
+                        horizontal: MediaQuery.of(context).size.width * 0.1,
+                        vertical: 12),
                     child: Builder(
                       builder: (context) => ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
@@ -327,8 +318,7 @@ class _ProfileSidebarDrawerState extends State<ProfileSidebarDrawer> {
                         ),
                         onPressed: () {
                           Navigator.of(context).pop();
-                          Future.delayed(const Duration(milliseconds: 250),
-                              () {
+                          Future.delayed(const Duration(milliseconds: 250), () {
                             navigatorKey.currentState?.push(
                               MaterialPageRoute(
                                   builder: (context) => AdminLogin()),
@@ -446,10 +436,11 @@ class _SidebarSkeletonLoader extends StatelessWidget {
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
-            child: const Divider(
-                thickness: 1, color: Color(0xFFE0E0E0)),
+            child: const Divider(thickness: 1, color: Color(0xFFE0E0E0)),
           ),
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           const SizedBox(height: 16),
           // Menu items
           ...List.generate(

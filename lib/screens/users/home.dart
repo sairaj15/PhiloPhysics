@@ -7,9 +7,6 @@ import 'package:ephysicsapp/screens/authentication/adminLogin.dart';
 import 'package:ephysicsapp/screens/users/queryScreen.dart';
 import 'package:ephysicsapp/screens/users/quiz/quizHomePage.dart';
 import 'package:ephysicsapp/screens/users/sidebar.dart';
-import 'package:ephysicsapp/screens/users/studentLogin.dart';
-import 'package:ephysicsapp/screens/users/studentRegistration.dart';
-import 'package:ephysicsapp/screens/users/v-labs/vabs_home_screen.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/widgets/bottom_navy_bar.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +20,11 @@ class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
   late PageController _pageController;
   String appbarText = "Home";
-  List titles = ["Home", "Notes", "Play Quiz", "Virtual Labs"];
+  List titles = [
+    "Home",
+    "Notes",
+    "Play Quiz",
+  ];
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -65,15 +66,18 @@ class _MyHomePageState extends State<MyHomePage> {
         elevation: 0,
         actions: [
           isLoggedIn() || isStudentLoggedIn()
-              ? IconButton(icon: Icon(Icons.menu_outlined), onPressed: () {
-                _scaffoldKey.currentState?.openEndDrawer();
-          },)
+              ? IconButton(
+                  icon: Icon(Icons.menu_outlined),
+                  onPressed: () {
+                    _scaffoldKey.currentState?.openEndDrawer();
+                  },
+                )
               : IconButton(
-              icon: Icon(Icons.person),
-              onPressed: () async {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => AdminLogin()));
-              }),
+                  icon: Icon(Icons.person),
+                  onPressed: () async {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => AdminLogin()));
+                  }),
         ],
       ),
       body: SafeArea(
@@ -89,7 +93,6 @@ class _MyHomePageState extends State<MyHomePage> {
             IntroPage(),
             NotesHomePage(),
             QuizHomePage(),
-            VlabsHomeScreen(),
           ],
         ),
       ),
@@ -129,39 +132,34 @@ class _MyHomePageState extends State<MyHomePage> {
             title: Text('Quizzes', style: TextStyle(color: color5)),
             icon: Icon(Icons.timer, color: color5),
           ),
-          BottomNavyBarItem(
-            activeColor: color2,
-            inactiveColor: Colors.white,
-            textAlign: TextAlign.center,
-            title: Text('V-Labs', style: TextStyle(color: color5)),
-            icon: Icon(Icons.science_rounded, color: color5),
-          ),
         ],
       ),
-      endDrawer:  isLoggedIn() || isStudentLoggedIn() ? ProfileSidebarDrawer(
-        selectedIndex: _currentIndex,
-        onItemSelected: _onSidebarItemSelected,
-        isAdmin: isLoggedIn(),
-        isStudent: isStudentLoggedIn(),
-        onLogout: () => onLogout(context),
-        onLogin: () {
-          // Navigate to your login page
-          navigatorKey.currentState
-              ?.push(MaterialPageRoute(builder: (context) => AdminLogin()));
-        },
-        onAdminLogin: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => AdminLogin()));
-        },
-        onQuery: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => QueryFormScreen()));
-        },
-        onAdminStats: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AdminStatistics()));
-        },
-      ) : null,
+      endDrawer: isLoggedIn() || isStudentLoggedIn()
+          ? ProfileSidebarDrawer(
+              selectedIndex: _currentIndex,
+              onItemSelected: _onSidebarItemSelected,
+              isAdmin: isLoggedIn(),
+              isStudent: isStudentLoggedIn(),
+              onLogout: () => onLogout(context),
+              onLogin: () {
+                // Navigate to your login page
+                navigatorKey.currentState?.push(
+                    MaterialPageRoute(builder: (context) => AdminLogin()));
+              },
+              onAdminLogin: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AdminLogin()));
+              },
+              onQuery: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => QueryFormScreen()));
+              },
+              onAdminStats: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => AdminStatistics()));
+              },
+            )
+          : null,
     );
   }
 }

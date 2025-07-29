@@ -3,7 +3,6 @@ import 'package:ephysicsapp/globals/constants.dart';
 import 'package:http/http.dart' as http;
 
 class MailServices {
-
   Future<void> sendEmail({
     required String name,
     required String email,
@@ -12,7 +11,6 @@ class MailServices {
     required String message,
     List<String>? attachmentUrls,
   }) async {
-
     final mailtrapToken = mailTrapToken;
     final mailtrapEndpoint = mailTrapHost;
 
@@ -30,7 +28,13 @@ class MailServices {
       ${attachmentUrls != null && attachmentUrls.isNotEmpty ? """
       <div style="margin-top:30px; padding-top:15px; border-top:1px solid #e0e0e0;">
         <h3 style="font-size:18px; margin-bottom:10px; color:#2a61b5;">Attachments</h3>
-        ${attachmentUrls.map((url) => '<a href="$url" target="_blank" style="display:block; margin-bottom:8px; color:#007BFF; text-decoration:none;">Download File</a>').join()}
+        <div style="display:flex; gap:10px; align-items:center;">
+          ${attachmentUrls.map((url) => '''
+            <a href="$url" target="_blank" style="display:inline-block; text-decoration:none; font-size:24px;" title="Download File">
+              📎
+            </a>
+          ''').join('')}
+        </div>
       </div>
       """ : ""}
       <div style="text-align:center; margin-top:40px; font-size:13px; color:#999;">
@@ -41,15 +45,9 @@ class MailServices {
   """;
 
     final payload = {
-      "from": {
-        "email": "hello@demomailtrap.co",
-        "name": "Philo Physics App"
-      },
+      "from": {"email": "hello@demomailtrap.co", "name": "Philo Physics App"},
       "to": [
-        {
-          "email": "physicsapp.sakec@gmail.com",
-          "name": "Support Team"
-        }
+        {"email": "physicsapp.sakec@gmail.com", "name": "Support Team"}
       ],
       "subject": "New Student Query Submitted",
       "html": htmlBody,
@@ -71,6 +69,4 @@ class MailServices {
       print("❌ Failed to send email: ${response.statusCode}\n${response.body}");
     }
   }
-
 }
-

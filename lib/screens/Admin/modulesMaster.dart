@@ -49,6 +49,7 @@ class _ModuleMasterState extends State<ModuleMaster> {
                     'moduleNo': value['moduleNo'] is int
                         ? value['moduleNo']
                         : int.tryParse(value['moduleNo']) ?? 0,
+                    'practicalUrl': value['practicalUrl'] ?? ''
                   });
                 }
               });
@@ -119,7 +120,10 @@ class _ModuleMasterState extends State<ModuleMaster> {
                 );
               },
               tooltip: 'Add Document',
-              child: Icon(Icons.add, color: Colors.white,),
+              child: Icon(
+                Icons.add,
+                color: Colors.white,
+              ),
             ),
     );
   }

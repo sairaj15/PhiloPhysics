@@ -1,6 +1,6 @@
 import 'package:ephysicsapp/globals/colors.dart';
-import 'package:ephysicsapp/screens/Admin/addModule.dart';
 import 'package:ephysicsapp/screens/authentication/adminLogin.dart';
+import 'package:ephysicsapp/screens/users/v-labs/vlabs_chapter_page.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 
 import 'package:flutter/material.dart';
@@ -22,6 +22,7 @@ class HomeWidgetState extends State<NotesHomePage>
     new Tab(text: "AP"),
     new Tab(text: "EP1"),
     new Tab(text: "EP2"),
+    new Tab(text: "V-Labs"),
   ];
 
   late TabController _tabController;
@@ -44,22 +45,6 @@ class HomeWidgetState extends State<NotesHomePage>
     return Scaffold(
       backgroundColor: color1,
       appBar: new AppBar(
-        // title: Text("Homepage"),
-        // actions: [
-        //   isLoggedIn()
-        //       ? IconButton(
-        //           icon: Icon(Icons.exit_to_app),
-        //           onPressed: () {
-        //             onLogout(context);
-        //           },
-        //         )
-        //       : IconButton(
-        //           icon: Icon(Icons.person),
-        //           onPressed: () async {
-        //             Navigator.push(context,
-        //                 MaterialPageRoute(builder: (context) => AdminLogin()));
-        //           })
-        // ],
         backgroundColor: color1,
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -89,14 +74,18 @@ class HomeWidgetState extends State<NotesHomePage>
             ? new TabBarView(
                 controller: _tabController,
                 children: tabs.map((Tab tab) {
-                  String section = "1";
-                  if (tab.text == tabs[1].text)
-                    section = "2";
-                  else if (tab.text == tabs[2].text)
-                    section = "3";
-                  else
-                    section = "1";
-                  return ModuleMaster(section: section);
+                  if (tab.text == "V-Labs") {
+                    return VLabChaptersPage();
+                  } else {
+                    String section = "1";
+                    if (tab.text == tabs[1].text)
+                      section = "2";
+                    else if (tab.text == tabs[2].text)
+                      section = "3";
+                    else
+                      section = "1";
+                    return ModuleMaster(section: section);
+                  }
                 }).toList(),
               )
             : Container(
@@ -208,16 +197,6 @@ class HomeWidgetState extends State<NotesHomePage>
                 ),
               ),
       ),
-      // floatingActionButton: isLoggedIn()? FloatingActionButton(
-      //   backgroundColor: color4,
-      //   onPressed: () {
-      //     Navigator.push(
-      //       context,
-      //       MaterialPageRoute(builder: (context) => AddModule()),
-      //     );
-      //   }
-      //   child: Icon(Icons.add,),
-      // ):Container(),
     );
   }
 }
