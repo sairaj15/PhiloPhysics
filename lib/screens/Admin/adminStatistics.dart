@@ -2,6 +2,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'package:ephysicsapp/globals/constants.dart';
 import 'package:ephysicsapp/screens/Admin/adminUserUsageStatistics.dart';
+import 'package:ephysicsapp/screens/Admin/vlabs_view_stats_page.dart';
 import 'package:ephysicsapp/services/dataAutomateService.dart';
 import 'package:ephysicsapp/shimmer/adminStatisticsShimmer.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -30,6 +31,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
   int totalUserofApp = 0;
   int hour = 0;
   int mins = 0;
+  int totalVLabViews = 0;
 
   List<String> availableYears = [];
   Map<String, List<Map<String, dynamic>>> topUsers = {};
@@ -242,6 +244,19 @@ class _AdminStatisticsState extends State<AdminStatistics>
             });
           }
 
+          if (userData.containsKey('VLabViews')) {
+            Map<dynamic, dynamic> vlabViews = userData['VLabViews'];
+            vlabViews.forEach((monthYear, dateMap) {
+              (dateMap as Map<dynamic, dynamic>).forEach((date, count) {
+                if (count is int) {
+                  totalVLabViews += count;
+                } else if (count is String) {
+                  totalVLabViews += int.tryParse(count) ?? 0;
+                }
+              });
+            });
+          }
+
           if (userData.containsKey('college')) {
             uniqueColleges.add(userData['college']);
           }
@@ -427,7 +442,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
                   children: [
                     SizedBox(height: 20),
 
-                    /// Stat Box Grid
+// First row: three stat boxes
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -465,7 +480,22 @@ class _AdminStatisticsState extends State<AdminStatistics>
                         ),
                       ],
                     ),
-                    SizedBox(height: MediaQuery.of(context).size.height / 30),
+                    SizedBox(height: MediaQuery.of(context).size.height / 40),
+// Second row: V-Labs Viewed box (full width, no value)
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildStatBox(
+                            Icons.science,
+                            'V-Labs\nViewed',
+                            '', // Pass empty string for value
+                            Colors.purple,
+                            context,
+                            VLabUsageStatsPage(),
+                          ),
+                        ),
+                      ],
+                    ),
 
                     /// Top Users Container
                     _buildTopUsersContainer(),
@@ -491,8 +521,9 @@ class _AdminStatisticsState extends State<AdminStatistics>
     String value,
     Color color,
     BuildContext context,
-    Widget? pageToNavigate,
-  ) {
+    Widget? pageToNavigate, [
+    bool showValue = true, // Add this optional parameter
+  ]) {
     return GestureDetector(
       onTap: () {
         if (pageToNavigate != null) {
@@ -544,14 +575,15 @@ class _AdminStatisticsState extends State<AdminStatistics>
               ),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.005),
-            Text(
-              formatNumber(int.parse(value)),
-              style: GoogleFonts.poppins(
-                fontSize: MediaQuery.of(context).size.width * 0.0575,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+            if (showValue && value.isNotEmpty)
+              Text(
+                formatNumber(int.tryParse(value) ?? 0),
+                style: GoogleFonts.poppins(
+                  fontSize: MediaQuery.of(context).size.width * 0.0575,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
-            ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.01),
           ],
         ),

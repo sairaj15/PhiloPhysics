@@ -64,6 +64,7 @@ class _VLabChaptersPageState extends State<VLabChaptersPage> {
                       builder: (context) => VLabWebViewPage(
                         title: chapters[index]['moduleName'],
                         url: chapters[index]['vlabUrl'],
+                        experimentId: chapters[index]['moduleNo'].toString(),
                       ),
                     ),
                   );
