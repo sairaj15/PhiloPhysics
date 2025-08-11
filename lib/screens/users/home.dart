@@ -9,7 +9,9 @@ import 'package:ephysicsapp/screens/users/quiz/quizHomePage.dart';
 import 'package:ephysicsapp/screens/users/sidebar.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/widgets/bottom_navy_bar.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class MyHomePage extends StatefulWidget {
   @override
@@ -32,12 +34,58 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     _pageController = PageController();
+    checkForProfileUpdate(context);
   }
 
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  Future<void> checkForProfileUpdate(BuildContext context) async {
+    final dbRef = FirebaseDatabase.instance.ref('Push_User_Update');
+
+    try {
+      String todaysDate = DateFormat('dd/MM/yyyy').format(DateTime.now());
+
+      DatabaseEvent event = await dbRef.once();
+
+      if (event.snapshot.exists) {
+        bool dateFound = false;
+
+        for (var child in event.snapshot.children) {
+          String? value = child.value?.toString();
+          if (value == todaysDate) {
+            dateFound = true;
+            break;
+          }
+        }
+
+        if (dateFound) {
+          showDialog(
+            context: context,
+            barrierDismissible: false, // non-dismissible
+            builder: (ctx) {
+              return AlertDialog(
+                title: Text("Update Profile"),
+                content: Text("Please update your profile to continue."),
+                actions: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text("OK"),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      }
+    } catch (e) {
+      print("Error: ${e.toString()}");
+    }
   }
 
   void _onSidebarItemSelected(int index) {

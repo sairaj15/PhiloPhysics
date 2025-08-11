@@ -1,6 +1,7 @@
 import 'dart:collection';
 import 'dart:convert';
 import 'package:ephysicsapp/globals/constants.dart';
+import 'package:ephysicsapp/screens/Admin/adminControlPanel.dart';
 import 'package:ephysicsapp/screens/Admin/adminUserUsageStatistics.dart';
 import 'package:ephysicsapp/services/dataAutomateService.dart';
 import 'package:ephysicsapp/shimmer/adminStatisticsShimmer.dart';
@@ -469,7 +470,29 @@ class _AdminStatisticsState extends State<AdminStatistics>
 
                     /// Top Users Container
                     _buildTopUsersContainer(),
-                    SizedBox(height: MediaQuery.of(context).size.height / 30),
+                    SizedBox(height: MediaQuery.of(context).size.height / 50),
+
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        minimumSize: const Size(double.infinity, 50),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => AdminControlPanel()),
+                        );
+                      },
+                      child: const Text(
+                        "Go to Admin Panel",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                    ),
+
+                    SizedBox(height: MediaQuery.of(context).size.height / 50),
                     // Usage Stats Box
                     _buildUsageStatsBox(
                       context,
@@ -478,6 +501,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
                       hour,
                       mins,
                     ),
+
                   ],
                 ),
               ),

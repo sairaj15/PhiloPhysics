@@ -28,7 +28,6 @@ void main() async {
     print("Firebase initialization error: $e");
   }
   await initializePreferences();
-  // Enable offline persistence for Firebase Realtime Database
   FirebaseDatabase.instance.setPersistenceEnabled(true);
   await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.playIntegrity,
@@ -71,13 +70,11 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       final tempDir = await getTemporaryDirectory();
       final appDocDir = await getApplicationDocumentsDirectory();
 
-      // Delete temporary files
       if (tempDir.existsSync()) {
         tempDir.deleteSync(recursive: true);
         print("Temporary cache cleared.");
       }
 
-      // Delete cached videos or other files in app directory
       if (appDocDir.existsSync()) {
         for (var file in appDocDir.listSync()) {
           if (file is File) {
@@ -108,7 +105,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
-  // Check for updates
   void checkForUpdate() async {
     try {
       if (Platform.isAndroid) {
@@ -117,7 +113,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         if (updateInfo.updateAvailability ==
             UpdateAvailability.updateAvailable) {
           print("Update found");
-          // Start the immediate update process
           await InAppUpdate.performImmediateUpdate();
         }
       }
@@ -126,7 +121,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       final packageInfo = await PackageInfo.fromPlatform();
       final currentVersion = packageInfo.version;
 
-      // Replace with your app's App Store ID
       const appStoreId = 'YOUR_APP_STORE_ID_HERE';
       final url = 'https://itunes.apple.com/lookup?id=$appStoreId';
       final response = await http.get(Uri.parse(url));
@@ -137,7 +131,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
         if (_isVersionNewer(storeVersion, currentVersion)) {
           print("Update found on App Store");
-          // Show a dialog to the user
           _promptUserToUpdate(context);
         } else {
           print("No update found on App Store");
@@ -208,7 +201,6 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     });
   }
 
-  // Method to stop tracking when user logs out
   Future<void> onUserLogout() async {
     if (_isLoggedIn) {
       await _logAppUsageTime();
