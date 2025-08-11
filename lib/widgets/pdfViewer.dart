@@ -1,19 +1,22 @@
 import 'dart:async';
 import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/services/authentication.dart';
+import 'package:ephysicsapp/services/docServices.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:no_screenshot/no_screenshot.dart';
 
 class PDFScreen extends StatefulWidget {
-  final String path, title;
+  final String path, title, moduleName, originalFileUrl;
+  final bool? isFromOfflineScreen;
 
-  PDFScreen({Key? key, required this.path, required this.title})
+  PDFScreen({Key? key, required this.path, required this.title, required this.moduleName, required this.originalFileUrl, this.isFromOfflineScreen = false})
       : super(key: key);
 
   _PDFScreenState createState() => _PDFScreenState();
@@ -305,27 +308,129 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
                   : Container()
               : Center(
                   child: Text(errorMessage),
-                )
+                ),
+          ValueListenableBuilder(
+            valueListenable: DownloadService.isDownloading,
+            builder: (context, isDownloading, _) {
+              if (!(isDownloading as bool)) return SizedBox();
+
+              final bottomPadding = MediaQuery.of(context).padding.bottom + 100;
+
+              return Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  margin: EdgeInsets.only(
+                    bottom: bottomPadding,
+                    left: MediaQuery.of(context).size.width * 0.15,
+                    right: MediaQuery.of(context).size.width * 0.15,
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 6,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ValueListenableBuilder(
+                          valueListenable: DownloadService.progress,
+                          builder: (context, progress, _) {
+                            final value = progress as double;
+                            return LinearProgressIndicator(
+                              value: value,
+                              color: Colors.green,
+                              backgroundColor: Colors.grey[300],
+                              minHeight: 6,
+                            );
+                          },
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      ValueListenableBuilder(
+                        valueListenable: DownloadService.progress,
+                        builder: (context, progress, _) {
+                          final value = progress as double;
+                          return Text(
+                            "${(value * 100).toStringAsFixed(0)}%",
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
         ],
       ),
-      floatingActionButton: FutureBuilder<PDFViewController>(
-        future: _controller.future,
-        builder: (context, AsyncSnapshot<PDFViewController> snapshot) {
-          if (snapshot.hasData) {
-            return FloatingActionButton.extended(
-              backgroundColor: color5,
-              label: Text(
-                "Page ${currentPage + 1}/$pages",
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () async {
-                // Optional: Uncomment if you want to navigate to the middle of the PDF.
-                // await snapshot.data.setPage(pages ~/ 2);
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+              left: MediaQuery.of(context).size.width * 0.09,
+            ),
+            child: FutureBuilder<PDFViewController>(
+              future: _controller.future,
+              builder: (context, AsyncSnapshot<PDFViewController> snapshot) {
+                if (snapshot.hasData) {
+                  return FloatingActionButton.extended(
+                    backgroundColor: color5,
+                    label: Text(
+                      "Page ${currentPage + 1}/$pages",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () async {},
+                  );
+                }
+                return Container();
               },
-            );
-          }
-          return Container();
-        },
+            ),
+          ),
+          if(widget.isFromOfflineScreen == false)
+          SpeedDial(
+            direction: SpeedDialDirection.up,
+            icon: Icons.menu,
+            activeIcon: Icons.close,
+            iconTheme: IconThemeData(color: Colors.white),
+            backgroundColor: color5,
+            buttonSize: Size(
+              MediaQuery.of(context).size.width * 0.13,
+              MediaQuery.of(context).size.width * 0.13,
+            ),
+            overlayColor: Colors.transparent,
+            overlayOpacity: 0,
+            children: [
+              SpeedDialChild(
+                child: Icon(Icons.download_rounded, color: Colors.white),
+                label: 'Save Offline',
+                backgroundColor: color5,
+                shape: const CircleBorder(),
+                visible: true,
+                onTap: () {
+                  DownloadService.savePdfOffline(
+                      context,
+                      widget.originalFileUrl,
+                      widget.title,
+                      widget.moduleName
+                  );
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

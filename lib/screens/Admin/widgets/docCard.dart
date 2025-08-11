@@ -9,11 +9,12 @@ import 'package:flutter/material.dart';
    required String section,
    required String moduleID,
    required BuildContext context,
+   required String moduleName,
  }) {
    return GestureDetector(
      onTap: () {
        print("Pdf tapped by admin");
-       openFile(docDetails["downloadUrl"], context, docDetails["docName"]);
+       openFile(docDetails["downloadUrl"], context, docDetails["docName"],moduleName);
      },
      child: Container(
        child: Card(

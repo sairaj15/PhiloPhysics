@@ -1,13 +1,19 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:ephysicsapp/dataBase/models/pdfFileModel.dart';
 import 'package:ephysicsapp/screens/users/home.dart';
 import 'package:ephysicsapp/screens/users/splash_screen.dart';
 import 'package:ephysicsapp/services/authentication.dart';
+import 'package:ephysicsapp/widgets/noInternetScreen.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
@@ -17,6 +23,8 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'globals/colors.dart';
 import 'package:http/http.dart' as http;
+
+import 'globals/constants.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
@@ -33,6 +41,9 @@ void main() async {
     androidProvider: AndroidProvider.playIntegrity,
     // appleProvider: AppleProvider.appAttest,
   );
+  await Hive.initFlutter();
+  Hive.registerAdapter(PDFFileAdapter());
+  await Hive.openBox<PDFFile>(Hive_Pdf_key);
   runApp(MaterialApp(
     navigatorKey: navigatorKey,
     debugShowCheckedModeBanner: false,
@@ -55,12 +66,56 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   bool _isLoggedIn = false;
   String? _userId;
 
+  final Connectivity connectivity = Connectivity();
+  bool isFirstListener = true;
+  bool isConnected = true;
+  bool isDialogShowing = false;
+  late StreamSubscription<List<ConnectivityResult>> connectivitySubscription;
+  bool hadConnectionLoss = false;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     checkForUpdate();
     _checkLoggedInStatus();
+    initConnectivity();
+    connectivitySubscription = connectivity.onConnectivityChanged.listen(updateConnectionStatus);
+  }
+
+  /// No Internet
+  Future<void> initConnectivity() async {
+    List<ConnectivityResult> result;
+
+    try {
+      result = await connectivity.checkConnectivity();
+    } on PlatformException catch (e) {
+      print('Couldn\'t check connectivity status: ${e.message}');
+      return;
+    }
+
+    if (!mounted) {
+      return;
+    }
+    updateConnectionStatus(result);
+  }
+
+  void updateConnectionStatus(List<ConnectivityResult> result) {
+    bool wasConnected = isConnected;
+    bool isNowConnected = result.contains(ConnectivityResult.mobile) || result.contains(ConnectivityResult.wifi) || result.contains(ConnectivityResult.ethernet);
+    print('Connectivity changed: $result, isConnected: $isNowConnected');
+
+    if (wasConnected != isNowConnected) {
+      setState(() {
+        isConnected = isNowConnected;
+      });
+
+      if (isNowConnected) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Internet Connection Restored', style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,),
+        );
+      }
+    }
   }
 
   /// Clearin video and pdf caches
@@ -211,17 +266,21 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (_isLoggedIn) {
-      if (state == AppLifecycleState.resumed) {
-        // App brought to foreground i.e., in use
+    super.didChangeAppLifecycleState(state);
+
+    if (state == AppLifecycleState.resumed) {
+      initConnectivity();
+      if (_isLoggedIn) {
         print('Starting Time Recording');
         _startTime = DateTime.now();
-      } else if (state == AppLifecycleState.paused ||
-          state == AppLifecycleState.inactive) {
-        print("App Not in Foreground");
-        _logAppUsageTime();
-      } else if (state == AppLifecycleState.detached) {
-        clearAppCache();
+      }
+    } else if (_isLoggedIn && (state == AppLifecycleState.paused || state == AppLifecycleState.inactive)) {
+      print("App Not in Foreground");
+      _logAppUsageTime();
+    } else if (_isLoggedIn && state == AppLifecycleState.detached) {
+      clearAppCache();
+      if (Hive.isBoxOpen(Hive_Pdf_key)) {
+        Hive.box(Hive_Pdf_key).close();
       }
     }
   }
@@ -261,8 +320,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _updateUsageInFirebase(
-      DateTime usageDate, Duration sessionDuration) async {
+  Future<void> _updateUsageInFirebase(DateTime usageDate, Duration sessionDuration) async {
     String userId = _userId!;
     String currentMonth = DateFormat('MMM yyyy').format(usageDate);
     String dateKey = DateFormat('dd-MM-yyyy').format(usageDate);
@@ -311,6 +369,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     clearAppCache();
+    if (Hive.isBoxOpen(Hive_Pdf_key)) {
+      Hive.box(Hive_Pdf_key).close();
+    }
     super.dispose();
   }
 
@@ -321,9 +382,16 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
       DeviceOrientation.portraitDown,
     ]);
 
-    return prefs.getBool("isStudentLoggedIn") == true ||
-            prefs.getBool("isLogged") == true
+    Widget mainScreen = (prefs.getBool("isStudentLoggedIn") == true ||
+        prefs.getBool("isLogged") == true)
         ? MyHomePage()
         : SplashScreen();
+
+    return Stack(
+      children: [
+        mainScreen,
+        if (!isConnected) const NoInternetScreen(),
+      ],
+    );
   }
 }
