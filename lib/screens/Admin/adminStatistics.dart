@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:ephysicsapp/globals/constants.dart';
 import 'package:ephysicsapp/screens/Admin/adminControlPanel.dart';
 import 'package:ephysicsapp/screens/Admin/adminUserUsageStatistics.dart';
+import 'package:ephysicsapp/screens/Admin/developerControlPanel.dart';
 import 'package:ephysicsapp/screens/Admin/vlabs_view_stats_page.dart';
 import 'package:ephysicsapp/services/dataAutomateService.dart';
 import 'package:ephysicsapp/shimmer/adminStatisticsShimmer.dart';
@@ -482,7 +483,6 @@ class _AdminStatisticsState extends State<AdminStatistics>
                       ],
                     ),
                     SizedBox(height: MediaQuery.of(context).size.height / 40),
-// Second row: V-Labs Viewed box (full width, no value)
                     Row(
                       children: [
                         Expanded(
@@ -523,6 +523,28 @@ class _AdminStatisticsState extends State<AdminStatistics>
                     ),
 
                     SizedBox(height: MediaQuery.of(context).size.height / 50),
+
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        minimumSize: const Size(double.infinity, 50),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => DeveloperControlPanel()),
+                        );
+                      },
+                      child: const Text(
+                        "Go to Developer Panel",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                    ),
+
+                    SizedBox(height: MediaQuery.of(context).size.height / 50),
                     // Usage Stats Box
                     _buildUsageStatsBox(
                       context,
@@ -531,6 +553,27 @@ class _AdminStatisticsState extends State<AdminStatistics>
                       hour,
                       mins,
                     ),
+
+                    SizedBox(height: MediaQuery.of(context).size.height / 50),
+
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        minimumSize: const Size(double.infinity, 50),
+                      ),
+                      onPressed: () {
+                        showSemesterDialog(context);
+                      },
+                      child: const Text(
+                        "End Semester / Academic Year",
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                    ),
+
+                    SizedBox(height: MediaQuery.of(context).size.height / 30),
 
                   ],
                 ),
@@ -944,4 +987,166 @@ class _AdminStatisticsState extends State<AdminStatistics>
       ),
     );
   }
+
+  void showSemesterDialog(BuildContext context) {
+    DateTime? startDate;
+    DateTime? endDate;
+    bool isLoading = false; // Loader state
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              contentPadding: const EdgeInsets.all(16),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text("Select Semester Duration",
+                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                            SizedBox(height: 4),
+                            Text("Pick the start and end month/year for this semester",
+                                style: TextStyle(fontSize: 13, color: Colors.black54)),
+                          ],
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: const Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                  const Divider(height: 24),
+
+                  // Start Date Picker
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text("Start Month & Year"),
+                    subtitle: Text(
+                      startDate != null
+                          ? "${_monthName(startDate!.month)} ${startDate!.year}"
+                          : "Select start date",
+                    ),
+                    trailing: const Icon(Icons.calendar_today, size: 20),
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: startDate ?? DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                        helpText: "Select Start Date",
+                        initialDatePickerMode: DatePickerMode.year,
+                      );
+                      if (picked != null) {
+                        setState(() => startDate = picked);
+                      }
+                    },
+                  ),
+
+                  // End Date Picker
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text("End Month & Year"),
+                    subtitle: Text(
+                      endDate != null
+                          ? "${_monthName(endDate!.month)} ${endDate!.year}"
+                          : "Select end date",
+                    ),
+                    trailing: const Icon(Icons.calendar_today, size: 20),
+                    onTap: () async {
+                      final picked = await showDatePicker(
+                        context: context,
+                        initialDate: endDate ?? DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2100),
+                        helpText: "Select End Date",
+                        initialDatePickerMode: DatePickerMode.year,
+                      );
+                      if (picked != null) {
+                        setState(() => endDate = picked);
+                      }
+                    },
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Confirm Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: GestureDetector(
+                      onTap: isLoading
+                          ? null
+                          : () async {
+                        if (startDate != null && endDate != null) {
+                          setState(() => isLoading = true);
+                          try {
+                            await DataAutomateService()
+                                .updateGoogleSheetDataForSpecificTime(startDate!, endDate!);
+                            Navigator.pop(dialogContext);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Semester sheet created successfully")),
+                            );
+                          } catch (e) {
+                            Navigator.pop(dialogContext);
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Failed to create semester sheet")),
+                            );
+                          } finally {
+                            setState(() => isLoading = false);
+                          }
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        decoration: BoxDecoration(
+                          color: Colors.blue,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Center(
+                          child: isLoading
+                              ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                              : const Text(
+                            "Confirm",
+                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  String _monthName(int month) {
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    return months[month - 1];
+  }
+
 }
