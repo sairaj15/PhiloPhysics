@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/services/mailService.dart';
@@ -115,7 +114,8 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
         fileUrls.clear();
         for (int i = 0; i < selectedFiles.length; i++) {
           String fileName = path.basename(selectedFiles[i].path);
-          final ref = FirebaseStorage.instance.ref().child('queries').child(fileName);
+          final ref =
+              FirebaseStorage.instance.ref().child('queries').child(fileName);
           final uploadTask = ref.putFile(selectedFiles[i]);
           await uploadTask.whenComplete(() async {
             String downloadUrl = await ref.getDownloadURL();
@@ -124,7 +124,8 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
         }
 
         // Then push to Realtime DB
-        DatabaseReference queryRef = FirebaseDatabase.instance.ref().child('Queries').push();
+        DatabaseReference queryRef =
+            FirebaseDatabase.instance.ref().child('Queries').push();
         await queryRef.set({
           'name': _nameController.text,
           'email': _emailController.text,
@@ -160,7 +161,8 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
-            title: Text('Success', style: TextStyle(fontWeight: FontWeight.bold, color: color5)),
+            title: Text('Success',
+                style: TextStyle(fontWeight: FontWeight.bold, color: color5)),
             content: Text('Your query has been submitted successfully.'),
             actions: [
               TextButton(
@@ -547,18 +549,17 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
                         onPressed: _isSubmitting ? null : _submitQuery,
                         child: _isSubmitting
                             ? SizedBox(
-                          height: 24,
-                          width: 24,
-                          child: SpinKitFadingCircle(
-                            color: color1,
-                          )
-                        )
+                                height: 24,
+                                width: 24,
+                                child: SpinKitFadingCircle(
+                                  color: color1,
+                                ))
                             : Text(
-                          'Submit Query',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white),
-                        ),
+                                'Submit Query',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white),
+                              ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
@@ -634,8 +635,8 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(color: color5, width: 1.5),
             ),
-            contentPadding: EdgeInsets.symmetric(
-                horizontal: 16, vertical: small ? 8 : 8),
+            contentPadding:
+                EdgeInsets.symmetric(horizontal: 16, vertical: small ? 8 : 8),
           ),
         ),
       ),

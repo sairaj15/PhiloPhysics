@@ -43,6 +43,63 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
     getAppUsageData();
   }
 
+/*This is to delete any irrelevant data from the database*/
+  // Future<int> cleanupFutureUsageData({
+  //   required ValueNotifier<String> statusNotifier,
+  // }) async {
+  //   final DatabaseReference rootRef = FirebaseDatabase.instance.ref();
+
+  //   final usersSnapshot = await rootRef.child('Users').get();
+  //   if (!usersSnapshot.exists || usersSnapshot.value == null) {
+  //     statusNotifier.value = 'No users found.';
+  //     return 0;
+  //   }
+
+  //   final Map<String, dynamic> users =
+  //       Map<String, dynamic>.from(usersSnapshot.value as Map);
+
+  //   const List<String> invalidMonths = [
+  //     'Jan 2026',
+  //     'Feb 2026',
+  //     'Mar 2026',
+  //   ];
+
+  //   final Map<String, dynamic> updates = {};
+  //   int affectedUsers = 0;
+
+  //   int index = 0;
+  //   for (final entry in users.entries) {
+  //     index++;
+  //     final userId = entry.key;
+  //     final userData = Map<String, dynamic>.from(entry.value);
+
+  //     if (!userData.containsKey('AppUsage')) continue;
+
+  //     bool hasInvalid = false;
+
+  //     for (final month in invalidMonths) {
+  //       final path = 'Users/$userId/AppUsage/$month';
+  //       if ((userData['AppUsage'] as Map).containsKey(month)) {
+  //         updates[path] = null; // delete
+  //         hasInvalid = true;
+  //       }
+  //     }
+
+  //     if (hasInvalid) {
+  //       affectedUsers++;
+  //       statusNotifier.value =
+  //           'Queued cleanup for $affectedUsers users (scanned $index)';
+  //     }
+  //   }
+
+  //   statusNotifier.value = 'Applying cleanup…';
+
+  //   await rootRef.update(updates);
+
+  //   statusNotifier.value = 'Cleanup completed ✔';
+  //   return affectedUsers;
+  // }
+
   Future<void> getAppUsageData() async {
     DatabaseReference dbRef = FirebaseDatabase.instance.ref().child('Users');
 
@@ -380,6 +437,49 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
                               ],
                             ),
                           ),
+                          // ElevatedButton(
+                          //   onPressed: () async {
+                          //     final statusNotifier =
+                          //         ValueNotifier<String>('Starting cleanup…');
+
+                          //     // Show SnackBar immediately
+                          //     ScaffoldMessenger.of(context).showSnackBar(
+                          //       SnackBar(
+                          //         duration: const Duration(
+                          //             minutes: 5), // stays visible
+                          //         content: ValueListenableBuilder<String>(
+                          //           valueListenable: statusNotifier,
+                          //           builder: (_, value, __) => Text(value),
+                          //         ),
+                          //         backgroundColor: Colors.blueGrey,
+                          //       ),
+                          //     );
+
+                          //     final int deletedCount =
+                          //         await cleanupFutureUsageData(
+                          //       statusNotifier: statusNotifier,
+                          //     );
+
+                          //     if (!context.mounted) return;
+
+                          //     // Replace with final confirmation SnackBar
+                          //     ScaffoldMessenger.of(context)
+                          //         .hideCurrentSnackBar();
+
+                          //     ScaffoldMessenger.of(context).showSnackBar(
+                          //       SnackBar(
+                          //         content: Text(
+                          //           deletedCount > 0
+                          //               ? 'Cleanup finished ✅ Removed $deletedCount invalid entries.'
+                          //               : 'Cleanup finished ✅ No invalid data found.',
+                          //         ),
+                          //         backgroundColor: Colors.green,
+                          //         duration: const Duration(seconds: 4),
+                          //       ),
+                          //     );
+                          //   },
+                          //   child: const Text('Run Usage Cleanup'),
+                          // ),
                           GraphContainer(
                             year: availableAcademicYears[currentYearIndex]
                                 .split('-')[0],

@@ -62,10 +62,7 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
     ]);
 
     // pdf time calc and setting in db:
-    DateTime pdfTimeEnd = DateTime.now();
-    if (pdfTimeStart != null) {
-      _logPdfUsageTime(pdfTimeStart!, DateTime.now());
-    }
+    _logPdfUsageTime(pdfTimeStart, DateTime.now());
     super.dispose();
   }
 

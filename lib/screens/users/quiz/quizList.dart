@@ -18,12 +18,6 @@ class _QuizListState extends State<QuizList> {
   List quizDetails = [];
 
   @override
-  void initState() {
-    // TODO: implement initState
-    // print(quizDetails.length);
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: color1,

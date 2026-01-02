@@ -55,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
         bool dateFound = false;
 
         for (var child in event.snapshot.children) {
+          print("Child Key: ${child.key}, Value: ${child.value}");
           String? value = child.value?.toString();
           if (value == todaysDate) {
             dateFound = true;

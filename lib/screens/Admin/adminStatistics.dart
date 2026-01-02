@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:ephysicsapp/globals/constants.dart';
 import 'package:ephysicsapp/screens/Admin/adminControlPanel.dart';
 import 'package:ephysicsapp/screens/Admin/adminUserUsageStatistics.dart';
+import 'package:ephysicsapp/screens/Admin/developerControlPanel.dart';
 import 'package:ephysicsapp/screens/Admin/vlabs_view_stats_page.dart';
 import 'package:ephysicsapp/services/dataAutomateService.dart';
 import 'package:ephysicsapp/shimmer/adminStatisticsShimmer.dart';
@@ -513,12 +514,39 @@ class _AdminStatisticsState extends State<AdminStatistics>
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => AdminControlPanel()),
+                          MaterialPageRoute(
+                              builder: (context) => AdminControlPanel()),
                         );
                       },
                       child: const Text(
                         "Go to Admin Panel",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        minimumSize: const Size(double.infinity, 50),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => DeveloperControlPanel()),
+                        );
+                      },
+                      child: const Text(
+                        "Go to Developer Panel",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
                       ),
                     ),
 
@@ -531,7 +559,6 @@ class _AdminStatisticsState extends State<AdminStatistics>
                       hour,
                       mins,
                     ),
-
                   ],
                 ),
               ),

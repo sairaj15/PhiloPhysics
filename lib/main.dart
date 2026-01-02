@@ -105,36 +105,69 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
+  Future<bool> fetchForceUpdateFlag() async {
+    final ref = FirebaseDatabase.instance.ref('AppConfig/force_update');
+    final snapshot = await ref.get();
+    return snapshot.value == true;
+  }
+
   void checkForUpdate() async {
     try {
+      bool updateAvailable = false;
+      String? storeVersion;
+      String? currentVersion;
+
+      // Android: Use in_app_update
       if (Platform.isAndroid) {
-        print("App Version check been performed");
+        print("App Version check being performed (Android)");
         final AppUpdateInfo updateInfo = await InAppUpdate.checkForUpdate();
-        if (updateInfo.updateAvailability ==
-            UpdateAvailability.updateAvailable) {
-          print("Update found");
-          await InAppUpdate.performImmediateUpdate();
+        updateAvailable =
+            updateInfo.updateAvailability == UpdateAvailability.updateAvailable;
+        // You can get the version from your backend or Play Store API if needed
+      }
+
+      // iOS: Check App Store version
+      if (Platform.isIOS) {
+        final packageInfo = await PackageInfo.fromPlatform();
+        currentVersion = packageInfo.version;
+
+        // Replace with your app's App Store ID
+        const appStoreId = 'YOUR_APP_STORE_ID_HERE';
+        final url = 'https://itunes.apple.com/lookup?id=$appStoreId';
+        final response = await http.get(Uri.parse(url));
+
+        if (response.statusCode == 200) {
+          final json = jsonDecode(response.body);
+          if (json['results'] != null && json['results'].isNotEmpty) {
+            storeVersion = json['results'][0]['version'];
+            updateAvailable = _isVersionNewer(storeVersion!, currentVersion);
+          }
         }
       }
 
-      if (Platform.isIOS) {}
-      final packageInfo = await PackageInfo.fromPlatform();
-      final currentVersion = packageInfo.version;
+      // Fetch force update flag from Firebase
+      final forceUpdate = await fetchForceUpdateFlag();
 
-      const appStoreId = 'YOUR_APP_STORE_ID_HERE';
-      final url = 'https://itunes.apple.com/lookup?id=$appStoreId';
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        final json = jsonDecode(response.body);
-        final storeVersion = json['results'][0]['version'];
-
-        if (_isVersionNewer(storeVersion, currentVersion)) {
-          print("Update found on App Store");
-          _promptUserToUpdate(context);
+      if (updateAvailable) {
+        if (forceUpdate) {
+          print("Force update is ON. Forcing update.");
+          if (Platform.isAndroid) {
+            await InAppUpdate.performImmediateUpdate();
+          } else if (Platform.isIOS) {
+            // Open App Store directly
+            const appStoreUrl =
+                'https://apps.apple.com/app/idYOUR_APP_STORE_ID';
+            if (await canLaunchUrl(Uri.parse(appStoreUrl))) {
+              launchUrl(Uri.parse(appStoreUrl),
+                  mode: LaunchMode.externalApplication);
+            }
+          }
         } else {
-          print("No update found on App Store");
+          print("Force update is OFF. Showing suggestion dialog.");
+          _promptUserToUpdate(context);
         }
+      } else {
+        print("No update available.");
       }
     } catch (e) {
       print("Error checking for updates: $e");

@@ -241,7 +241,7 @@ class _WeeklyAdminAppUsageStatisticsState
             colorScheme: const ColorScheme.light(
               primary: Color(0xFF4CAF50),
             ),
-            dialogBackgroundColor: Colors.white,
+            dialogTheme: DialogThemeData(backgroundColor: Colors.white),
           ),
           child: child!,
         );

@@ -1,4 +1,3 @@
-import 'package:ephysicsapp/globals/colors.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -19,8 +18,7 @@ class _AdminControlPanelState extends State<AdminControlPanel> {
 
   final TextEditingController _branchController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
-  final DatabaseReference _dbRef =
-  FirebaseDatabase.instance.ref('Departments');
+  final DatabaseReference _dbRef = FirebaseDatabase.instance.ref('Departments');
 
   List<String> _departments = [];
 
@@ -87,7 +85,8 @@ class _AdminControlPanelState extends State<AdminControlPanel> {
               children: [
                 Text(
                   text,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 const SizedBox(height: 8),
                 const SpinKitCircle(
@@ -160,7 +159,7 @@ class _AdminControlPanelState extends State<AdminControlPanel> {
 
   Future<void> _editBranch(String oldName) async {
     final TextEditingController editController =
-    TextEditingController(text: oldName);
+        TextEditingController(text: oldName);
 
     bool confirm = await _showEditDialog(editController);
     if (!confirm) return;
@@ -180,46 +179,46 @@ class _AdminControlPanelState extends State<AdminControlPanel> {
 
   Future<bool> _showConfirmDialog(String message) async {
     return await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Confirm"),
-        content: Text(message),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text("Cancel"),
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Confirm"),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text("Cancel"),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text("Yes"),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text("Yes"),
-          ),
-        ],
-      ),
-    ) ??
+        ) ??
         false;
   }
 
   Future<bool> _showEditDialog(TextEditingController controller) async {
     return await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Edit Branch"),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(labelText: "Branch Name"),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text("Cancel"),
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text("Edit Branch"),
+            content: TextField(
+              controller: controller,
+              decoration: const InputDecoration(labelText: "Branch Name"),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text("Cancel"),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text("Save"),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text("Save"),
-          ),
-        ],
-      ),
-    ) ??
+        ) ??
         false;
   }
 
@@ -244,10 +243,12 @@ class _AdminControlPanelState extends State<AdminControlPanel> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(title,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w500)),
               ElevatedButton(
                 onPressed: onPressed,
-                child: Text(buttonLabel, style: const TextStyle(color: Colors.white)),
+                child: Text(buttonLabel,
+                    style: const TextStyle(color: Colors.white)),
               )
             ],
           ),
@@ -255,9 +256,9 @@ class _AdminControlPanelState extends State<AdminControlPanel> {
             duration: const Duration(milliseconds: 300),
             child: isExpanded
                 ? Padding(
-              padding: const EdgeInsets.only(top: 12.0),
-              child: expandedChild,
-            )
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: expandedChild,
+                  )
                 : const SizedBox.shrink(),
           )
         ],
@@ -364,7 +365,7 @@ class _AdminControlPanelState extends State<AdminControlPanel> {
                       children: [
                         IconButton(
                           icon: Icon(Icons.edit,
-                              color:  Color(0xFF495962), size: 16),
+                              color: Color(0xFF495962), size: 16),
                           onPressed: () => _editBranch(deptName),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
@@ -487,12 +488,12 @@ class _AdminControlPanelState extends State<AdminControlPanel> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Admin Control Panel", style: TextStyle(color: Colors.white)),
+        title: const Text("Admin Control Panel",
+            style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.blueAccent,
         centerTitle: true,
       ),

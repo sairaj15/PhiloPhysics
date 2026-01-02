@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/widgets/popUps.dart';
@@ -157,7 +155,7 @@ class _StudentRegisterState extends State<StudentRegister> {
     }
 
     String collegeName =
-    _selectedCollege == 'Sakec' ? 'Sakec' : otherCollegeNameController.text;
+        _selectedCollege == 'Sakec' ? 'Sakec' : otherCollegeNameController.text;
 
     // // Show the pop-up dialog to inform the user about Google Sign-In
     // await showDialog(
@@ -203,7 +201,6 @@ class _StudentRegisterState extends State<StudentRegister> {
       });
     }
   }
-
 
   @override
   void initState() {
@@ -293,9 +290,11 @@ class _StudentRegisterState extends State<StudentRegister> {
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.grey[100],
-                    contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     labelStyle: TextStyle(color: Colors.grey[700]),
-                    prefixIcon: Icon(Icons.person_2_outlined, color: Colors.grey[700]), // optional
+                    prefixIcon: Icon(Icons.person_2_outlined,
+                        color: Colors.grey[700]), // optional
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide(color: color5, width: 2),
@@ -318,8 +317,7 @@ class _StudentRegisterState extends State<StudentRegister> {
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w400),
                       ),
-                      SizedBox(width: MediaQuery.of(context).size.width *
-                          0.01),
+                      SizedBox(width: MediaQuery.of(context).size.width * 0.01),
                       Expanded(
                         child: Wrap(
                           alignment: WrapAlignment
@@ -406,9 +404,11 @@ class _StudentRegisterState extends State<StudentRegister> {
                         decoration: InputDecoration(
                           filled: true,
                           fillColor: Colors.grey[100],
-                          contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          contentPadding:
+                              EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                           labelStyle: TextStyle(color: Colors.grey[700]),
-                          prefixIcon: Icon(Icons.school_outlined, color: Colors.grey[700]), // optional
+                          prefixIcon: Icon(Icons.school_outlined,
+                              color: Colors.grey[700]), // optional
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(15),
                             borderSide: BorderSide(color: color5, width: 2),
@@ -435,9 +435,11 @@ class _StudentRegisterState extends State<StudentRegister> {
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.grey[100],
-                    contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     labelStyle: TextStyle(color: Colors.grey[700]),
-                    prefixIcon: Icon(Icons.email_outlined, color: Colors.grey[700]), // optional
+                    prefixIcon: Icon(Icons.email_outlined,
+                        color: Colors.grey[700]), // optional
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide(color: color5, width: 2),
@@ -461,9 +463,11 @@ class _StudentRegisterState extends State<StudentRegister> {
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.grey[100],
-                    contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     labelStyle: TextStyle(color: Colors.grey[700]),
-                    prefixIcon: Icon(Icons.class_outlined, color: Colors.grey[700]), // optional
+                    prefixIcon: Icon(Icons.class_outlined,
+                        color: Colors.grey[700]), // optional
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide(color: color5, width: 2),
@@ -493,9 +497,11 @@ class _StudentRegisterState extends State<StudentRegister> {
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.grey[100],
-                    contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     labelStyle: TextStyle(color: Colors.grey[700]),
-                    prefixIcon: Icon(Icons.lock_outline_rounded, color: Colors.grey[700]), // optional
+                    prefixIcon: Icon(Icons.lock_outline_rounded,
+                        color: Colors.grey[700]), // optional
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide(color: color5, width: 2),
@@ -578,9 +584,11 @@ class _StudentRegisterState extends State<StudentRegister> {
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.grey[100],
-                    contentPadding: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                    contentPadding:
+                        EdgeInsets.symmetric(vertical: 8, horizontal: 16),
                     labelStyle: TextStyle(color: Colors.grey[700]),
-                    prefixIcon: Icon(Icons.lock_outline_rounded, color: Colors.grey[700]), // optional
+                    prefixIcon: Icon(Icons.lock_outline_rounded,
+                        color: Colors.grey[700]), // optional
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                       borderSide: BorderSide(color: color5, width: 2),

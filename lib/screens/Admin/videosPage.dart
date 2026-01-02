@@ -321,7 +321,6 @@
 //     );
 //   }
 // }
-import 'package:chewie/chewie.dart';
 import 'package:ephysicsapp/widgets/video_screen.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -330,7 +329,6 @@ import 'package:ephysicsapp/services/authentication.dart';
 import 'package:ephysicsapp/services/general.dart';
 import 'package:ephysicsapp/widgets/popUps.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:video_player/video_player.dart';
 
 class VideosListPage extends StatelessWidget {
   final String section;
@@ -471,8 +469,7 @@ class VideosListPage extends StatelessWidget {
                         .child(studentUUID)
                         .child('videosViewed')
                         .once();
-                    DataSnapshot snapshot = event
-                        .snapshot;
+                    DataSnapshot snapshot = event.snapshot;
 
                     if (snapshot.exists) {
                       int currentViewCount = snapshot.value as int;
