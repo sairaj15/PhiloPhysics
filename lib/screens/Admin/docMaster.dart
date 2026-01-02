@@ -88,6 +88,7 @@ class _DocMasterState extends State<DocMaster> {
                                 context: context,
                                 section: widget.section,
                                 moduleID: widget.moduleID,
+                                moduleName: widget.moduleName
                               )
                             : docUserCard(
                                 index: index,
@@ -95,6 +96,7 @@ class _DocMasterState extends State<DocMaster> {
                                 context: context,
                                 section: widget.section,
                                 moduleID: widget.moduleID,
+                                moduleName: widget.moduleName,
                               );
                       },
                     );

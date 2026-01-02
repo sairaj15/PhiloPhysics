@@ -76,6 +76,7 @@ Widget docUserCard({
   String? section,
   String? moduleID,
   BuildContext? context,
+  String? moduleName,
 }) {
   return Container(
     margin: EdgeInsets.fromLTRB(10, 7, 10, 7),
@@ -109,7 +110,7 @@ Widget docUserCard({
           print("Section : ${section}");
           // Open the PDF first
           if (docDetails["downloadUrl"] != null && context != null) {
-            openFile(docDetails["downloadUrl"], context, docDetails["docName"]);
+            openFile(docDetails["downloadUrl"], context, docDetails["docName"],moduleName ?? '');
           }
 
           // Increment the view count in the background

@@ -1,6 +1,7 @@
 import 'package:ephysicsapp/globals/colors.dart';
 import 'package:ephysicsapp/main.dart';
 import 'package:ephysicsapp/screens/authentication/adminLogin.dart';
+import 'package:ephysicsapp/screens/users/offlineMaterialsScreen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
@@ -253,6 +254,16 @@ class _ProfileSidebarDrawerState extends State<ProfileSidebarDrawer> {
                             widget.onQuery();
                           },
                         ),
+                        SidebarItem(
+                        icon: Icons.downloading_sharp,
+                        label: "Downloads",
+                        isSelected: false,
+                        selectedColor: selectedColor,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => OfflineMaterialScreen()));
+                        },
+                      ),
                     ],
                   ),
                 ),

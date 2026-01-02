@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:dio/dio.dart';
+import 'package:ephysicsapp/dataBase/models/pdfFileModel.dart';
 import 'package:ephysicsapp/globals/colors.dart';
+import 'package:ephysicsapp/globals/constants.dart';
 import 'package:ephysicsapp/widgets/pdfViewer.dart';
 import 'package:ephysicsapp/widgets/popUps.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
@@ -101,7 +105,7 @@ deleteDoc(
   });
 }
 
-Future<void> openFile(String url, BuildContext context, String title) async {
+Future<void> openFile(String url, BuildContext context, String title, String chapterName) async {
   // Show a loading dialog while downloading
   showDialog(
     context: context,
@@ -130,6 +134,8 @@ Future<void> openFile(String url, BuildContext context, String title) async {
           builder: (context) => PDFScreen(
             path: remotePDFpath,
             title: title,
+            moduleName: chapterName,
+            originalFileUrl: url,
           ),
         ),
       );
@@ -245,5 +251,81 @@ Future<void> incrementPDFViewCount(String studentUUID) async {
     }
   } catch (e) {
     print("Error incrementing PDF view count: $e");
+  }
+}
+
+class DownloadService {
+  static ValueNotifier<bool> isDownloading = ValueNotifier(false);
+  static ValueNotifier<double> progress = ValueNotifier(0.0);
+
+  static Future<void> savePdfOffline(
+      BuildContext context,
+      String url,
+      String fileName,
+      String chapterName,
+      ) async {
+    try {
+      var box = Hive.box<PDFFile>(Hive_Pdf_key);
+
+      final alreadyExists = box.values.any((pdf) =>
+      pdf.chapterName == chapterName && pdf.fileName == fileName);
+
+      if (alreadyExists) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("$fileName File for '$chapterName' is already downloaded."),
+            duration: Duration(seconds: 2),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
+
+      isDownloading.value = true;
+      progress.value = 0.0;
+
+      final dir = await getApplicationDocumentsDirectory();
+      final filePath = "${dir.path}/${chapterName.replaceAll(' ','_') + fileName.replaceAll(' ','_')}";
+
+      Dio dio = Dio();
+      await dio.download(
+        url,
+        filePath,
+        onReceiveProgress: (received, total) {
+          if (total != -1) {
+            progress.value = received / total;
+          }
+        },
+      );
+
+      box.add(PDFFile(
+        fileName: fileName,
+        filePath: filePath,
+        chapterName: chapterName,
+        savedAt: DateTime.now(),
+      ));
+
+      isDownloading.value = false;
+
+      // 2. Show success SnackBar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Downloaded '$fileName' successfully."),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      isDownloading.value = false;
+
+      // 3. Show failure SnackBar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Failed to download '$fileName'. Please try again."),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }
