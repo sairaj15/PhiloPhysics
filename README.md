@@ -22,7 +22,7 @@ or you can download the application from
 ## Installation and Usage
 
 1. Ensure your Android device is running **Android version <=12**.
-<!-- 2. Download the app from the provided [Google Play Store link](https://play.google.com/store/apps/details?id=com.philophysics.ephysicsapp). -->
+2. Download the app from the provided [Google Play Store link](https://play.google.com/store/apps/details?id=com.philophysics.ephysicsapp)
 3. Install the app by following the on-screen instructions.
 4. Open the app and explore the study materials, concept maps, presentations, and quiz sections for an enriched learning experience.
 
