@@ -105,7 +105,8 @@ deleteDoc(
   });
 }
 
-Future<void> openFile(String url, BuildContext context, String title, String chapterName) async {
+Future<void> openFile(
+    String url, BuildContext context, String title, String chapterName) async {
   // Show a loading dialog while downloading
   showDialog(
     context: context,
@@ -168,6 +169,10 @@ Future<File> createFileOfPdfUrl(String pdfUrl) async {
       var request = await HttpClient().getUrl(Uri.parse(url));
       var response = await request.close();
       var bytes = await consolidateHttpClientResponseBytes(response);
+      print("URL: $url");
+      print("Status Code: ${response.statusCode}");
+      print("Content Type: ${response.headers.contentType}");
+      print("Bytes Length: ${bytes.length}");
       await file.writeAsBytes(bytes, flush: true);
     } else
       print("--------------------Already exist");
@@ -259,21 +264,22 @@ class DownloadService {
   static ValueNotifier<double> progress = ValueNotifier(0.0);
 
   static Future<void> savePdfOffline(
-      BuildContext context,
-      String url,
-      String fileName,
-      String chapterName,
-      ) async {
+    BuildContext context,
+    String url,
+    String fileName,
+    String chapterName,
+  ) async {
     try {
       var box = Hive.box<PDFFile>(Hive_Pdf_key);
 
-      final alreadyExists = box.values.any((pdf) =>
-      pdf.chapterName == chapterName && pdf.fileName == fileName);
+      final alreadyExists = box.values.any(
+          (pdf) => pdf.chapterName == chapterName && pdf.fileName == fileName);
 
       if (alreadyExists) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("$fileName File for '$chapterName' is already downloaded."),
+            content: Text(
+                "$fileName File for '$chapterName' is already downloaded."),
             duration: Duration(seconds: 2),
             backgroundColor: Colors.orange,
           ),
@@ -285,7 +291,8 @@ class DownloadService {
       progress.value = 0.0;
 
       final dir = await getApplicationDocumentsDirectory();
-      final filePath = "${dir.path}/${chapterName.replaceAll(' ','_') + fileName.replaceAll(' ','_')}";
+      final filePath =
+          "${dir.path}/${chapterName.replaceAll(' ', '_') + fileName.replaceAll(' ', '_')}";
 
       Dio dio = Dio();
       await dio.download(

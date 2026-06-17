@@ -10,7 +10,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:no_screenshot/no_screenshot.dart';
+//import 'package:no_screenshot/no_screenshot.dart';
 
 class PDFScreen extends StatefulWidget {
   final String path, title, moduleName, originalFileUrl;
@@ -62,7 +62,7 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
-    NoScreenshot.instance.screenshotOn(); // Allow screenshots when disposing.
+    //NoScreenshot.instance.screenshotOn(); // Allow screenshots when disposing.
 
     // Reset orientation back to portrait only when leaving this screen
     SystemChrome.setPreferredOrientations([
