@@ -1,0 +1,159 @@
+{
+  "project_info": {
+    "project_number": "409205311132",
+    "firebase_url": "https://engineering-physics-bde89.firebaseio.com",
+    "project_id": "engineering-physics-bde89",
+    "storage_bucket": "engineering-physics-bde89.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:409205311132:android:da5fd374e5e887f6844f59",
+        "android_client_info": {
+          "package_name": "com.philophysics.ephysicsapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "409205311132-0tf08mobk0r2i9675godmg6q950c9lc6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCU4uUvEDNwMGM5XBI6OxB4oOhELg04uoo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "409205311132-0tf08mobk0r2i9675godmg6q950c9lc6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "409205311132-ju4m7acp4bp57egiqbvntrkeuhj2bssv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.philophysics.physicsappli"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:409205311132:android:c442e0d60a64f0cf844f59",
+        "android_client_info": {
+          "package_name": "com.philophysics.physicsappli"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "409205311132-4nooihl4c6082vg0o34rhlttn1abqkjj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.philophysics.physicsappli",
+            "certificate_hash": "c7e9eefd8656bddfd58a284b6282dad8f17b1ad3"
+          }
+        },
+        {
+          "client_id": "409205311132-a8u86b2r0qo3ds13ih102g30r8r4oaje.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.philophysics.physicsappli",
+            "certificate_hash": "469664735fd2048cab3058f933b76bce4cfbe193"
+          }
+        },
+        {
+          "client_id": "409205311132-dm6bhdim81d2luk8nnptvmim91bvhqkv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.philophysics.physicsappli",
+            "certificate_hash": "b5c4056ccee58da0a6c396222526645c3b53868a"
+          }
+        },
+        {
+          "client_id": "409205311132-hb6o2ak537crr4emsigipdv0nhlvt32d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.philophysics.physicsappli",
+            "certificate_hash": "f92e220a47edcf6be08afa1d7b7962196d17ea5d"
+          }
+        },
+        {
+          "client_id": "409205311132-0tf08mobk0r2i9675godmg6q950c9lc6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCU4uUvEDNwMGM5XBI6OxB4oOhELg04uoo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "409205311132-0tf08mobk0r2i9675godmg6q950c9lc6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "409205311132-ju4m7acp4bp57egiqbvntrkeuhj2bssv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.philophysics.physicsappli"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:409205311132:android:52fbfe1962cddde6844f59",
+        "android_client_info": {
+          "package_name": "com.shraddha.engineeringphysics"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "409205311132-9ekioefqhpcjgiua59bignetvrd40lhb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.shraddha.engineeringphysics",
+            "certificate_hash": "73a5b3a117449d51fa567345fa069f49e4f0bfca"
+          }
+        },
+        {
+          "client_id": "409205311132-0tf08mobk0r2i9675godmg6q950c9lc6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCU4uUvEDNwMGM5XBI6OxB4oOhELg04uoo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "409205311132-0tf08mobk0r2i9675godmg6q950c9lc6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "409205311132-ju4m7acp4bp57egiqbvntrkeuhj2bssv.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.philophysics.physicsappli"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
