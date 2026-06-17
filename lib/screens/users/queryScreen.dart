@@ -157,7 +157,7 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
         await showDialog(
           context: context,
           builder: (_) => AlertDialog(
-            backgroundColor: Colors.white.withOpacity(0.9),
+            backgroundColor: Colors.white.withValues(alpha: 0.9),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
@@ -226,8 +226,8 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Colors.white.withOpacity(0.9),
-                  Colors.white.withOpacity(0.95),
+                  Colors.white.withValues(alpha: 0.9),
+                  Colors.white.withValues(alpha: 0.95),
                 ],
               ),
             ),
@@ -337,7 +337,7 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
             color: color3,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: Colors.grey.withOpacity(0.2),
+              color: Colors.grey.withValues(alpha: 0.2),
               width: 1,
             ),
             // boxShadow: [
@@ -403,7 +403,7 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.03),
+                          color: Colors.black.withValues(alpha: 0.03),
                           blurRadius: 10,
                           spreadRadius: 2,
                         ),
@@ -418,7 +418,7 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
                         floatingLabelBehavior: FloatingLabelBehavior.always,
                         alignLabelWithHint: true,
                         filled: true,
-                        fillColor: Colors.white.withOpacity(0.7),
+                        fillColor: Colors.white.withValues(alpha: 0.7),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
@@ -426,7 +426,8 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(
-                              color: Colors.grey.shade200.withOpacity(0.5)),
+                              color:
+                                  Colors.grey.shade200.withValues(alpha: 0.5)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -451,15 +452,15 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
                         borderRadius: BorderRadius.circular(12),
                         gradient: LinearGradient(
                           colors: [
-                            color5.withOpacity(0.8),
-                            color5.withOpacity(1),
+                            color5.withValues(alpha: 0.8),
+                            color5.withValues(alpha: 1),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: color5.withOpacity(0.2),
+                            color: color5.withValues(alpha: 0.2),
                             blurRadius: 10,
                             spreadRadius: 1,
                             offset: Offset(0, 3),
@@ -501,7 +502,7 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
                               selectedFiles.removeAt(index);
                             });
                           },
-                          backgroundColor: Colors.white.withOpacity(0.7),
+                          backgroundColor: Colors.white.withValues(alpha: 0.7),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
                             side: BorderSide(
@@ -530,15 +531,15 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
                         borderRadius: BorderRadius.circular(12),
                         gradient: LinearGradient(
                           colors: [
-                            color5.withOpacity(0.8),
-                            color5.withOpacity(1),
+                            color5.withValues(alpha: 0.8),
+                            color5.withValues(alpha: 1),
                           ],
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: color5.withOpacity(0.2),
+                            color: color5.withValues(alpha: 0.2),
                             blurRadius: 10,
                             spreadRadius: 1,
                             offset: Offset(0, 3),
@@ -592,7 +593,7 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
           hintText: label,
           hintStyle: TextStyle(color: Colors.grey[500]),
           filled: true,
-          fillColor: Colors.white.withOpacity(0.7),
+          fillColor: Colors.white.withValues(alpha: 0.7),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none,
@@ -600,7 +601,7 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide(
-                color: Colors.grey.shade200.withOpacity(0.5), width: 1),
+                color: Colors.grey.shade200.withValues(alpha: 0.5), width: 1),
           ),
           contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         ),
@@ -621,7 +622,7 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
             hintText: label,
             hintStyle: TextStyle(color: Colors.grey[500]),
             filled: true,
-            fillColor: Colors.white.withOpacity(0.7),
+            fillColor: Colors.white.withValues(alpha: 0.7),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide.none,
@@ -629,7 +630,7 @@ class _QueryFormScreenState extends State<QueryFormScreen> {
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                  color: Colors.grey.shade200.withOpacity(0.5), width: 1),
+                  color: Colors.grey.shade200.withValues(alpha: 0.5), width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),

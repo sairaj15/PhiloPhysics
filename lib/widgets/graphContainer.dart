@@ -11,8 +11,6 @@ class GraphContainer extends StatelessWidget {
   final String selectedYear;
   final int selectedMonthIndex;
 
-
-
   const GraphContainer({
     required this.maxY,
     required this.yInterval,
@@ -34,7 +32,7 @@ class GraphContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               spreadRadius: 5,
               blurRadius: 15,
               offset: const Offset(0, 5),
@@ -84,9 +82,9 @@ class GraphContainer extends StatelessWidget {
                   titlesData: FlTitlesData(
                     show: true,
                     topTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
                     rightTitles:
-                    AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                        AxisTitles(sideTitles: SideTitles(showTitles: false)),
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
                         showTitles: true,
@@ -103,11 +101,14 @@ class GraphContainer extends StatelessWidget {
                       ),
                     ),
                     bottomTitles: AxisTitles(
-                      axisNameWidget: Text('Weeks in ${months[selectedMonthIndex]} ${selectedYear}',style: GoogleFonts.poppins(
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                      ),),
+                      axisNameWidget: Text(
+                        'Weeks in ${months[selectedMonthIndex]} ${selectedYear}',
+                        style: GoogleFonts.poppins(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
                       sideTitles: SideTitles(
                         showTitles: true,
                         interval: 5,
@@ -130,13 +131,13 @@ class GraphContainer extends StatelessWidget {
                     verticalInterval: 1,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: Colors.grey.withOpacity(0.3),
+                        color: Colors.grey.withValues(alpha: 0.3),
                         strokeWidth: 2,
                       );
                     },
                     getDrawingVerticalLine: (value) {
                       return FlLine(
-                        color: Colors.grey.withOpacity(0.3),
+                        color: Colors.grey.withValues(alpha: 0.3),
                         strokeWidth: 2,
                       );
                     },
@@ -173,5 +174,4 @@ class GraphContainer extends StatelessWidget {
       return '${value.toInt()} H'; // Example: 45 → 45M
     }
   }
-
 }

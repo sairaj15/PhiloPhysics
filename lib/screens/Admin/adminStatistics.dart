@@ -574,7 +574,10 @@ class _AdminStatisticsState extends State<AdminStatistics>
                       },
                       child: const Text(
                         "End Semester / Academic Year",
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white),
                       ),
                     ),
 
@@ -609,14 +612,14 @@ class _AdminStatisticsState extends State<AdminStatistics>
         curve: Curves.easeInOut,
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [color.withOpacity(0.8), color],
+            colors: [color.withValues(alpha: 0.8), color],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: color.withOpacity(0.4),
+              color: color.withValues(alpha: 0.4),
               spreadRadius: 2,
               blurRadius: 8,
               offset: const Offset(0, 4),
@@ -630,7 +633,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
             SizedBox(height: MediaQuery.of(context).size.height * 0.01),
             CircleAvatar(
               radius: MediaQuery.of(context).size.width / 17,
-              backgroundColor: Colors.white.withOpacity(0.3),
+              backgroundColor: Colors.white.withValues(alpha: 0.3),
               child: Icon(icon,
                   size: MediaQuery.of(context).size.width / 14,
                   color: Colors.white),
@@ -788,7 +791,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
           color: Colors.grey.shade200,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha: 0.1),
               blurRadius: 10,
               spreadRadius: 2,
             ),
@@ -896,7 +899,7 @@ class _AdminStatisticsState extends State<AdminStatistics>
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.3),
+            color: Colors.grey.withValues(alpha: 0.3),
             blurRadius: 8,
             spreadRadius: 4,
             offset: const Offset(0, 4),
@@ -1004,7 +1007,8 @@ class _AdminStatisticsState extends State<AdminStatistics>
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               contentPadding: const EdgeInsets.all(16),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1019,10 +1023,13 @@ class _AdminStatisticsState extends State<AdminStatistics>
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: const [
                             Text("Select Semester Duration",
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                style: TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold)),
                             SizedBox(height: 4),
-                            Text("Pick the start and end month/year for this semester",
-                                style: TextStyle(fontSize: 13, color: Colors.black54)),
+                            Text(
+                                "Pick the start and end month/year for this semester",
+                                style: TextStyle(
+                                    fontSize: 13, color: Colors.black54)),
                           ],
                         ),
                       ),
@@ -1093,25 +1100,30 @@ class _AdminStatisticsState extends State<AdminStatistics>
                       onTap: isLoading
                           ? null
                           : () async {
-                        if (startDate != null && endDate != null) {
-                          setState(() => isLoading = true);
-                          try {
-                            await DataAutomateService()
-                                .updateGoogleSheetDataForSpecificTime(startDate!, endDate!);
-                            Navigator.pop(dialogContext);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Semester sheet created successfully")),
-                            );
-                          } catch (e) {
-                            Navigator.pop(dialogContext);
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Failed to create semester sheet")),
-                            );
-                          } finally {
-                            setState(() => isLoading = false);
-                          }
-                        }
-                      },
+                              if (startDate != null && endDate != null) {
+                                setState(() => isLoading = true);
+                                try {
+                                  await DataAutomateService()
+                                      .updateGoogleSheetDataForSpecificTime(
+                                          startDate!, endDate!);
+                                  Navigator.pop(dialogContext);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            "Semester sheet created successfully")),
+                                  );
+                                } catch (e) {
+                                  Navigator.pop(dialogContext);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            "Failed to create semester sheet")),
+                                  );
+                                } finally {
+                                  setState(() => isLoading = false);
+                                }
+                              }
+                            },
                       child: Container(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         decoration: BoxDecoration(
@@ -1121,17 +1133,19 @@ class _AdminStatisticsState extends State<AdminStatistics>
                         child: Center(
                           child: isLoading
                               ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
+                                  height: 20,
+                                  width: 20,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                )
                               : const Text(
-                            "Confirm",
-                            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
-                          ),
+                                  "Confirm",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w500),
+                                ),
                         ),
                       ),
                     ),
@@ -1147,10 +1161,19 @@ class _AdminStatisticsState extends State<AdminStatistics>
 
   String _monthName(int month) {
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December'
     ];
     return months[month - 1];
   }
-
 }

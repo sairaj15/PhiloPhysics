@@ -2,15 +2,12 @@ import 'dart:convert';
 import 'package:ephysicsapp/globals/constants.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
 
 class DataAutomateService {
-
   Future<void> updateGoogleSheetData() async {
-
     final scriptUrl = dataAutomateScriptUrl;
 
-    List<Map<String,dynamic>> userData = await buildUserDataList();
+    List<Map<String, dynamic>> userData = await buildUserDataList();
 
     final response = await http.post(
       Uri.parse(scriptUrl),
@@ -94,19 +91,30 @@ class DataAutomateService {
 
   String _monthName(int month) {
     const months = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December"
     ];
     return months[month - 1];
   }
 
-  Future<void> updateGoogleSheetDataForSpecificTime(DateTime startDate, DateTime endDate) async {
-
+  Future<void> updateGoogleSheetDataForSpecificTime(
+      DateTime startDate, DateTime endDate) async {
     final scriptUrl = customDataAutomateScriptUrl;
 
     String sheetName = getSheetName(startDate, endDate);
 
-    List<Map<String,dynamic>> userData = await buildUserDataListForSpecificTime(startDate, endDate);
+    List<Map<String, dynamic>> userData =
+        await buildUserDataListForSpecificTime(startDate, endDate);
 
     for (var row in userData) {
       row["sheetName"] = sheetName;
@@ -130,7 +138,8 @@ class DataAutomateService {
         (date.isBefore(end) || date.isAtSameMomentAs(end));
   }
 
-  Future<List<Map<String, dynamic>>> buildUserDataListForSpecificTime(DateTime startDate, DateTime endDate) async {
+  Future<List<Map<String, dynamic>>> buildUserDataListForSpecificTime(
+      DateTime startDate, DateTime endDate) async {
     final DatabaseReference ref = FirebaseDatabase.instance.ref('Users');
     final DataSnapshot snapshot = await ref.get();
 
@@ -206,5 +215,4 @@ class DataAutomateService {
 
     return usersList;
   }
-
 }

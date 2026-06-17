@@ -113,14 +113,14 @@ class HomeWidgetState extends State<QuizHomePage>
                         color: Colors
                             .white, // Background color to contrast with border
                         border: Border.all(
-                            color: Colors.black.withOpacity(0.6),
+                            color: Colors.black.withValues(alpha: 0.6),
                             width: 2), // Softer black
                         borderRadius: BorderRadius.circular(
                             20), // More rounded corners for modern look
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey
-                                .withOpacity(0.3), // Subtle shadow for depth
+                            color: Colors.grey.withValues(
+                                alpha: 0.3), // Subtle shadow for depth
                             blurRadius: 8,
                             spreadRadius: 3,
                             offset: const Offset(0, 4), // Shadow offset

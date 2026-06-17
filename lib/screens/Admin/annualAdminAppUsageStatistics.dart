@@ -348,7 +348,8 @@ class _AdminStatisticsState extends State<AnnualAdminAppUsageStatistics> {
                                     shadows: [
                                       Shadow(
                                         blurRadius: 10.0,
-                                        color: Colors.black.withOpacity(0.3),
+                                        color:
+                                            Colors.black.withValues(alpha: 0.3),
                                         offset: const Offset(2.0, 2.0),
                                       ),
                                     ],
@@ -547,7 +548,7 @@ class GraphContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               spreadRadius: 5,
               blurRadius: 15,
               offset: const Offset(0, 5),
@@ -642,7 +643,7 @@ class GraphContainer extends StatelessWidget {
                     verticalInterval: 1,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: Colors.grey.withOpacity(0.3),
+                        color: Colors.grey.withValues(alpha: 0.3),
                         strokeWidth: 2,
                       );
                     },

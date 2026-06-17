@@ -30,5 +30,5 @@ MaterialColor createMaterialColor(Color color) {
     );
   });
 
-  return MaterialColor(color.value, swatch);
+  return MaterialColor(color.toARGB32(), swatch);
 }

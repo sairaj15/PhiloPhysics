@@ -172,7 +172,7 @@ class _VLabWeeklyUsageGraphState extends State<VLabWeeklyUsageGraph> {
                           borderRadius: BorderRadius.circular(8),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.grey.withOpacity(0.2),
+                              color: Colors.grey.withValues(alpha: 0.2),
                               spreadRadius: 2,
                               blurRadius: 4,
                               offset: const Offset(0, 2),
@@ -209,7 +209,7 @@ class _VLabWeeklyUsageGraphState extends State<VLabWeeklyUsageGraph> {
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.grey.withOpacity(0.1),
+                            color: Colors.grey.withValues(alpha: 0.1),
                             spreadRadius: 5,
                             blurRadius: 15,
                             offset: const Offset(0, 5),

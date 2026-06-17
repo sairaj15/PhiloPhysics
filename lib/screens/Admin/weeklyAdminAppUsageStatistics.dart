@@ -188,7 +188,7 @@ class _WeeklyAdminAppUsageStatisticsState
                             borderRadius: BorderRadius.circular(8),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
+                                color: Colors.grey.withValues(alpha: 0.2),
                                 spreadRadius: 2,
                                 blurRadius: 4,
                                 offset: const Offset(0, 2),
@@ -291,7 +291,7 @@ class GraphContainer extends StatelessWidget {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Colors.grey.withValues(alpha: 0.1),
               spreadRadius: 5,
               blurRadius: 15,
               offset: const Offset(0, 5),
@@ -397,7 +397,7 @@ class GraphContainer extends StatelessWidget {
                     verticalInterval: 1,
                     getDrawingHorizontalLine: (value) {
                       return FlLine(
-                        color: Colors.grey.withOpacity(0.3),
+                        color: Colors.grey.withValues(alpha: 0.3),
                         strokeWidth: 2,
                       );
                     },

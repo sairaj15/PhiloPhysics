@@ -16,8 +16,14 @@ class PDFScreen extends StatefulWidget {
   final String path, title, moduleName, originalFileUrl;
   final bool? isFromOfflineScreen;
 
-  PDFScreen({Key? key, required this.path, required this.title, required this.moduleName, required this.originalFileUrl, this.isFromOfflineScreen = false})
-      : super(key: key);
+  PDFScreen({
+    Key? key,
+    required this.path,
+    required this.title,
+    required this.moduleName,
+    required this.originalFileUrl,
+    this.isFromOfflineScreen = false,
+  }) : super(key: key);
 
   _PDFScreenState createState() => _PDFScreenState();
 }
@@ -41,7 +47,7 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    NoScreenshot.instance.screenshotOff();
+    //NoScreenshot.instance.screenshotOff();
     pdfTimeStart = DateTime.now();
 
     // Allow all orientations for this screen
@@ -98,14 +104,17 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
         DateTime nextDayStart = midnight.add(Duration(seconds: 1));
         Duration afterMidnight = endTime.difference(nextDayStart);
         print(
-            "Logging (X+1)-day usage: $nextDayStart to $endTime ($afterMidnight)");
+          "Logging (X+1)-day usage: $nextDayStart to $endTime ($afterMidnight)",
+        );
         await _updatePdfUsageInFirebase(nextDayStart, afterMidnight);
       }
     }
   }
 
   Future<void> _updatePdfUsageInFirebase(
-      DateTime usageDate, Duration sessionDuration) async {
+    DateTime usageDate,
+    Duration sessionDuration,
+  ) async {
     String currentMonth = DateFormat('MMM yyyy').format(usageDate);
     String dateKey = DateFormat('dd-MM-yyyy').format(usageDate);
 
@@ -117,8 +126,9 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
         .child(currentMonth)
         .child(dateKey);
 
-    DataSnapshot snapshot =
-        await userUsageRef.once().then((event) => event.snapshot);
+    DataSnapshot snapshot = await userUsageRef.once().then(
+          (event) => event.snapshot,
+        );
     Duration totalUsage = Duration();
 
     if (snapshot.exists) {
@@ -199,15 +209,18 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
         actions: [
           // Row for positioning the arrows
           Padding(
-            padding:
-                EdgeInsets.only(right: MediaQuery.of(context).size.width / 50),
+            padding: EdgeInsets.only(
+              right: MediaQuery.of(context).size.width / 50,
+            ),
             child: Row(
               mainAxisAlignment:
                   MainAxisAlignment.end, // Align buttons to the right
               children: [
                 // Left arrow button (previous page)
                 IconButton(
-                  icon: Icon(FontAwesomeIcons.rotate), // Rotate icon
+                  icon: FaIcon(
+                    FontAwesomeIcons.rotate,
+                  ), // Rotate icon
                   onPressed: toggleOrientation,
                   iconSize: 18,
                 ),
@@ -225,8 +238,8 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
 
                 // Add some spacing between the arrows
                 SizedBox(
-                    width: MediaQuery.of(context).size.width /
-                        300), // You can adjust the width to control the gap
+                  width: MediaQuery.of(context).size.width / 300,
+                ), // You can adjust the width to control the gap
                 // Right arrow button (next page)
                 IconButton(
                   icon: Icon(
@@ -297,15 +310,10 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
           errorMessage.isEmpty
               ? !isReady
                   ? Center(
-                      child: SpinKitFadingCircle(
-                        color: color5,
-                        size: 30.0,
-                      ),
+                      child: SpinKitFadingCircle(color: color5, size: 30.0),
                     )
                   : Container()
-              : Center(
-                  child: Text(errorMessage),
-                ),
+              : Center(child: Text(errorMessage)),
           ValueListenableBuilder(
             valueListenable: DownloadService.isDownloading,
             builder: (context, isDownloading, _) {
@@ -396,37 +404,37 @@ class _PDFScreenState extends State<PDFScreen> with WidgetsBindingObserver {
               },
             ),
           ),
-          if(widget.isFromOfflineScreen == false)
-          SpeedDial(
-            direction: SpeedDialDirection.up,
-            icon: Icons.menu,
-            activeIcon: Icons.close,
-            iconTheme: IconThemeData(color: Colors.white),
-            backgroundColor: color5,
-            buttonSize: Size(
-              MediaQuery.of(context).size.width * 0.13,
-              MediaQuery.of(context).size.width * 0.13,
-            ),
-            overlayColor: Colors.transparent,
-            overlayOpacity: 0,
-            children: [
-              SpeedDialChild(
-                child: Icon(Icons.download_rounded, color: Colors.white),
-                label: 'Save Offline',
-                backgroundColor: color5,
-                shape: const CircleBorder(),
-                visible: true,
-                onTap: () {
-                  DownloadService.savePdfOffline(
+          if (widget.isFromOfflineScreen == false)
+            SpeedDial(
+              direction: SpeedDialDirection.up,
+              icon: Icons.menu,
+              activeIcon: Icons.close,
+              iconTheme: IconThemeData(color: Colors.white),
+              backgroundColor: color5,
+              buttonSize: Size(
+                MediaQuery.of(context).size.width * 0.13,
+                MediaQuery.of(context).size.width * 0.13,
+              ),
+              overlayColor: Colors.transparent,
+              overlayOpacity: 0,
+              children: [
+                SpeedDialChild(
+                  child: Icon(Icons.download_rounded, color: Colors.white),
+                  label: 'Save Offline',
+                  backgroundColor: color5,
+                  shape: const CircleBorder(),
+                  visible: true,
+                  onTap: () {
+                    DownloadService.savePdfOffline(
                       context,
                       widget.originalFileUrl,
                       widget.title,
-                      widget.moduleName
-                  );
-                },
-              ),
-            ],
-          ),
+                      widget.moduleName,
+                    );
+                  },
+                ),
+              ],
+            ),
         ],
       ),
     );

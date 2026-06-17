@@ -12,7 +12,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:in_app_update/in_app_update.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -80,7 +79,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     checkForUpdate();
     _checkLoggedInStatus();
     initConnectivity();
-    connectivitySubscription = connectivity.onConnectivityChanged.listen(updateConnectionStatus);
+    connectivitySubscription =
+        connectivity.onConnectivityChanged.listen(updateConnectionStatus);
   }
 
   /// No Internet
@@ -102,7 +102,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
   void updateConnectionStatus(List<ConnectivityResult> result) {
     bool wasConnected = isConnected;
-    bool isNowConnected = result.contains(ConnectivityResult.mobile) || result.contains(ConnectivityResult.wifi) || result.contains(ConnectivityResult.ethernet);
+    bool isNowConnected = result.contains(ConnectivityResult.mobile) ||
+        result.contains(ConnectivityResult.wifi) ||
+        result.contains(ConnectivityResult.ethernet);
     print('Connectivity changed: $result, isConnected: $isNowConnected');
 
     if (wasConnected != isNowConnected) {
@@ -112,7 +114,13 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
 
       if (isNowConnected) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Internet Connection Restored', style: TextStyle(color: Colors.white),),backgroundColor: Colors.green,),
+          SnackBar(
+            content: Text(
+              'Internet Connection Restored',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.green,
+          ),
         );
       }
     }
@@ -307,7 +315,9 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
         print('Starting Time Recording');
         _startTime = DateTime.now();
       }
-    } else if (_isLoggedIn && (state == AppLifecycleState.paused || state == AppLifecycleState.inactive)) {
+    } else if (_isLoggedIn &&
+        (state == AppLifecycleState.paused ||
+            state == AppLifecycleState.inactive)) {
       print("App Not in Foreground");
       _logAppUsageTime();
     } else if (_isLoggedIn && state == AppLifecycleState.detached) {
@@ -353,7 +363,8 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     }
   }
 
-  Future<void> _updateUsageInFirebase(DateTime usageDate, Duration sessionDuration) async {
+  Future<void> _updateUsageInFirebase(
+      DateTime usageDate, Duration sessionDuration) async {
     String userId = _userId!;
     String currentMonth = DateFormat('MMM yyyy').format(usageDate);
     String dateKey = DateFormat('dd-MM-yyyy').format(usageDate);
@@ -416,7 +427,7 @@ class MyAppState extends State<MyApp> with WidgetsBindingObserver {
     ]);
 
     Widget mainScreen = (prefs.getBool("isStudentLoggedIn") == true ||
-        prefs.getBool("isLogged") == true)
+            prefs.getBool("isLogged") == true)
         ? MyHomePage()
         : SplashScreen();
 

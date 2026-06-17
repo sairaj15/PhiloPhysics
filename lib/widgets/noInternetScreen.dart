@@ -15,7 +15,7 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Container(
-      color: Colors.black.withOpacity(0.7),
+      color: Colors.black.withValues(alpha: 0.7),
       height: size.height,
       width: size.width,
       alignment: Alignment.center,
@@ -32,22 +32,17 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
             Text(
               "No Internet Connection",
               style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black
-              ),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black),
             ),
-
             const SizedBox(height: 12),
-
             const Icon(
               Icons.wifi_off,
               color: Colors.redAccent,
               size: 60,
             ),
-
             const SizedBox(height: 20),
-
             Text(
               "Philo Physics requires an active internet connection to view notes, videos, virtual labs, and more.",
               textAlign: TextAlign.center,
@@ -56,9 +51,7 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
                 color: Colors.black87,
               ),
             ),
-
             const SizedBox(height: 28),
-
             SizedBox(
               width: 180,
               height: 45,
@@ -71,7 +64,8 @@ class _NoInternetScreenState extends State<NoInternetScreen> {
                 ),
                 onPressed: () {
                   navigatorKey.currentState?.push(
-                    MaterialPageRoute(builder: (_) => const OfflineMaterialScreen()),
+                    MaterialPageRoute(
+                        builder: (_) => const OfflineMaterialScreen()),
                   );
                 },
                 child: FittedBox(
