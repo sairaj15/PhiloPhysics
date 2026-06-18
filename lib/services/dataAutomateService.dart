@@ -155,7 +155,6 @@ class DataAutomateService {
         if (user['AppUsage'] != null) {
           final appUsage = Map<String, dynamic>.from(user['AppUsage']);
           for (final monthEntry in appUsage.entries) {
-            final monthNameYear = monthEntry.key;
             final dates = Map<String, dynamic>.from(monthEntry.value);
 
             for (final dateEntry in dates.entries) {
