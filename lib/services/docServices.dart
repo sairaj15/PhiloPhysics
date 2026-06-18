@@ -188,7 +188,7 @@ Future<void> openFile(
 // }
 
 Future<File> createFileOfPdfUrl(String pdfUrl) async {
-  String assetPath = "assets/pdfs/ep1.pdf";
+  String assetPath = "assets/pdfs/formula_list.pdf";
 
   final byteData = await rootBundle.load(assetPath);
 
