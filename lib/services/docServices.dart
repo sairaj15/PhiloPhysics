@@ -12,8 +12,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
-import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart';
 
 addDoc(
     {required String section,
@@ -151,40 +151,57 @@ Future<void> openFile(
   });
 }
 
+// Future<File> createFileOfPdfUrl(String pdfUrl) async {
+//   Completer<File> completer = Completer();
+//   print("Start download file from internet!");
+//   try {
+//     // "https://berlin2017.droidcon.cod.newthinking.net/sites/global.droidcon.cod.newthinking.net/files/media/documents/Flutter%20-%2060FPS%20UI%20of%20the%20future%20%20-%20DroidconDE%2017.pdf";
+//     // final url = "https://pdfkit.org/docs/guide.pdf";
+//     final url = pdfUrl;
+//     final filename = url.substring(url.lastIndexOf("/") + 1);
+
+//     var dir = await getApplicationDocumentsDirectory();
+//     print("${dir.path}/$filename");
+//     File file = File("${dir.path}/$filename");
+
+//     if (!(await file.exists())) {
+//       print("--------------------doesnt  exist");
+//       var request = await HttpClient().getUrl(Uri.parse(url));
+//       var response = await request.close();
+//       var bytes = await consolidateHttpClientResponseBytes(response);
+//       print("URL: $url");
+//       print("Status Code: ${response.statusCode}");
+//       print("Content Type: ${response.headers.contentType}");
+//       print("Bytes Length: ${bytes.length}");
+//       await file.writeAsBytes(bytes, flush: true);
+//     } else
+//       print("--------------------Already exist");
+
+//     print("Checking stored PDF cache...");
+//     await printCacheSize();
+//     completer.complete(file);
+//   } catch (e) {
+//     throw Exception('Error parsing asset file!');
+//   }
+
+//   return completer.future;
+// }
+
 Future<File> createFileOfPdfUrl(String pdfUrl) async {
-  Completer<File> completer = Completer();
-  print("Start download file from internet!");
-  try {
-    // "https://berlin2017.droidcon.cod.newthinking.net/sites/global.droidcon.cod.newthinking.net/files/media/documents/Flutter%20-%2060FPS%20UI%20of%20the%20future%20%20-%20DroidconDE%2017.pdf";
-    // final url = "https://pdfkit.org/docs/guide.pdf";
-    final url = pdfUrl;
-    final filename = url.substring(url.lastIndexOf("/") + 1);
+  String assetPath = "assets/pdfs/diffraction.pdf";
 
-    var dir = await getApplicationDocumentsDirectory();
-    print("${dir.path}/$filename");
-    File file = File("${dir.path}/$filename");
+  final byteData = await rootBundle.load(assetPath);
 
-    if (!(await file.exists())) {
-      print("--------------------doesnt  exist");
-      var request = await HttpClient().getUrl(Uri.parse(url));
-      var response = await request.close();
-      var bytes = await consolidateHttpClientResponseBytes(response);
-      print("URL: $url");
-      print("Status Code: ${response.statusCode}");
-      print("Content Type: ${response.headers.contentType}");
-      print("Bytes Length: ${bytes.length}");
-      await file.writeAsBytes(bytes, flush: true);
-    } else
-      print("--------------------Already exist");
+  final dir = await getApplicationDocumentsDirectory();
 
-    print("Checking stored PDF cache...");
-    await printCacheSize();
-    completer.complete(file);
-  } catch (e) {
-    throw Exception('Error parsing asset file!');
-  }
+  final file = File("${dir.path}/demo.pdf");
 
-  return completer.future;
+  await file.writeAsBytes(
+    byteData.buffer.asUint8List(),
+    flush: true,
+  );
+
+  return file;
 }
 
 Future<void> printCacheSize() async {
